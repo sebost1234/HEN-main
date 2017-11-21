@@ -1,0 +1,13 @@
+1
+0
+Save
+2018-05-30 17:35:35
+start.txt
+16
+6
+flag;testflag
+addmodel;model1
+texturemodel;model1;Model1.png
+changebg;testbg1.png
+moveintorow;model1;front;-1
+fx;camerazoom;zoom;6.096094;5.000000;0;0.500000;
