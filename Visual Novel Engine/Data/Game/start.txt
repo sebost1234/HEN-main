@@ -26,8 +26,6 @@ moveintorow;model2;front;1;0
 say;Imie;Testowy tekst
 
 moveintorow;model2;front;0;0
-
-
 say;Imie;Uwaga nagly zoom z wstrząśnięciem
 
 fx;camerazoom;trash;0;0;0;0.5
