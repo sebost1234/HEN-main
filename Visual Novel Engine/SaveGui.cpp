@@ -2,9 +2,9 @@
 #include "GameState.h"
 #include "GeneralSettings.h"
 
-void GuiSaveManager::notifyEvent(Gui::MyEvent event, Gui::GuiElement * from)
+void GuiSaveManager::notifyEvent(GuiNS::MyEvent event, GuiNS::GuiElement * from)
 {
-	if (event.type == Gui::MyEvent::Pressed && event.mouse.type == Gui::MyEvent::Type::Released)
+	if (event.type == GuiNS::MyEvent::Pressed && event.mouse.type == GuiNS::MyEvent::Type::Released)
 	{
 		if (from == &prevpagebutton)
 			changePage(currentpage - 1);

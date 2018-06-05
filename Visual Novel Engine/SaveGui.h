@@ -11,8 +11,8 @@
 struct GuiSaveData
 {
 	GuiSaveData(sf::Vector2f offset, sf::Vector2f size, int x, int y, int paddingbetween, int paddingoutside) :
-		desc(ResourceManager::getStyle(), *ResourceManager::getFont(), size, "", 25, 5, 5, Gui::GuiText::FormatVer::Ver_Top, Gui::GuiText::FormatHor::Hor_Center, Gui::GuiText::Nothing),
-		time(ResourceManager::getStyle(), *ResourceManager::getFont(), sf::Vector2f(size.x ,size.y*0.25f), "", 25, 5, 5, Gui::GuiText::FormatVer::Ver_Top, Gui::GuiText::FormatHor::Hor_Center, Gui::GuiText::Nothing)
+		desc(ResourceManager::getStyle(), *ResourceManager::getFont(), size, "", 25, 5, 5, GuiNS::GuiText::FormatVer::Ver_Top, GuiNS::GuiText::FormatHor::Hor_Center, GuiNS::GuiText::Nothing),
+		time(ResourceManager::getStyle(), *ResourceManager::getFont(), sf::Vector2f(size.x ,size.y*0.25f), "", 25, 5, 5, GuiNS::GuiText::FormatVer::Ver_Top, GuiNS::GuiText::FormatHor::Hor_Center, GuiNS::GuiText::Nothing)
 	{
 		desc.setPosition(offset + sf::Vector2f((size.x + paddingoutside) * x, (size.y + paddingoutside)*y));
 		time.setPosition(offset + sf::Vector2f((size.x + paddingoutside) * x, (size.y + paddingoutside)*y) + sf::Vector2f(0.0f, size.y*0.75f));
@@ -35,12 +35,12 @@ struct GuiSaveData
 		time.setString(tmp.date);
 	}
 
-	void enable(Gui::Gui*gui)
+	void enable(GuiNS::Gui*gui)
 	{
 		gui->addElement(&time);
 		gui->addElement(&desc);
 	}
-	void disable(Gui::Gui*gui)
+	void disable(GuiNS::Gui*gui)
 	{
 		gui->eraseElement(&desc);
 		gui->eraseElement(&time);
@@ -48,20 +48,20 @@ struct GuiSaveData
 
 
 	sf::Texture texture;
-	Gui::GuiText desc;
-	Gui::GuiText time;
+	GuiNS::GuiText desc;
+	GuiNS::GuiText time;
 };
 
 class OptionsSaveSubType;
 
 
-class GuiSaveManager : public Gui::GuiElementObserver
+class GuiSaveManager : public GuiNS::GuiElementObserver
 {
 public:
 	GuiSaveManager(unsigned int rows, unsigned int columns, OptionsSaveSubType*fatherstate) :
-		prevpagebutton(ResourceManager::getStyle(), *ResourceManager::getFont(), sf::Vector2f(200, 50), "Prev", 30, 5, 5, Gui::GuiText::FormatVer::Ver_Center, Gui::GuiText::FormatHor::Hor_Left, Gui::GuiText::Nothing),
-		nextpagebutton(ResourceManager::getStyle(), *ResourceManager::getFont(), sf::Vector2f(200, 50), "Next", 30, 5, 5, Gui::GuiText::FormatVer::Ver_Center, Gui::GuiText::FormatHor::Hor_Left, Gui::GuiText::Nothing),
-		pagenr(ResourceManager::getStyle(), *ResourceManager::getFont(), sf::Vector2f(200, 50), "", 30, 5, 5, Gui::GuiText::FormatVer::Ver_Center, Gui::GuiText::FormatHor::Hor_Left, Gui::GuiText::Nothing),
+		prevpagebutton(ResourceManager::getStyle(), *ResourceManager::getFont(), sf::Vector2f(200, 50), "Prev", 30, 5, 5, GuiNS::GuiText::FormatVer::Ver_Center, GuiNS::GuiText::FormatHor::Hor_Left, GuiNS::GuiText::Nothing),
+		nextpagebutton(ResourceManager::getStyle(), *ResourceManager::getFont(), sf::Vector2f(200, 50), "Next", 30, 5, 5, GuiNS::GuiText::FormatVer::Ver_Center, GuiNS::GuiText::FormatHor::Hor_Left, GuiNS::GuiText::Nothing),
+		pagenr(ResourceManager::getStyle(), *ResourceManager::getFont(), sf::Vector2f(200, 50), "", 30, 5, 5, GuiNS::GuiText::FormatVer::Ver_Center, GuiNS::GuiText::FormatHor::Hor_Left, GuiNS::GuiText::Nothing),
 		currentpage(0),
 		rows(rows),
 		columns(columns),
@@ -114,7 +114,7 @@ public:
 		saveDataToFile();
 	}
 
-	void notifyEvent(Gui::MyEvent event, Gui::GuiElement * from);
+	void notifyEvent(GuiNS::MyEvent event, GuiNS::GuiElement * from);
 
 	void changePage(int newpage)
 	{
@@ -136,7 +136,7 @@ public:
 		currentpage = newpage;
 	}
 
-	void enable(Gui::Gui*gui)
+	void enable(GuiNS::Gui*gui)
 	{
 		gui->addElement(&prevpagebutton);
 		gui->addElement(&nextpagebutton);
@@ -146,7 +146,7 @@ public:
 			savesgui[i].enable(gui);
 	}
 
-	void disable(Gui::Gui*gui)
+	void disable(GuiNS::Gui*gui)
 	{
 		gui->eraseElement(&prevpagebutton);
 		gui->eraseElement(&nextpagebutton);
@@ -192,10 +192,10 @@ public:
 		file.close();
 	}
 private:
-	Gui::GuiText prevpagebutton;
-	Gui::GuiText nextpagebutton;
+	GuiNS::GuiText prevpagebutton;
+	GuiNS::GuiText nextpagebutton;
 
-	Gui::GuiText pagenr;
+	GuiNS::GuiText pagenr;
 
 	const unsigned int rows;
 	const unsigned int columns;

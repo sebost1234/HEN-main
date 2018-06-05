@@ -4,7 +4,7 @@
 #include "GameState.h"
 #include "Options.h"
 
-class MainMenuState : public State, Gui::GuiElementObserver
+class MainMenuState : public State, GuiNS::GuiElementObserver
 {
 public:
 	MainMenuState(Engine*engine);
@@ -14,15 +14,17 @@ public:
 	virtual void draw() override;
 
 
-	virtual void notifyEvent(Gui::MyEvent event, Gui::GuiElement*from) override;
+	virtual void notifyEvent(GuiNS::MyEvent event, GuiNS::GuiElement*from) override;
 private:
-	Gui::Gui gui;
+	GuiNS::Gui gui;
 
 	sf::RectangleShape background;
-	Gui::GuiText startbutton;
-	Gui::GuiText loadbutton;
-	Gui::GuiText optionsbutton;
-	Gui::GuiText exitbutton;
+	GuiNS::GuiText startbutton;
+	GuiNS::GuiText loadbutton;
+	GuiNS::GuiText optionsbutton;
+	GuiNS::GuiText exitbutton;
+
+	GuiNS::GuiText testbutton;
 
 	Options options;
 }; 

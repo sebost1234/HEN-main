@@ -27,20 +27,20 @@ public:
 		}
 		return font;
 	}
-	static Gui::Style*getStyle(StyleTypes type = transparent)
+	static GuiNS::Style*getStyle(StyleTypes type = transparent)
 	{
 		if (styles.count(type) == 0)
 		{
 			switch (type)
 			{
 			case transparent:
-				styles[type] = new Gui::Style(sf::Color(50, 50, 50, 150), sf::Color(100, 100, 100, 150), sf::Color(255, 0, 0, 150), sf::Color(100, 0, 0, 150), sf::Color::White);
+				styles[type] = new GuiNS::Style(sf::Color(50, 50, 50, 150), sf::Color(100, 100, 100, 150), sf::Color(255, 0, 0, 150), sf::Color(100, 0, 0, 150), sf::Color::White);
 				break;
 			case normal:
-				styles[type] = new Gui::Style(sf::Color(50, 50, 50), sf::Color(100, 100, 100), sf::Color(255, 0, 0), sf::Color(100, 0, 0), sf::Color::White);
+				styles[type] = new GuiNS::Style(sf::Color(50, 50, 50), sf::Color(100, 100, 100), sf::Color(255, 0, 0), sf::Color(100, 0, 0), sf::Color::White);
 				break;
 			case blankwhite:
-				styles[type] = new Gui::Style(sf::Color::White, sf::Color::White, sf::Color::White, sf::Color::White, sf::Color::White);
+				styles[type] = new GuiNS::Style(sf::Color::White, sf::Color::White, sf::Color::White, sf::Color::White, sf::Color::White);
 				break;
 			default:
 				break;
@@ -72,6 +72,6 @@ public:
 	}
 private:
 	static sf::Font*font;
-	static std::map<StyleTypes, Gui::Style*> styles;
+	static std::map<StyleTypes, GuiNS::Style*> styles;
 	static std::map<std::string, sf::Texture*> textures;
 };

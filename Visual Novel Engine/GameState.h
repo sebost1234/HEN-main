@@ -11,7 +11,7 @@
 #include "Scene.h"
 
 
-class GameState : public State, public Gui::GuiElementObserver
+class GameState : public State, public GuiNS::GuiElementObserver
 {
 public:
 	GameState(Engine*engine, SaveData*data = nullptr);
@@ -20,7 +20,7 @@ public:
 	virtual void sync(float time) override;
 	virtual void draw() override;
 
-	virtual void notifyEvent(Gui::MyEvent event, Gui::GuiElement * from) override;
+	virtual void notifyEvent(GuiNS::MyEvent event, GuiNS::GuiElement * from) override;
 	SaveData getSave()
 	{
 		SaveData data = vnc.createSaveBase();
@@ -43,12 +43,12 @@ private:
 
 	//Gui
 	bool hidegui;
-	Gui::Gui gui;
+	GuiNS::Gui gui;
 
-	Gui::GuiTextSlowShow tekst;
-	Gui::GuiText name;
+	GuiNS::GuiTextSlowShow tekst;
+	GuiNS::GuiText name;
 
-	std::vector <Gui::GuiText*> choices;
+	std::vector <GuiNS::GuiText*> choices;
 
 	Options options;
 

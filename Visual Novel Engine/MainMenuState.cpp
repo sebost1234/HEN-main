@@ -3,10 +3,11 @@
 #include "Options.h"
 
 MainMenuState::MainMenuState(Engine*engine) :
-	startbutton(ResourceManager::getStyle(), *ResourceManager::getFont(), sf::Vector2f(200, 50), L"Start", 30, 1, 30, Gui::GuiText::FormatVer::Ver_Center, Gui::GuiText::FormatHor::Hor_Center, Gui::GuiText::Nothing),
-	loadbutton(ResourceManager::getStyle(), *ResourceManager::getFont(), sf::Vector2f(200, 50), "Load Game", 30, 1, 30, Gui::GuiText::FormatVer::Ver_Center, Gui::GuiText::FormatHor::Hor_Center, Gui::GuiText::Nothing),
-	optionsbutton(ResourceManager::getStyle(), *ResourceManager::getFont(), sf::Vector2f(200, 50), "Options", 30, 1, 30, Gui::GuiText::FormatVer::Ver_Center, Gui::GuiText::FormatHor::Hor_Center, Gui::GuiText::Nothing),
-	exitbutton(ResourceManager::getStyle(), *ResourceManager::getFont(), sf::Vector2f(200, 50), "Exit", 30, 1, 30, Gui::GuiText::FormatVer::Ver_Center, Gui::GuiText::FormatHor::Hor_Center, Gui::GuiText::Nothing),
+	startbutton(ResourceManager::getStyle(), *ResourceManager::getFont(), sf::Vector2f(200, 50), L"Start", 30, 1, 30, GuiNS::GuiText::FormatVer::Ver_Center, GuiNS::GuiText::FormatHor::Hor_Center, GuiNS::GuiText::Nothing),
+	loadbutton(ResourceManager::getStyle(), *ResourceManager::getFont(), sf::Vector2f(200, 50), "Load Game", 30, 1, 30, GuiNS::GuiText::FormatVer::Ver_Center, GuiNS::GuiText::FormatHor::Hor_Center, GuiNS::GuiText::Nothing),
+	optionsbutton(ResourceManager::getStyle(), *ResourceManager::getFont(), sf::Vector2f(200, 50), "Options", 30, 1, 30, GuiNS::GuiText::FormatVer::Ver_Center, GuiNS::GuiText::FormatHor::Hor_Center, GuiNS::GuiText::Nothing),
+	exitbutton(ResourceManager::getStyle(), *ResourceManager::getFont(), sf::Vector2f(200, 50), "Exit", 30, 1, 30, GuiNS::GuiText::FormatVer::Ver_Center, GuiNS::GuiText::FormatHor::Hor_Center, GuiNS::GuiText::Nothing),
+	testbutton(ResourceManager::getStyle(), *ResourceManager::getFont(), sf::Vector2f(200, 50), "TEST", 30, 1, 30, GuiNS::GuiText::FormatVer::Ver_Center, GuiNS::GuiText::FormatHor::Hor_Center, GuiNS::GuiText::Nothing),
 	options(engine->getWindow(), Optiontype::Menu, this),
 	State(engine)
 {
@@ -27,10 +28,15 @@ MainMenuState::MainMenuState(Engine*engine) :
 	exitbutton.setPosition(optionsbutton.getPosition() + sf::Vector2f(0, 10 + optionsbutton.getSize().y));
 	exitbutton.setObserver(this);
 
+	testbutton.setPosition(exitbutton.getPosition() + sf::Vector2f(0, 10 + exitbutton.getSize().y));
+	testbutton.setObserver(this);
+
+
 	gui.addElement(&startbutton);
 	gui.addElement(&loadbutton);
 	gui.addElement(&optionsbutton);
 	gui.addElement(&exitbutton);
+	gui.addElement(&testbutton);
 }
 
 bool MainMenuState::processEvent(sf::Event event)
@@ -69,9 +75,9 @@ void MainMenuState::draw()
 	}
 }
 
-void MainMenuState::notifyEvent(Gui::MyEvent event, Gui::GuiElement*from)
+void MainMenuState::notifyEvent(GuiNS::MyEvent event, GuiNS::GuiElement*from)
 {
-	if (event.type == Gui::MyEvent::Pressed && event.mouse.type == Gui::MyEvent::Type::Released)
+	if (event.type == GuiNS::MyEvent::Pressed && event.mouse.type == GuiNS::MyEvent::Type::Released)
 	{
 		if (from == &startbutton)
 			setNewState(new GameState(getEngine(), nullptr));
@@ -84,6 +90,8 @@ void MainMenuState::notifyEvent(Gui::MyEvent event, Gui::GuiElement*from)
 			options.setVisible(true);
 		else if (from == &exitbutton)
 			getWindow()->close();
+		else if (from == &testbutton)
+			gui.addPopup(new GuiNS::Popup());
 		else return;
 		SoundEngine::playSound("click");
 	}

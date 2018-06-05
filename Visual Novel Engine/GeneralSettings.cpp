@@ -12,9 +12,9 @@ GeneralSettings::~GeneralSettings()
 	fatherstate->getEngine()->getSettings()->saveToFile();
 }
 
-void GeneralSettings::notifyEvent(Gui::MyEvent event, Gui::GuiElement * from)
+void GeneralSettings::notifyEvent(GuiNS::MyEvent event, GuiNS::GuiElement * from)
 {
-	if (event.type == Gui::MyEvent::BarValueChanged&&from == &volumebar)
+	if (event.type == GuiNS::MyEvent::BarValueChanged&&from == &volumebar)
 	{
 		fatherstate->getEngine()->getSettings()->changeVolume(event.bar.state);
 		SoundEngine::playSound("hover");

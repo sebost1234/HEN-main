@@ -9,7 +9,7 @@ enum Optiontype
 	InGame
 };
 
-struct Options : public Gui::GuiElementObserver, public sf::Drawable
+struct Options : public GuiNS::GuiElementObserver, public sf::Drawable
 {
 public:
 	Options(sf::RenderWindow*window, Optiontype type, State*fatherstate);
@@ -18,7 +18,7 @@ public:
 
 	void sync(float time);
 
-	virtual void notifyEvent(Gui::MyEvent event, Gui::GuiElement*from) override;
+	virtual void notifyEvent(GuiNS::MyEvent event, GuiNS::GuiElement*from) override;
 
 	void setVisible(bool state);
 	inline bool isVisible() const
@@ -47,17 +47,17 @@ public:
 	}
 
 private:
-	Gui::GuiRectangle background;
+	GuiNS::GuiRectangle background;
 
-	Gui::GuiText optionsbutton;
-	Gui::GuiText savebutton;
-	Gui::GuiText loadbutton;
-	Gui::GuiText mainmenubutton;//In game - go to main menu
-	Gui::GuiText returnbutton;
+	GuiNS::GuiText optionsbutton;
+	GuiNS::GuiText savebutton;
+	GuiNS::GuiText loadbutton;
+	GuiNS::GuiText mainmenubutton;//In game - go to main menu
+	GuiNS::GuiText returnbutton;
 
 	OptionsSubType*subtype;
 
-	Gui::Gui gui;
+	GuiNS::Gui gui;
 	bool visible;
 	sf::RenderWindow*window;
 	Optiontype type;

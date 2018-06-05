@@ -125,6 +125,7 @@
   <ItemGroup>
     <ClCompile Include="GameState.cpp" />
     <ClCompile Include="GeneralSettings.cpp" />
+    <ClCompile Include="Gui.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="MainMenuState.cpp" />
     <ClCompile Include="Options.cpp" />
@@ -147,6 +148,7 @@
     <ClInclude Include="MainMenuState.h" />
     <ClInclude Include="Options.h" />
     <ClInclude Include="PlayerInput.h" />
+    <ClInclude Include="Popup.h" />
     <ClInclude Include="ResourceManager.h" />
     <ClInclude Include="Save.h" />
     <ClInclude Include="SaveGui.h" />

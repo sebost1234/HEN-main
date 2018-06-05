@@ -3,11 +3,11 @@
 
 Options::Options(sf::RenderWindow*window, Optiontype type, State*fatherstate) :
 	background(ResourceManager::getStyle(), gamesize),
-	optionsbutton(ResourceManager::getStyle(), *ResourceManager::getFont(), sf::Vector2f(200, 50), "Options", 30, 1, 30, Gui::GuiText::FormatVer::Ver_Center, Gui::GuiText::FormatHor::Hor_Center, Gui::GuiText::Nothing),
-	savebutton(ResourceManager::getStyle(), *ResourceManager::getFont(), sf::Vector2f(200, 50), "Save Game", 30, 1, 30, Gui::GuiText::FormatVer::Ver_Center, Gui::GuiText::FormatHor::Hor_Center, Gui::GuiText::Nothing),
-	loadbutton(ResourceManager::getStyle(), *ResourceManager::getFont(), sf::Vector2f(200, 50), "Load Game", 30, 1, 30, Gui::GuiText::FormatVer::Ver_Center, Gui::GuiText::FormatHor::Hor_Center, Gui::GuiText::Nothing),
-	mainmenubutton(ResourceManager::getStyle(), *ResourceManager::getFont(), sf::Vector2f(200, 50), "Main Menu", 30, 1, 30, Gui::GuiText::FormatVer::Ver_Center, Gui::GuiText::FormatHor::Hor_Center, Gui::GuiText::Nothing),
-	returnbutton(ResourceManager::getStyle(), *ResourceManager::getFont(), sf::Vector2f(200, 50), "Return", 30, 1, 30, Gui::GuiText::FormatVer::Ver_Center, Gui::GuiText::FormatHor::Hor_Center, Gui::GuiText::Nothing),
+	optionsbutton(ResourceManager::getStyle(), *ResourceManager::getFont(), sf::Vector2f(200, 50), "Options", 30, 1, 30, GuiNS::GuiText::FormatVer::Ver_Center, GuiNS::GuiText::FormatHor::Hor_Center, GuiNS::GuiText::Nothing),
+	savebutton(ResourceManager::getStyle(), *ResourceManager::getFont(), sf::Vector2f(200, 50), "Save Game", 30, 1, 30, GuiNS::GuiText::FormatVer::Ver_Center, GuiNS::GuiText::FormatHor::Hor_Center, GuiNS::GuiText::Nothing),
+	loadbutton(ResourceManager::getStyle(), *ResourceManager::getFont(), sf::Vector2f(200, 50), "Load Game", 30, 1, 30, GuiNS::GuiText::FormatVer::Ver_Center, GuiNS::GuiText::FormatHor::Hor_Center, GuiNS::GuiText::Nothing),
+	mainmenubutton(ResourceManager::getStyle(), *ResourceManager::getFont(), sf::Vector2f(200, 50), "Main Menu", 30, 1, 30, GuiNS::GuiText::FormatVer::Ver_Center, GuiNS::GuiText::FormatHor::Hor_Center, GuiNS::GuiText::Nothing),
+	returnbutton(ResourceManager::getStyle(), *ResourceManager::getFont(), sf::Vector2f(200, 50), "Return", 30, 1, 30, GuiNS::GuiText::FormatVer::Ver_Center, GuiNS::GuiText::FormatHor::Hor_Center, GuiNS::GuiText::Nothing),
 	window(window),
 	type(type),
 	fatherstate(fatherstate),
@@ -81,9 +81,9 @@ void Options::sync(float time)
 	gui.sync(window->mapPixelToCoords(sf::Mouse::getPosition(*window)), time);
 }
 
-void Options::notifyEvent(Gui::MyEvent event, Gui::GuiElement * from)
+void Options::notifyEvent(GuiNS::MyEvent event, GuiNS::GuiElement * from)
 {
-	if (event.type == Gui::MyEvent::Pressed && event.mouse.type == Gui::MyEvent::Type::Released)
+	if (event.type == GuiNS::MyEvent::Pressed && event.mouse.type == GuiNS::MyEvent::Type::Released)
 	{
 		if (from == &optionsbutton)
 			changeSubType(new GeneralSettings(fatherstate));

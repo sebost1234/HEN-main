@@ -2,8 +2,8 @@
 #include "Engine.h"
 
 GameState::GameState(Engine * engine, SaveData*data) :
-	tekst(Gui::GuiText(ResourceManager::getStyle(), *ResourceManager::getFont(), sf::Vector2f(300, 40), "", 30, 15, 15, Gui::GuiText::FormatVer::Ver_Top, Gui::GuiText::FormatHor::Hor_Left, Gui::GuiText::NewLine), 0.1f),
-	name(ResourceManager::getStyle(), *ResourceManager::getFont(), sf::Vector2f(300, 150), "Name", 30, 5, 5, Gui::GuiText::FormatVer::Ver_Center, Gui::GuiText::FormatHor::Hor_Left, Gui::GuiText::Nothing),
+	tekst(GuiNS::GuiText(ResourceManager::getStyle(), *ResourceManager::getFont(), sf::Vector2f(300, 40), "", 30, 15, 15, GuiNS::GuiText::FormatVer::Ver_Top, GuiNS::GuiText::FormatHor::Hor_Left, GuiNS::GuiText::NewLine), 0.1f),
+	name(ResourceManager::getStyle(), *ResourceManager::getFont(), sf::Vector2f(300, 150), "Name", 30, 5, 5, GuiNS::GuiText::FormatVer::Ver_Center, GuiNS::GuiText::FormatHor::Hor_Left, GuiNS::GuiText::Nothing),
 	options(getWindow(), Optiontype::InGame, this),
 	State(engine)
 {
@@ -117,9 +117,9 @@ void GameState::draw()
 	}
 }
 
-void GameState::notifyEvent(Gui::MyEvent event, Gui::GuiElement * from)
+void GameState::notifyEvent(GuiNS::MyEvent event, GuiNS::GuiElement * from)
 {
-	if (event.type == Gui::MyEvent::Pressed && event.mouse.type == Gui::MyEvent::Type::Released)
+	if (event.type == GuiNS::MyEvent::Pressed && event.mouse.type == GuiNS::MyEvent::Type::Released)
 	{
 		if(!choices.empty())
 		{
@@ -183,7 +183,7 @@ bool GameState::process(VisualNovelEvent event)
 		int nrofchoices = event.getArgumentAsInt(ChoiceEventnr);
 		for (int i = 0; i < nrofchoices; i++)
 		{
-			choices.push_back(new Gui::GuiText(ResourceManager::getStyle(), *ResourceManager::getFont(), sf::Vector2f(width, 100), event.getArgument(ChoiceEventstart+i), 30, 1, 5, Gui::GuiText::Ver_Center, Gui::GuiText::Hor_Center));
+			choices.push_back(new GuiNS::GuiText(ResourceManager::getStyle(), *ResourceManager::getFont(), sf::Vector2f(width, 100), event.getArgument(ChoiceEventstart+i), 30, 1, 5, GuiNS::GuiText::Ver_Center, GuiNS::GuiText::Hor_Center));
 
 			choices.back()->setPosition(pos);
 			gui.addElement(choices.back());

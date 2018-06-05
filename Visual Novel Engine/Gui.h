@@ -7,8 +7,7 @@
 #include "PlayerInput.h"
 #include "SoundEngine.h"
 
-
-namespace Gui
+namespace GuiNS
 {
 	struct Style
 	{
@@ -209,6 +208,8 @@ namespace Gui
 		std::vector < GuiElement* > elements;
 	};
 
+	class Popup;
+
 	class Gui : public sf::Drawable
 	{
 	public:
@@ -248,35 +249,11 @@ namespace Gui
 			}
 		}
 
-		void sync(sf::Vector2f mousepos, float time)
+		void sync(sf::Vector2f mousepos, float time);
+
+		void addPopup(Popup*popup)
 		{
-			for (unsigned int i = 0; i < elements.size(); i++)
-				elements[i]->sync(time);
-
-			static sf::Vector2f mouseprevpos = mousepos;
-			if (held != nullptr)
-				held->heldEvent(mousepos, mousepos - mouseprevpos, time);
-			mouseprevpos = mousepos;
-			
-
-			for (int i = elements.size() - 1; i >= 0; i--)
-			{
-				if (elements[i]->contains(mousepos))
-				{
-
-					if (hover != elements[i])
-					{
-						elements[i]->changeState(GuiElement::States::hover);//hover
-						if(hover!=nullptr)
-							hover->changeState(GuiElement::States::nothing);//unhover
-					}
-					hover = elements[i];
-					return;
-				}
-			}
-			if (hover != nullptr)
-				hover->changeState(GuiElement::States::nothing);//unhover
-			hover = nullptr;
+			popups.push_back(popup);
 		}
 
 		bool isActivated()
@@ -284,85 +261,25 @@ namespace Gui
 			return held != nullptr || focused != nullptr;
 		}
 
-		bool processEvent(sf::Event event, sf::Vector2f mousepos)
-		{
-			bool to_return = true;
+		bool processEvent(sf::Event event, sf::Vector2f mousepos);
 
-			if (focused != nullptr)
-			{
-				if ((event.type == sf::Event::MouseButtonPressed || event.type == sf::Event::MouseButtonReleased) && event.mouseButton.button == sf::Mouse::Button::Left)
-				{
-					if (hover != focused)
-					{
-						focused->changeState(GuiElement::States::nothing);//unfocused
-						focused = nullptr;
-					}
-				}
-				else focused->processEvent(event, mousepos);
-				to_return = false;
-			}
-			else
-			{
-				if (hover != nullptr&&event.type == sf::Event::MouseButtonPressed&&event.mouseButton.button == sf::Mouse::Button::Left)
-				{
-					if (hover->isClickable())
-					{
-						held = hover;
-
-						MyEvent newevent;
-						newevent.type = MyEvent::EventType::Mouse;
-						newevent.mouse.button = sf::Mouse::Button::Left;
-						newevent.mouse.type = MyEvent::Type::Pressed;
-						newevent.mouse.mousepos = mousepos;
-						hover->changeState(GuiElement::States::held);//pressed
-						hover->notifyObserver(newevent);
-						to_return = false;
-					}
-					else to_return = true;
-				}
-				else if (event.type == sf::Event::MouseButtonReleased&&event.mouseButton.button == sf::Mouse::Button::Left)
-				{
-					if (held != nullptr)
-					{
-
-						MyEvent newevent;
-						newevent.type = MyEvent::EventType::Mouse;
-						newevent.mouse.button = sf::Mouse::Button::Left;
-						newevent.mouse.type = MyEvent::Type::Released;
-						newevent.mouse.mousepos = mousepos;
-
-						if (held->isFocusable())
-						{
-							focused = held;
-							held->changeState(GuiElement::States::focused);//focused
-						}
-						else held->changeState(GuiElement::States::nothing);//released
-
-						held->notifyObserver(newevent);
-						to_return = false;
-						held = nullptr;
-					}
-				}
-				else if (held != nullptr)
-				{
-					held->processEvent(event, mousepos);
-					to_return = false;
-				}
-			}
-
-			return to_return;
-		}
-
-		virtual void draw(sf::RenderTarget & target, sf::RenderStates states) const override
-		{
-			for (unsigned int i = 0; i < elements.size(); i++)
-				target.draw(*elements[i], states);
-		}
+		virtual void draw(sf::RenderTarget & target, sf::RenderStates states) const override;
 	private:
+
+		void deactivateAll()
+		{
+			hover = nullptr;
+			held = nullptr;
+			focused = nullptr;
+		}
+
 		GuiElement * hover;
 		GuiElement * held;
 		GuiElement * focused;
 		std::vector <GuiElement*> elements;
+		std::vector <Popup*> popups;
+
+		sf::Vector2f mouseprevpos;
 	};
 
 	class GuiText : public GuiElement
@@ -1473,3 +1390,5 @@ namespace Gui
 		std::vector <GuiElement*> elements;
 	};
 }
+
+#include "Popup.h"

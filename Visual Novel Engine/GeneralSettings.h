@@ -2,15 +2,15 @@
 
 #include "SaveGui.h"
 
-class OptionsSubType : public Gui::GuiElementObserver, public sf::Drawable
+class OptionsSubType : public GuiNS::GuiElementObserver, public sf::Drawable
 {
 public:
 	virtual ~OptionsSubType() {}
-	virtual void enable(Gui::Gui*gui)
+	virtual void enable(GuiNS::Gui*gui)
 	{
 	}
 
-	virtual void disable(Gui::Gui*gui)
+	virtual void disable(GuiNS::Gui*gui)
 	{
 	}
 };
@@ -19,8 +19,8 @@ class GeneralSettings : public OptionsSubType
 {
 public:
 	GeneralSettings(State*fatherstate) :fatherstate(fatherstate),
-		volumeinfo(ResourceManager::getStyle(), *ResourceManager::getFont(), sf::Vector2f(200, 50), "Volume", 30, 1, 30, Gui::GuiText::FormatVer::Ver_Center, Gui::GuiText::FormatHor::Hor_Center, Gui::GuiText::Nothing),
-		volumebar(ResourceManager::getStyle(), sf::Vector2f(500, 50), Gui::GuiBar::Horizontal)
+		volumeinfo(ResourceManager::getStyle(), *ResourceManager::getFont(), sf::Vector2f(200, 50), "Volume", 30, 1, 30, GuiNS::GuiText::FormatVer::Ver_Center, GuiNS::GuiText::FormatHor::Hor_Center, GuiNS::GuiText::Nothing),
+		volumebar(ResourceManager::getStyle(), sf::Vector2f(500, 50), GuiNS::GuiBar::Horizontal)
 	{
 
 		volumeinfo.setPosition(sf::Vector2f(300, 50));
@@ -34,19 +34,19 @@ public:
 	}
 	~GeneralSettings();
 
-	virtual void enable(Gui::Gui*gui) override
+	virtual void enable(GuiNS::Gui*gui) override
 	{
 		gui->addElement(&volumebar);
 		gui->addElement(&volumeinfo);
 	}
 
-	virtual void disable(Gui::Gui*gui)override
+	virtual void disable(GuiNS::Gui*gui)override
 	{
 		gui->eraseElement(&volumebar);
 		gui->eraseElement(&volumeinfo);
 	}
 
-	void notifyEvent(Gui::MyEvent event, Gui::GuiElement * from);
+	void notifyEvent(GuiNS::MyEvent event, GuiNS::GuiElement * from);
 
 	virtual void draw(sf::RenderTarget & target, sf::RenderStates states) const override
 	{
@@ -54,8 +54,8 @@ public:
 	}
 
 private:
-	Gui::GuiText volumeinfo;
-	Gui::GuiBar volumebar;
+	GuiNS::GuiText volumeinfo;
+	GuiNS::GuiBar volumebar;
 	State*fatherstate;
 };
 
@@ -77,17 +77,17 @@ class SaveSettings : public OptionsSaveSubType
 public:
 	SaveSettings(State*_fatherstate);
 
-	virtual void enable(Gui::Gui*gui) override
+	virtual void enable(GuiNS::Gui*gui) override
 	{
 		savemanager.enable(gui);
 	}
 
-	virtual void disable(Gui::Gui*gui)override
+	virtual void disable(GuiNS::Gui*gui)override
 	{
 		savemanager.disable(gui);
 	}
 
-	void notifyEvent(Gui::MyEvent event, Gui::GuiElement * from)
+	void notifyEvent(GuiNS::MyEvent event, GuiNS::GuiElement * from)
 	{
 
 	}
@@ -112,17 +112,17 @@ public:
 
 	}
 
-	virtual void enable(Gui::Gui*gui) override
+	virtual void enable(GuiNS::Gui*gui) override
 	{
 		savemanager.enable(gui);
 	}
 
-	virtual void disable(Gui::Gui*gui) override
+	virtual void disable(GuiNS::Gui*gui) override
 	{
 		savemanager.disable(gui);
 	}
 
-	void notifyEvent(Gui::MyEvent event, Gui::GuiElement * from)
+	void notifyEvent(GuiNS::MyEvent event, GuiNS::GuiElement * from)
 	{
 
 	}
