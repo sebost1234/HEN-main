@@ -4,7 +4,7 @@
 GameState::GameState(Engine * engine, SaveData*data) :
 	tekst(GuiNS::GuiText(ResourceManager::getStyle(), *ResourceManager::getFont(), sf::Vector2f(300, 40), "", 30, 15, 15, GuiNS::GuiText::FormatVer::Ver_Top, GuiNS::GuiText::FormatHor::Hor_Left, GuiNS::GuiText::NewLine), 0.1f),
 	name(ResourceManager::getStyle(), *ResourceManager::getFont(), sf::Vector2f(300, 150), "Name", 30, 5, 5, GuiNS::GuiText::FormatVer::Ver_Center, GuiNS::GuiText::FormatHor::Hor_Left, GuiNS::GuiText::Nothing),
-	options(getWindow(), Optiontype::InGame, this),
+	options(Optiontype::InGame, this),
 	State(engine)
 {
 	float x = (gamesize.x - 1280)*0.5f;
@@ -40,9 +40,6 @@ GameState::GameState(Engine * engine, SaveData*data) :
 
 bool GameState::processEvent(sf::Event event)
 {
-	if (options.isVisible())
-		return options.processEvent(event);
-	else
 	if (gui.processEvent(event, getWindow()->mapPixelToCoords(sf::Mouse::getPosition(*getWindow()))))
 	{
 		if (
@@ -72,7 +69,7 @@ bool GameState::processEvent(sf::Event event)
 
 		if (event.type == sf::Event::KeyPressed&&event.key.code == sf::Keyboard::Escape)
 		{
-			options.toggle();
+			gui.changePopup(&options);
 			return false;
 		}
 		return true;
@@ -82,9 +79,8 @@ bool GameState::processEvent(sf::Event event)
 }
 void GameState::sync(float time)
 {
-
-	if (options.isVisible())
-		options.sync(time);
+	if (gui.hasPopup())
+		gui.sync(getWindow()->mapPixelToCoords(sf::Mouse::getPosition(*getWindow())), time);
 	else
 	{
 		gui.sync(getWindow()->mapPixelToCoords(sf::Mouse::getPosition(*getWindow())), time);
@@ -102,7 +98,7 @@ void GameState::sync(float time)
 
 void GameState::draw()
 {
-	if (options.isVisible())
+	if (gui.hasPopup())
 		getWindow()->draw(options);
 	else
 	{

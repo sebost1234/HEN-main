@@ -4,8 +4,6 @@
 #include <map>
 #include <array>
 
-#include "Gui.h"
-
 #include <iostream>
 
 enum StyleTypes
@@ -14,6 +12,23 @@ enum StyleTypes
 	normal,
 	blankwhite
 };
+
+namespace GuiNS
+{
+	struct Style
+	{
+		Style(sf::Color backcolor, sf::Color backcolor2, sf::Color decalcolor, sf::Color decalcolor2, sf::Color textcolor) :
+			backcolor(backcolor), backcolor2(backcolor2), decalcolor(decalcolor), decalcolor2(decalcolor2), textcolor(textcolor)
+		{}
+
+		sf::Color backcolor;
+		sf::Color backcolor2;
+		sf::Color decalcolor;
+		sf::Color decalcolor2;
+		sf::Color textcolor;
+	};
+}
+
 
 class ResourceManager
 {

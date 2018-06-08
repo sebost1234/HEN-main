@@ -8,7 +8,7 @@ MainMenuState::MainMenuState(Engine*engine) :
 	optionsbutton(ResourceManager::getStyle(), *ResourceManager::getFont(), sf::Vector2f(200, 50), "Options", 30, 1, 30, GuiNS::GuiText::FormatVer::Ver_Center, GuiNS::GuiText::FormatHor::Hor_Center, GuiNS::GuiText::Nothing),
 	exitbutton(ResourceManager::getStyle(), *ResourceManager::getFont(), sf::Vector2f(200, 50), "Exit", 30, 1, 30, GuiNS::GuiText::FormatVer::Ver_Center, GuiNS::GuiText::FormatHor::Hor_Center, GuiNS::GuiText::Nothing),
 	testbutton(ResourceManager::getStyle(), *ResourceManager::getFont(), sf::Vector2f(200, 50), "TEST", 30, 1, 30, GuiNS::GuiText::FormatVer::Ver_Center, GuiNS::GuiText::FormatHor::Hor_Center, GuiNS::GuiText::Nothing),
-	options(engine->getWindow(), Optiontype::Menu, this),
+	options(Optiontype::Menu, this),
 	State(engine)
 {
 
@@ -41,14 +41,11 @@ MainMenuState::MainMenuState(Engine*engine) :
 
 bool MainMenuState::processEvent(sf::Event event)
 {
-	if (options.isVisible())
-		return options.processEvent(event);
-	else
 	if (gui.processEvent(event, getWindow()->mapPixelToCoords(sf::Mouse::getPosition(*getWindow()))))
 	{
 		if (event.type == sf::Event::KeyPressed&&event.key.code == sf::Keyboard::Escape)
 		{
-			options.toggle();
+			gui.changePopup(&options);
 			return false;
 		}
 		return true;
@@ -58,21 +55,13 @@ bool MainMenuState::processEvent(sf::Event event)
 
 void MainMenuState::sync(float time)
 {
-	if (options.isVisible())
-		options.sync(time);
-	else
-		gui.sync(getWindow()->mapPixelToCoords(sf::Mouse::getPosition(*getWindow())), time);
+	gui.sync(getWindow()->mapPixelToCoords(sf::Mouse::getPosition(*getWindow())), time);
 }
 
 void MainMenuState::draw()
 {
-	if (options.isVisible())
-		getWindow()->draw(options);
-	else
-	{
-		getWindow()->draw(background);
-		getWindow()->draw(gui);
-	}
+	getWindow()->draw(background);
+	getWindow()->draw(gui);
 }
 
 void MainMenuState::notifyEvent(GuiNS::MyEvent event, GuiNS::GuiElement*from)
@@ -83,15 +72,15 @@ void MainMenuState::notifyEvent(GuiNS::MyEvent event, GuiNS::GuiElement*from)
 			setNewState(new GameState(getEngine(), nullptr));
 		else if (from == &loadbutton)
 		{
-			options.setVisible(true);
+			gui.changePopup(&options);
 			options.changeSubType(new LoadSettings(this));
 		}
 		else if (from == &optionsbutton)
-			options.setVisible(true);
+			gui.changePopup(&options);
 		else if (from == &exitbutton)
 			getWindow()->close();
 		else if (from == &testbutton)
-			gui.addPopup(new GuiNS::Popup());
+			gui.changePopup(new GuiNS::InfoPopup(ResourceManager::getStyle(), "TEST"));
 		else return;
 		SoundEngine::playSound("click");
 	}

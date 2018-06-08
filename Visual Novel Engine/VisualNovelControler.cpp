@@ -5,7 +5,7 @@ std::wstring VisualNovelEvent::typeToString(Type typ)
 	switch (typ)
 	{
 	case VisualNovelEvent::None:
-		break;
+		return L"//";
 	case VisualNovelEvent::Wait:
 		return L"wait";
 	case VisualNovelEvent::Stop:
@@ -23,7 +23,7 @@ std::wstring VisualNovelEvent::typeToString(Type typ)
 	case VisualNovelEvent::RemoveFromRow:
 		return L"removefromrow";
 	case VisualNovelEvent::BgChange:
-		return L"bgchange";
+		return L"changebg";
 	case VisualNovelEvent::AddModel:
 		return L"addmodel";
 	case VisualNovelEvent::TextureModel:
@@ -47,5 +47,5 @@ std::wstring VisualNovelEvent::typeToString(Type typ)
 	default:
 		break;
 	}
-	return L"Error";
+	return L"ERROR";
 }

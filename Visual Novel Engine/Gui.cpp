@@ -3,17 +3,15 @@
 
 void GuiNS::Gui::sync(sf::Vector2f mousepos, float time)
 {
-	if (popups.empty() || !popups.front()->isStoppingEverything())
+	if (popup == nullptr || !popup->isStopping())
 		for (unsigned int i = 0; i < elements.size(); i++)
 			elements[i]->sync(time);
 
-	if (popups.empty())
+	if (popup == nullptr)
 	{
 		if (held != nullptr)
 			held->heldEvent(mousepos, mousepos - mouseprevpos, time);
 		mouseprevpos = mousepos;
-
-
 		for (int i = elements.size() - 1; i >= 0; i--)
 		{
 			if (elements[i]->contains(mousepos))
@@ -27,22 +25,22 @@ void GuiNS::Gui::sync(sf::Vector2f mousepos, float time)
 				}
 				hover = elements[i];
 				return;
-			}
+			} 
 		}
 		if (hover != nullptr)
 			hover->changeState(GuiElement::States::nothing);//unhover
 		hover = nullptr;
 	}
-	else if (popups.front()->sync(mousepos, time))
+	else if (popup->sync(mousepos, time))
 	{
-		delete popups.front();
-		popups.erase(popups.begin());
+		popup->reset();
+		popup = nullptr;
 	}
 }
 
 bool GuiNS::Gui::processEvent(sf::Event event, sf::Vector2f mousepos)
 {
-	if (popups.empty())
+	if (popup==nullptr)
 	{
 		bool to_return = true;
 
@@ -110,15 +108,15 @@ bool GuiNS::Gui::processEvent(sf::Event event, sf::Vector2f mousepos)
 
 		return to_return;
 	}
-	else return popups.front()->processEvent(event, mousepos);
+	else return popup->processEvent(event, mousepos);
 }
 
 void GuiNS::Gui::draw(sf::RenderTarget & target, sf::RenderStates states) const
 {
-	if (popups.empty() || popups.front()->isDrawingEverything())
+	if (popup==nullptr || popup->isDrawing())
 		for (unsigned int i = 0; i < elements.size(); i++)
 			target.draw(*elements[i], states);
 
-	if (!popups.empty())
-		target.draw(*popups.front());
+	if (popup!=nullptr)
+		target.draw(*popup);
 }

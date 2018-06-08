@@ -7,20 +7,10 @@
 #include "PlayerInput.h"
 #include "SoundEngine.h"
 
+#include "ResourceManager.h"
+
 namespace GuiNS
 {
-	struct Style
-	{
-		Style(sf::Color backcolor, sf::Color backcolor2, sf::Color decalcolor, sf::Color decalcolor2, sf::Color textcolor) :
-			backcolor(backcolor), backcolor2(backcolor2), decalcolor(decalcolor), decalcolor2(decalcolor2),  textcolor(textcolor)
-		{}
-
-		sf::Color backcolor;
-		sf::Color backcolor2;
-		sf::Color decalcolor;
-		sf::Color decalcolor2;
-		sf::Color textcolor;
-	};
 
 	class MyEvent
 	{
@@ -218,6 +208,7 @@ namespace GuiNS
 			hover = nullptr;
 			held = nullptr;
 			focused = nullptr;
+			popup = nullptr;
 		}
 
 		void addElement(GuiElement*toadd)
@@ -251,9 +242,17 @@ namespace GuiNS
 
 		void sync(sf::Vector2f mousepos, float time);
 
-		void addPopup(Popup*popup)
+		Popup*changePopup(Popup*newpopup)
 		{
-			popups.push_back(popup);
+			Popup*tmp = popup;
+			
+			popup = newpopup;
+			return tmp;
+		}
+
+		Popup*getCurrentPopup()
+		{
+			return popup;
 		}
 
 		bool isActivated()
@@ -262,6 +261,11 @@ namespace GuiNS
 		}
 
 		bool processEvent(sf::Event event, sf::Vector2f mousepos);
+
+		bool hasPopup()
+		{
+			return popup!=nullptr;
+		}
 
 		virtual void draw(sf::RenderTarget & target, sf::RenderStates states) const override;
 	private:
@@ -277,7 +281,7 @@ namespace GuiNS
 		GuiElement * held;
 		GuiElement * focused;
 		std::vector <GuiElement*> elements;
-		std::vector <Popup*> popups;
+		Popup*popup;
 
 		sf::Vector2f mouseprevpos;
 	};

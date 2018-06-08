@@ -2,7 +2,7 @@
 
 #include "SaveGui.h"
 
-class OptionsSubType : public GuiNS::GuiElementObserver, public sf::Drawable
+class OptionsSubType : public GuiNS::GuiElementObserver
 {
 public:
 	virtual ~OptionsSubType() {}
@@ -47,12 +47,6 @@ public:
 	}
 
 	void notifyEvent(GuiNS::MyEvent event, GuiNS::GuiElement * from);
-
-	virtual void draw(sf::RenderTarget & target, sf::RenderStates states) const override
-	{
-
-	}
-
 private:
 	GuiNS::GuiText volumeinfo;
 	GuiNS::GuiBar volumebar;
@@ -92,11 +86,6 @@ public:
 
 	}
 
-	virtual void draw(sf::RenderTarget & target, sf::RenderStates states) const override
-	{
-
-	}
-
 	virtual void saveMangerEvent(int slot) override;
 
 private:
@@ -123,11 +112,6 @@ public:
 	}
 
 	void notifyEvent(GuiNS::MyEvent event, GuiNS::GuiElement * from)
-	{
-
-	}
-
-	virtual void draw(sf::RenderTarget & target, sf::RenderStates states) const override
 	{
 
 	}

@@ -71,7 +71,7 @@ struct VisualNovelEvent
 
 
 
-	enum Type
+	enum Type : int
 	{
 		STARTOFGAME,
 		None,
@@ -126,133 +126,27 @@ struct VisualNovelEvent
 
 	void loadFromString(std::wstring line)
 	{
-		
-		typ = VisualNovelEvent::None;
-
 		size_t tmp=0;
 		std::wstring type = nextArgument(line, tmp);
 
 		for(auto&n:type)
 			n = towlower(n);
 
-		if (type != L"//")
-			if (type == L"stop")
-			{
-				typ = VisualNovelEvent::Stop;
-			}
-			else if (type == L"wait")
-			{
-				typ = VisualNovelEvent::Wait;
-				loadArguments(line, tmp);
-			}
-			else if (type == L"changebg")
-			{
-				typ = VisualNovelEvent::BgChange;
-				loadArguments(line, tmp);
-			}
-			else if (type == L"say")
-			{
-				typ = VisualNovelEvent::Say;
-				loadArguments(line, tmp);
-			}
-			else if (type == L"addmodel")
-			{
-				typ = VisualNovelEvent::AddModel;
-				loadArguments(line, tmp);
-			}
-			else if (type == L"texturemodel")
-			{
-				typ = VisualNovelEvent::TextureModel;
-				loadArguments(line, tmp);
-			}
-			else if (type == L"deletemodel")
-			{
-				typ = VisualNovelEvent::DeleteModel;
-				loadArguments(line, tmp);
-			}
-			else if (type == L"changefile")
-			{
-				typ = VisualNovelEvent::ChangeFile;
-				loadArguments(line, tmp);
-			}
-			else if (type == L"scope")
-			{
-				typ = VisualNovelEvent::Scope;
-				loadArguments(line, tmp);
-			}
-			else if (type == L"goto")
-			{
-				typ = VisualNovelEvent::GoTo;
-				loadArguments(line, tmp);
-			}
-			else if (type == L"choice")
-			{
-				typ = VisualNovelEvent::Choice;
-
-				arguments.push_back(nextArgument(line, tmp));
-
-				int nrofchoices = stoi(arguments.back());
-
-				loadArguments(line, tmp);
-			}
-			else if (type == L"playsound")
-			{
-				typ = VisualNovelEvent::PlaySound;
-				loadArguments(line, tmp);
-			}
-			else if (type == L"playmusic")
-			{
-				typ = VisualNovelEvent::PlayMusic;
-				loadArguments(line, tmp);
-			}
-			else if (type == L"fx")
-			{
-				typ = VisualNovelEvent::FX;
-				loadArguments(line, tmp);
-			}			
-			else if (type == L"flag")
-			{
-				typ = VisualNovelEvent::Flag;
-				loadArguments(line, tmp);
-			}
-			else if (type == L"flagtest")
-			{
-				typ = VisualNovelEvent::FlagTest;
-				loadArguments(line, tmp);
-			}
-			else if (type == L"setscene")
-			{
-				typ = VisualNovelEvent::SetScene;
-				loadArguments(line, tmp);
-			}
-			else if (type == L"moveintorow")
-			{
-				typ = VisualNovelEvent::MoveIntoRow;
-				loadArguments(line, tmp);
-			}
-			else if (type == L"removefromrow")
-			{
-				typ = VisualNovelEvent::RemoveFromRow;
-				loadArguments(line, tmp);
-			}
-			else if (type == L"setmodelposition")
-			{
-				typ = VisualNovelEvent::SetModelPosition;
-				loadArguments(line, tmp);
-			}
-			else if (type == L"setmodeltargetposition")
-			{
-				typ = VisualNovelEvent::SetModelTargetPosition;
-				loadArguments(line, tmp);
-			}
-			else if (type == L"setmodelfree")
-			{
-				typ = VisualNovelEvent::SetModelFreeEvent;
-				loadArguments(line, tmp);
-			}
+		typ = stringToType(type);
+		loadArguments(line, tmp);
 	}
 
 	static std::wstring typeToString(Type typ);
+	static Type stringToType(std::wstring name)
+	{
+		for (Type tmp = STARTOFGAME; tmp < ENDOFCONTROL; tmp = Type((int)tmp + 1))
+		{
+			if (name == typeToString(tmp))
+				return tmp;
+		}
+		return Type::None;
+	}
+
 
 	std::wstring toString() const
 	{
