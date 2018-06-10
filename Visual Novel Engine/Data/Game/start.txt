@@ -1,81 +1,81 @@
 ﻿scope;start
 
-setscene;1
-changebg;testbg1.png
+	setscene;1
+	changebg;testbg1.png
 
-addmodel;model1
-texturemodel;model1;Model1.png
-moveintorow;model1;front;-1;1
+	addmodel;model1
+	texturemodel;model1;Model1.png
+	moveintorow;model1;front;-1;1
 
-//;Komentarz
+	//;Komentarz
 
-say;Imie;Testowy tekst
+	say;Imie;Testowy tekst
 
-addmodel;model2
-texturemodel;model2;Model2.png
-moveintorow;model2;frontright;-1;1;
+	addmodel;model2
+	texturemodel;model2;Model2.png
+	moveintorow;model2;frontright;-1;1;
 
-say;Imie;Testowy tekst
+	say;Imie;Testowy tekst
 
-moveintorow;model2;front;0;0
+	moveintorow;model2;front;0;0
 
-say;Imie;Testowy tekst
+	say;Imie;Testowy tekst
 
-moveintorow;model2;front;1;0
+	moveintorow;model2;front;1;0
 
-say;Imie;Testowy tekst
+	say;Imie;Testowy tekst
 
-moveintorow;model2;front;0;0
-say;Imie;Uwaga nagly zoom z wstrząśnięciem
+	moveintorow;model2;front;0;0
+	say;Imie;Uwaga nagly zoom z wstrząśnięciem
 
-fx;camerazoom;trash;0;0;0;0.5
+	fx;camerazoom;trash;0;0;0;0.5
 
-fx;screenshake;trash;0;0.2;1;0.01
+	fx;screenshake;trash;0;0.2;1;0.01
 
-say;narrator;Teraz wolny zoom.
+	say;narrator;Teraz wolny zoom.
 
-fx;delete;trash
-fx;camerazoom;zoom;0;5;0;0.5
-wait;5
-fx;finish;zoom
+	fx;delete;trash
+	fx;camerazoom;zoom;0;5;0;0.5
+	wait;5
+	fx;finish;zoom
 
-flag;testflag
+	flag;testflag
 
-playsound;drop
-say;narrator;Dźwiek
+	playsound;drop
+	say;narrator;Dźwiek
 
-fx;delete;zoom
+	fx;delete;zoom
 
-fx;color;idcolor;0;2;0;255;255;255;0;0;0
-say;Imie;Wyciemienie;
-fx;delete;idcolor
-fx;color;idcolor;0;2;0;0;0;0;255;255;255
-say;Imie;Odciemienie;
-fx;delete;idcolor
+	fx;color;idcolor;0;2;0;255;255;255;0;0;0
+	say;Imie;Wyciemienie;
+	fx;delete;idcolor
+	fx;color;idcolor;0;2;0;0;0;0;255;255;255
+	say;Imie;Odciemienie;
+	fx;delete;idcolor
 
 
-say;Imie;Tekstpierwszy(przerwa dwusekundowa);NS
-wait;2
-say;Imie; Tekstdrugi(przerwa sekundowa);NSA
-wait;1
-say;Imie; Teksttrzeci(trzeba kilknac);A
-say;Imie; Tekstostatni;A
+	say;Imie;Tekstpierwszy(przerwa dwusekundowa);NS
+	wait;2
+	say;Imie; Tekstdrugi(przerwa sekundowa);NSA
+	wait;1
+	say;Imie; Teksttrzeci(trzeba kilknac);A
+	say;Imie; Tekstostatni;A
 
-deletemodel;model1
+	deletemodel;model1
 
-flagtest;testflag;success;end
+	flagtest;testflag;success;end
 
 scope;success
-say;Imie;Flaga jest
-goto;pofladze
+	say;Imie;Flaga jest
+	goto;pofladze
+
 scope;end
-say;Imie;Flagi nie ma
-goto;pofladze
+	say;Imie;Flagi nie ma
+	goto;pofladze
 
 scope;pofladze
 
 
-fx;delete;trash
-
+	fx;delete;trash
 
 goto;start

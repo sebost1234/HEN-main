@@ -12,10 +12,10 @@
 namespace GuiNS
 {
 
-	class MyEvent
+	class GuiElementEvent
 	{
 	public:
-		MyEvent(){ }
+		GuiElementEvent(){ }
 		enum EventType
 		{
 			Mouse,
@@ -62,7 +62,7 @@ namespace GuiNS
 	class GuiElementObserver
 	{
 	public:
-		virtual void notifyEvent(MyEvent event, GuiElement*from) = 0;
+		virtual void notifyEvent(GuiElementEvent event, GuiElement*from) = 0;
 	};
 
 	class Gui;
@@ -88,6 +88,8 @@ namespace GuiNS
 			clickable = true;
 			focusable = false;
 			observer = nullptr;
+			gui = nullptr;
+			style = nullptr;
 		}
 		virtual ~GuiElement()
 		{
@@ -106,7 +108,7 @@ namespace GuiNS
 		{
 			observer = nullptr;
 		}
-		void notifyObserver(MyEvent event)
+		void notifyObserver(GuiElementEvent event)
 		{
 			if (observer != nullptr)
 				observer->notifyEvent(event, this);
@@ -200,6 +202,30 @@ namespace GuiNS
 
 	class Popup;
 
+	class GuiEvent
+	{
+	public:
+		enum EventType
+		{
+			PopupDeleted
+		};
+
+		GuiEvent(){}
+		GuiEvent(EventType type):type(type) { }
+
+		EventType type;
+		union
+		{
+		};
+	};
+
+
+	class GuiObserver
+	{
+	public:
+		virtual void notifyEvent(GuiEvent event, Gui*from) = 0;
+	};
+
 	class Gui : public sf::Drawable
 	{
 	public:
@@ -242,7 +268,7 @@ namespace GuiNS
 
 		void sync(sf::Vector2f mousepos, float time);
 
-		Popup*changePopup(Popup*newpopup)
+		Popup*setPopup(Popup*newpopup)
 		{
 			Popup*tmp = popup;
 			
@@ -268,6 +294,15 @@ namespace GuiNS
 		}
 
 		virtual void draw(sf::RenderTarget & target, sf::RenderStates states) const override;
+		
+		void setObserver(GuiObserver*_observer)
+		{
+			observer = _observer;
+		}
+		void resetObserver()
+		{
+			observer = nullptr;
+		}
 	private:
 
 		void deactivateAll()
@@ -282,6 +317,8 @@ namespace GuiNS
 		GuiElement * focused;
 		std::vector <GuiElement*> elements;
 		Popup*popup;
+
+		GuiObserver*observer;
 
 		sf::Vector2f mouseprevpos;
 	};
@@ -415,8 +452,8 @@ namespace GuiNS
 				position.y = background.getPosition().y + paddingver;
 				break;
 			case Ver_Down:
-				origin.y = float(text.getCharacterSize()*nroflines);
-				position.y = background.getPosition().y + text.getCharacterSize()*nroflines + paddingver * 2;
+				origin.y = textRect.height;
+				position.y = background.getPosition().y + backRect.height - paddingver - text.getCharacterSize()*0.5f;
 				break;
 			}
 
@@ -433,6 +470,19 @@ namespace GuiNS
 		void setString(sf::String newstring)
 		{
 			string = newstring;
+
+
+			//Default state
+			sf::Vector2f origin;
+			sf::Vector2f position;
+			origin.x = 0;
+			position.x = background.getPosition().x + paddinghor;
+
+			origin.y = 0;
+			position.y = background.getPosition().y + paddingver;
+			text.setOrigin(origin);
+			text.setPosition(position);
+
 
 			switch (type)
 			{
@@ -686,18 +736,18 @@ namespace GuiNS
 		}
 		virtual void processEvent(sf::Event event, sf::Vector2f mousepos)override
 		{
-			MyEvent newevent;
-			newevent.type = MyEvent::EventType::Mouse;
+			GuiElementEvent newevent;
+			newevent.type = GuiElementEvent::EventType::Mouse;
 			if (event.type == sf::Event::MouseButtonPressed)
 			{
 				newevent.mouse.button = event.mouseButton.button;
-				newevent.mouse.type = MyEvent::Type::Pressed;
+				newevent.mouse.type = GuiElementEvent::Type::Pressed;
 				notifyObserver(newevent);
 			}
 			else if (event.type == sf::Event::MouseButtonReleased)
 			{
 				newevent.mouse.button = event.mouseButton.button;
-				newevent.mouse.type = MyEvent::Type::Released;
+				newevent.mouse.type = GuiElementEvent::Type::Released;
 				notifyObserver(newevent);
 			}
 		}
@@ -834,10 +884,10 @@ namespace GuiNS
 
 		virtual void processEvent(sf::Event event, sf::Vector2f mousepos) override
 		{
-			MyEvent newevent;
+			GuiElementEvent newevent;
 			if (event.type == sf::Event::TextEntered)
 			{
-				newevent.type = MyEvent::EventType::Text;
+				newevent.type = GuiElementEvent::EventType::Text;
 				auto tmp = static_cast<char>(event.text.unicode);
 				newevent.text.unicode = tmp;
 				input += sf::String(tmp);
@@ -930,8 +980,15 @@ namespace GuiNS
 			case GuiElement::nothing:
 				rectangle.setFillColor(style->backcolor);
 				break;
+
+			case GuiElement::States::hover:
+				if (isClickable())
+					SoundEngine::playSound("hover");	
 			case GuiElement::held:
-				rectangle.setFillColor(style->backcolor2);
+				if (isClickable())
+					rectangle.setFillColor(style->backcolor2);
+				else
+					rectangle.setFillColor(style->backcolor);
 				break;
 			}
 		}
@@ -956,57 +1013,8 @@ namespace GuiNS
 
 		virtual void heldEvent(sf::Vector2f mousepos, sf::Vector2f mousemove, float time) override
 		{
-			move(mousemove);
 		}
 
-		sf::RectangleShape*changeRectangle()
-		{
-			return &rectangle;
-		}
-		virtual void draw(sf::RenderTarget & target, sf::RenderStates states) const override
-		{
-			target.draw(rectangle, states);
-		}
-	private:
-		sf::RectangleShape rectangle;
-
-	};
-	
-	class GuiRectangleSprite : public GuiElement
-	{
-	public:
-		GuiRectangleSprite(Style*style, sf::Vector2f backgroundsize) :
-			rectangle(backgroundsize)
-		{
-			setStyle(style);
-		}
-
-		virtual void setStyle(Style*style) override
-		{
-			rectangle.setFillColor(style->backcolor);
-			rectangle.setOutlineColor(style->decalcolor);
-			GuiElement::setStyle(style);
-		}
-		virtual void changeState(States newstate)
-		{
-
-		}
-		virtual void setPosition(sf::Vector2f position) override
-		{
-			rectangle.setPosition(position);
-		}
-		virtual sf::Vector2f getPosition() const override
-		{
-			return rectangle.getPosition();
-		}
-		virtual void setSize(sf::Vector2f size) override
-		{
-			rectangle.setSize(size);
-		}
-		virtual sf::Vector2f getSize() const override
-		{
-			return rectangle.getSize();
-		}
 		sf::RectangleShape*changeRectangle()
 		{
 			return &rectangle;
@@ -1118,8 +1126,8 @@ namespace GuiNS
 				_sync();
 				if (state == newstate)
 				{
-					MyEvent newevent;
-					newevent.type = MyEvent::EventType::BarValueChanged;
+					GuiElementEvent newevent;
+					newevent.type = GuiElementEvent::EventType::BarValueChanged;
 					newevent.bar.min = min - 1;
 					newevent.bar.max = max - 1;
 					newevent.bar.state = state;

@@ -11,12 +11,13 @@
 struct GuiSaveData
 {
 	GuiSaveData(sf::Vector2f offset, sf::Vector2f size, int x, int y, int paddingbetween, int paddingoutside) :
-		desc(ResourceManager::getStyle(), *ResourceManager::getFont(), size, "", 25, 5, 5, GuiNS::GuiText::FormatVer::Ver_Top, GuiNS::GuiText::FormatHor::Hor_Center, GuiNS::GuiText::Nothing),
-		time(ResourceManager::getStyle(), *ResourceManager::getFont(), sf::Vector2f(size.x ,size.y*0.25f), "", 25, 5, 5, GuiNS::GuiText::FormatVer::Ver_Top, GuiNS::GuiText::FormatHor::Hor_Center, GuiNS::GuiText::Nothing)
+		desc(ResourceManager::getStyle(), *ResourceManager::getFont(), size, "", 30, 5, 5, GuiNS::GuiText::FormatVer::Ver_Down, GuiNS::GuiText::FormatHor::Hor_Center, GuiNS::GuiText::NewLine),
+		del(ResourceManager::getStyle(), sf::Vector2f(75, 75))
 	{
+		del.setPosition(offset + sf::Vector2f((size.x + paddingoutside) * x + size.x - 75, (size.y + paddingoutside)*y));
 		desc.setPosition(offset + sf::Vector2f((size.x + paddingoutside) * x, (size.y + paddingoutside)*y));
-		time.setPosition(offset + sf::Vector2f((size.x + paddingoutside) * x, (size.y + paddingoutside)*y) + sf::Vector2f(0.0f, size.y*0.75f));
 		clear();
+		loaded = false;
 	}
 
 
@@ -24,32 +25,48 @@ struct GuiSaveData
 	{
 		desc.changeBackground()->setTexture(NULL);
 		desc.setString("EMPTY");
-		time.setString("");
+		loaded = false;
 	}
 
 	void setSave(SaveData tmp)
 	{
 		texture.loadFromFile("Data\\Save\\" + std::to_string(tmp.slot) + ".png");
 		desc.changeBackground()->setTexture(&texture);
-		desc.setString(tmp.desc);
-		time.setString(tmp.date);
+		desc.setString(tmp.desc + L'\n' + tmp.date);
+		loaded = true;
 	}
 
-	void enable(GuiNS::Gui*gui)
+
+	void enable(GuiNS::Gui*gui, bool save)
 	{
-		gui->addElement(&time);
-		gui->addElement(&desc);
+		if (loaded)
+		{
+			desc.setClickable(true);
+			gui->addElement(&desc);
+			gui->addElement(&del);
+		}
+		else if (save)
+		{
+			desc.setClickable(true);
+			gui->addElement(&desc);
+		}
+		else 
+		{
+			desc.setClickable(false);
+			gui->addElement(&desc);
+		}
 	}
 	void disable(GuiNS::Gui*gui)
 	{
 		gui->eraseElement(&desc);
-		gui->eraseElement(&time);
+		gui->eraseElement(&del);
 	}
 
-
+	
 	sf::Texture texture;
+	GuiNS::GuiRectangle del;
 	GuiNS::GuiText desc;
-	GuiNS::GuiText time;
+	bool loaded;
 };
 
 class OptionsSaveSubType;
@@ -105,8 +122,11 @@ public:
 			{
 				savesgui.push_back(GuiSaveData(offset, size, x, y, 5, 10));
 				savesgui.back().desc.setObserver(this);
+				savesgui.back().del.setObserver(this);
 			}
 		changePage(1);
+
+		gui = nullptr;
 	}
 
 	~GuiSaveManager()
@@ -114,7 +134,7 @@ public:
 		saveDataToFile();
 	}
 
-	void notifyEvent(GuiNS::MyEvent event, GuiNS::GuiElement * from);
+	void notifyEvent(GuiNS::GuiElementEvent event, GuiNS::GuiElement * from);
 
 	void changePage(int newpage)
 	{
@@ -130,24 +150,42 @@ public:
 
 		for (unsigned int i = 0; i < savedata.size(); i++)
 			if (savedata[i].slot >= (newpage - 1)*rows*columns&&savedata[i].slot < (newpage)*rows*columns)
+			{
 				savesgui[savedata[i].slot % (rows*columns)].setSave(savedata[i]);
+			}
 
+
+		if (gui != nullptr)
+		{
+			for (unsigned int i = 0; i < savesgui.size(); i++)
+			{
+				savesgui[i].disable(gui);
+				savesgui[i].enable(gui, save);
+			}
+		}
 
 		currentpage = newpage;
 	}
 
-	void enable(GuiNS::Gui*gui)
+	void enable(GuiNS::Gui*_gui, bool _save)
 	{
+		gui = _gui;
+		if (gui == nullptr)
+			return;
 		gui->addElement(&prevpagebutton);
 		gui->addElement(&nextpagebutton);
 		gui->addElement(&pagenr);
 
 		for (unsigned int i = 0; i < savesgui.size(); i++)
-			savesgui[i].enable(gui);
+			savesgui[i].enable(gui, _save);
+		save = _save;
 	}
 
-	void disable(GuiNS::Gui*gui)
+	void disable(GuiNS::Gui*_gui)
 	{
+		gui = _gui;
+		if (gui == nullptr)
+			return;
 		gui->eraseElement(&prevpagebutton);
 		gui->eraseElement(&nextpagebutton);
 		gui->eraseElement(&pagenr);
@@ -171,6 +209,20 @@ public:
 		savedata.push_back(data);
 		saveDataToFile();
 		changePage(currentpage);
+	}
+
+	void deleteSaveData(int slot)
+	{
+		for (unsigned int i = savedata.size()-1; i>=0; i--)
+		{
+			if (savedata[i].slot == slot)
+			{
+				savedata.erase(savedata.begin() + i);
+				saveDataToFile();
+				changePage(currentpage);
+				return;
+			}
+		}
 	}
 
 	SaveData*getSaveData(int slot)
@@ -204,5 +256,7 @@ private:
 	std::vector <SaveData> savedata;
 
 	int currentpage;
+	bool save;
 	OptionsSaveSubType*fatherstate;
+	GuiNS::Gui*gui;
 };

@@ -20,10 +20,11 @@ public:
 	virtual void sync(float time) override;
 	virtual void draw() override;
 
-	virtual void notifyEvent(GuiNS::MyEvent event, GuiNS::GuiElement * from) override;
+	virtual void notifyEvent(GuiNS::GuiElementEvent event, GuiNS::GuiElement * from) override;
 	SaveData getSave()
 	{
 		SaveData data = vnc.createSaveBase();
+		data.toLoad.push_back(L"say;" + name.getString() + L";" + tekst.getString() + ";NS");
 		scene.save(data);
 		fxengine.save(data);
 		return data;

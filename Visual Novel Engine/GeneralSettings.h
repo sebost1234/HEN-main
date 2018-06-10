@@ -2,9 +2,15 @@
 
 #include "SaveGui.h"
 
+class Options;
+
 class OptionsSubType : public GuiNS::GuiElementObserver
 {
 public:
+	OptionsSubType(Options*options):options(options)
+	{
+
+	}
 	virtual ~OptionsSubType() {}
 	virtual void enable(GuiNS::Gui*gui)
 	{
@@ -13,12 +19,14 @@ public:
 	virtual void disable(GuiNS::Gui*gui)
 	{
 	}
+protected:
+	Options*options;
 };
 
 class GeneralSettings : public OptionsSubType
 {
 public:
-	GeneralSettings(State*fatherstate) :fatherstate(fatherstate),
+	GeneralSettings(Options*options) : OptionsSubType(options),
 		volumeinfo(ResourceManager::getStyle(), *ResourceManager::getFont(), sf::Vector2f(200, 50), "Volume", 30, 1, 30, GuiNS::GuiText::FormatVer::Ver_Center, GuiNS::GuiText::FormatHor::Hor_Center, GuiNS::GuiText::Nothing),
 		volumebar(ResourceManager::getStyle(), sf::Vector2f(500, 50), GuiNS::GuiBar::Horizontal)
 	{
@@ -46,34 +54,43 @@ public:
 		gui->eraseElement(&volumeinfo);
 	}
 
-	void notifyEvent(GuiNS::MyEvent event, GuiNS::GuiElement * from);
+	void notifyEvent(GuiNS::GuiElementEvent event, GuiNS::GuiElement * from);
 private:
 	GuiNS::GuiText volumeinfo;
 	GuiNS::GuiBar volumebar;
-	State*fatherstate;
 };
 
 
 class OptionsSaveSubType : public OptionsSubType
 {
 public:
-	OptionsSaveSubType(State*fatherstate):fatherstate(fatherstate), savemanager(3, 3, this)
+	OptionsSaveSubType(Options*options) : OptionsSubType(options), savemanager(3, 3, this)
 	{
+		lastclicked = -1;
 	}
-	virtual void saveMangerEvent(int slot) = 0;
+	virtual void saveMangerEvent(int slot, bool del) = 0;
+
+	void save();
+	void load();
+	void delet();
+
 protected:
+	void deletePopup(int slot);
 	GuiSaveManager savemanager;
-	State*fatherstate;
+	int lastclicked;
 };
 
 class SaveSettings : public OptionsSaveSubType
 {
 public:
-	SaveSettings(State*_fatherstate);
+	SaveSettings(Options*options) : OptionsSaveSubType(options)
+	{
+
+	}
 
 	virtual void enable(GuiNS::Gui*gui) override
 	{
-		savemanager.enable(gui);
+		savemanager.enable(gui, true);
 	}
 
 	virtual void disable(GuiNS::Gui*gui)override
@@ -81,29 +98,26 @@ public:
 		savemanager.disable(gui);
 	}
 
-	void notifyEvent(GuiNS::MyEvent event, GuiNS::GuiElement * from)
+	void notifyEvent(GuiNS::GuiElementEvent event, GuiNS::GuiElement * from)
 	{
 
 	}
 
-	virtual void saveMangerEvent(int slot) override;
-
+	virtual void saveMangerEvent(int slot, bool del) override;
 private:
-	SaveData currentstate;
 };
 
 class LoadSettings : public OptionsSaveSubType
 {
 public:
-	LoadSettings(State*_fatherstate) :
-		OptionsSaveSubType(_fatherstate)
+	LoadSettings(Options*options) : OptionsSaveSubType(options)
 	{
 
 	}
 
 	virtual void enable(GuiNS::Gui*gui) override
 	{
-		savemanager.enable(gui);
+		savemanager.enable(gui, false);
 	}
 
 	virtual void disable(GuiNS::Gui*gui) override
@@ -111,12 +125,11 @@ public:
 		savemanager.disable(gui);
 	}
 
-	void notifyEvent(GuiNS::MyEvent event, GuiNS::GuiElement * from)
+	void notifyEvent(GuiNS::GuiElementEvent event, GuiNS::GuiElement * from)
 	{
 
 	}
 
-	virtual void saveMangerEvent(int slot) override;
-
+	virtual void saveMangerEvent(int slot, bool del) override;
 private:
 };

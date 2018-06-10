@@ -14,7 +14,7 @@ public:
 	virtual void draw() override;
 
 
-	virtual void notifyEvent(GuiNS::MyEvent event, GuiNS::GuiElement*from) override;
+	virtual void notifyEvent(GuiNS::GuiElementEvent event, GuiNS::GuiElement*from) override;
 private:
 	GuiNS::Gui gui;
 

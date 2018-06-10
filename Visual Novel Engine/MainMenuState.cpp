@@ -13,7 +13,8 @@ MainMenuState::MainMenuState(Engine*engine) :
 {
 
 	background.setSize(gamesize);
-	background.setFillColor(ResourceManager::getStyle()->backcolor);
+	//background.setFillColor(ResourceManager::getStyle()->backcolor);
+	background.setTexture(ResourceManager::getTexture("Data//MenuTexture.png"));
 
 
 	startbutton.setPosition(gamesize*0.5f - startbutton.getSize()*0.5f);
@@ -36,7 +37,7 @@ MainMenuState::MainMenuState(Engine*engine) :
 	gui.addElement(&loadbutton);
 	gui.addElement(&optionsbutton);
 	gui.addElement(&exitbutton);
-	gui.addElement(&testbutton);
+	//gui.addElement(&testbutton);
 }
 
 bool MainMenuState::processEvent(sf::Event event)
@@ -45,7 +46,7 @@ bool MainMenuState::processEvent(sf::Event event)
 	{
 		if (event.type == sf::Event::KeyPressed&&event.key.code == sf::Keyboard::Escape)
 		{
-			gui.changePopup(&options);
+			gui.setPopup(&options);
 			return false;
 		}
 		return true;
@@ -64,23 +65,21 @@ void MainMenuState::draw()
 	getWindow()->draw(gui);
 }
 
-void MainMenuState::notifyEvent(GuiNS::MyEvent event, GuiNS::GuiElement*from)
+void MainMenuState::notifyEvent(GuiNS::GuiElementEvent event, GuiNS::GuiElement*from)
 {
-	if (event.type == GuiNS::MyEvent::Pressed && event.mouse.type == GuiNS::MyEvent::Type::Released)
+	if (event.type == GuiNS::GuiElementEvent::Pressed && event.mouse.type == GuiNS::GuiElementEvent::Type::Released)
 	{
 		if (from == &startbutton)
 			setNewState(new GameState(getEngine(), nullptr));
 		else if (from == &loadbutton)
 		{
-			gui.changePopup(&options);
-			options.changeSubType(new LoadSettings(this));
+			gui.setPopup(&options);
+			options.changeSubType(new LoadSettings(&options));
 		}
 		else if (from == &optionsbutton)
-			gui.changePopup(&options);
+			gui.setPopup(&options);
 		else if (from == &exitbutton)
 			getWindow()->close();
-		else if (from == &testbutton)
-			gui.changePopup(new GuiNS::InfoPopup(ResourceManager::getStyle(), "TEST"));
 		else return;
 		SoundEngine::playSound("click");
 	}

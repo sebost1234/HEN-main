@@ -18,6 +18,12 @@ std::wstring VisualNovelEvent::typeToString(Type typ)
 		return L"flag";
 	case VisualNovelEvent::SetScene:
 		return L"setscene";
+	case VisualNovelEvent::SetModelPosition:
+		return L"setmodelposition";
+	case VisualNovelEvent::SetModelTargetPosition:
+		return L"setmodeltargetposition";
+	case VisualNovelEvent::SetModelFreeEvent:
+		return L"setmodelfree";
 	case VisualNovelEvent::MoveIntoRow:
 		return L"moveintorow";
 	case VisualNovelEvent::RemoveFromRow:

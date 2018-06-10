@@ -2,9 +2,9 @@
 #include "GameState.h"
 #include "GeneralSettings.h"
 
-void GuiSaveManager::notifyEvent(GuiNS::MyEvent event, GuiNS::GuiElement * from)
+void GuiSaveManager::notifyEvent(GuiNS::GuiElementEvent event, GuiNS::GuiElement * from)
 {
-	if (event.type == GuiNS::MyEvent::Pressed && event.mouse.type == GuiNS::MyEvent::Type::Released)
+	if (event.type == GuiNS::GuiElementEvent::Pressed && event.mouse.type == GuiNS::GuiElementEvent::Type::Released)
 	{
 		if (from == &prevpagebutton)
 			changePage(currentpage - 1);
@@ -15,8 +15,14 @@ void GuiSaveManager::notifyEvent(GuiNS::MyEvent event, GuiNS::GuiElement * from)
 			for (unsigned int i = 0; i < savesgui.size(); i++)
 				if (from == &savesgui[i].desc)
 				{
-					fatherstate->saveMangerEvent(i + (currentpage - 1)*rows*columns);
+					fatherstate->saveMangerEvent(i + (currentpage - 1)*rows*columns, false);
 					
+					SoundEngine::playSound("click");
+					return;
+				}
+				else if (from == &savesgui[i].del)
+				{
+					fatherstate->saveMangerEvent(i + (currentpage - 1)*rows*columns, true);
 					SoundEngine::playSound("click");
 					return;
 				}

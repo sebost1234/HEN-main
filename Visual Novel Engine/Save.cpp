@@ -30,7 +30,7 @@ std::wistream& operator >> (std::wistream&is, SaveData&save)
 	
 	std::getline(is, tmp, L'\n');
 	int nr = stoi(tmp);
-	for (unsigned int i = 0; i < nr; i++)
+	for (int i = 0; i < nr; i++)
 	{
 		std::getline(is, tmp, L'\n');
 		save.toLoad.push_back(tmp);

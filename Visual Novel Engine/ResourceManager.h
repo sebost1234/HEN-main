@@ -42,7 +42,7 @@ public:
 		}
 		return font;
 	}
-	static GuiNS::Style*getStyle(StyleTypes type = transparent)
+	static GuiNS::Style*getStyle(StyleTypes type = normal)
 	{
 		if (styles.count(type) == 0)
 		{

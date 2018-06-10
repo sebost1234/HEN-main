@@ -69,7 +69,7 @@ bool GameState::processEvent(sf::Event event)
 
 		if (event.type == sf::Event::KeyPressed&&event.key.code == sf::Keyboard::Escape)
 		{
-			gui.changePopup(&options);
+			gui.setPopup(&options);
 			return false;
 		}
 		return true;
@@ -113,9 +113,9 @@ void GameState::draw()
 	}
 }
 
-void GameState::notifyEvent(GuiNS::MyEvent event, GuiNS::GuiElement * from)
+void GameState::notifyEvent(GuiNS::GuiElementEvent event, GuiNS::GuiElement * from)
 {
-	if (event.type == GuiNS::MyEvent::Pressed && event.mouse.type == GuiNS::MyEvent::Type::Released)
+	if (event.type == GuiNS::GuiElementEvent::Pressed && event.mouse.type == GuiNS::GuiElementEvent::Type::Released)
 	{
 		if(!choices.empty())
 		{

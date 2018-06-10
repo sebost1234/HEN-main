@@ -243,3 +243,5 @@ ModelManifest.xml
 
 # FAKE - F# Make
 .fake/
+/Visual Novel Engine/Data/OptionsTexture.png
+/Visual Novel Engine/Data/MenuTexture.png

@@ -33,6 +33,11 @@ void GuiNS::Gui::sync(sf::Vector2f mousepos, float time)
 	}
 	else if (popup->sync(mousepos, time))
 	{
+		if (observer != nullptr)
+		{
+			GuiEvent event(GuiEvent::PopupDeleted);
+			observer->notifyEvent(event, this);
+		}
 		popup->reset();
 		popup = nullptr;
 	}
@@ -65,10 +70,10 @@ bool GuiNS::Gui::processEvent(sf::Event event, sf::Vector2f mousepos)
 				{
 					held = hover;
 
-					MyEvent newevent;
-					newevent.type = MyEvent::EventType::Mouse;
+					GuiElementEvent newevent;
+					newevent.type = GuiElementEvent::EventType::Mouse;
 					newevent.mouse.button = sf::Mouse::Button::Left;
-					newevent.mouse.type = MyEvent::Type::Pressed;
+					newevent.mouse.type = GuiElementEvent::Type::Pressed;
 					newevent.mouse.mousepos = mousepos;
 					hover->changeState(GuiElement::States::held);//pressed
 					hover->notifyObserver(newevent);
@@ -81,10 +86,10 @@ bool GuiNS::Gui::processEvent(sf::Event event, sf::Vector2f mousepos)
 				if (held != nullptr)
 				{
 
-					MyEvent newevent;
-					newevent.type = MyEvent::EventType::Mouse;
+					GuiElementEvent newevent;
+					newevent.type = GuiElementEvent::EventType::Mouse;
 					newevent.mouse.button = sf::Mouse::Button::Left;
-					newevent.mouse.type = MyEvent::Type::Released;
+					newevent.mouse.type = GuiElementEvent::Type::Released;
 					newevent.mouse.mousepos = mousepos;
 
 					if (held->isFocusable())

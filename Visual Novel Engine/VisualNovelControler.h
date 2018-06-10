@@ -129,8 +129,13 @@ struct VisualNovelEvent
 		size_t tmp=0;
 		std::wstring type = nextArgument(line, tmp);
 
-		for(auto&n:type)
-			n = towlower(n);
+		for (int i = type.size()-1;i>=0;i--)
+		{
+			if (type[i] == L'\t')
+				type.erase(type.begin() + i);
+			else
+				type[i] = towlower(type[i]);
+		}
 
 		typ = stringToType(type);
 		loadArguments(line, tmp);

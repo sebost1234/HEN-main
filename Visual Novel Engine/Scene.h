@@ -210,7 +210,10 @@ public:
 
 		for (unsigned int i = 0; i < rows.size(); i++)
 			for (unsigned int o = 0; o < rows[i]->models.size(); o++)
-				data.toLoad.push_back(L"moveintorow;" + rows[i]->models[o]->id + L';' + rows[i]->id + L";-1");
+			{
+				data.toLoad.push_back(L"moveintorow;" + rows[i]->models[o]->id + L';' + rows[i]->id + L';' + std::to_wstring(o) + L";0");
+				data.toLoad.push_back(L"setmodelposition;" + rows[i]->models[o]->id + L';' + std::to_wstring(rows[i]->models[o]->sprite.getPosition().x) + L";" + std::to_wstring(rows[i]->models[o]->sprite.getPosition().y));
+			}
 	}
 
 	void sync(float time)
