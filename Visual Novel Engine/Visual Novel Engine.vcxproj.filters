@@ -24,9 +24,6 @@
     <Filter Include="Header Files\States\Game">
       <UniqueIdentifier>{b5ee805d-4150-49fb-9025-d9be3a9d9238}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Resources">
-      <UniqueIdentifier>{2e1c0cb0-3e87-42c1-b137-23d2a218eb0a}</UniqueIdentifier>
-    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -130,10 +127,5 @@
     <ClInclude Include="Popup.h">
       <Filter>Header Files\Gui</Filter>
     </ClInclude>
-  </ItemGroup>
-  <ItemGroup>
-    <Text Include="Data\Game\start.txt">
-      <Filter>Resources</Filter>
-    </Text>
   </ItemGroup>
 </Project>

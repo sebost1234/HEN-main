@@ -159,9 +159,6 @@
     <ClInclude Include="VisualNovelControler.h" />
     <ClInclude Include="Warnings.h" />
   </ItemGroup>
-  <ItemGroup>
-    <Text Include="Data\Game\start.txt" />
-  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
