@@ -174,7 +174,6 @@ public:
 				for (unsigned int x = 0; x < columns; x++)
 				{
 					savesgui.push_back(GuiSaveData(pos, size, x, y, padding));
-					savesgui.back().desc.setObserver(this);
 					savesgui.back().button.setObserver(this);
 				}
 			changePage(1);
