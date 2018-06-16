@@ -141,7 +141,7 @@ namespace GuiNS
 		ChoicePopup(std::string id, Style*style, sf::String text, sf::String button1text = "Yes", sf::String button2text = "No", sf::Vector2f size = sf::Vector2f(800, 400)) :
 			Popup(id),
 			rectangle(style, size),
-			info(style, *ResourceManager::getFont(), sf::Vector2f(size.x, size.y - 50), text, 50, 30, 10, GuiNS::GuiText::FormatVer::Ver_Top, GuiNS::GuiText::FormatHor::Hor_Center, GuiNS::GuiText::Type::NewLine),
+			info(style, *ResourceManager::getFont(), sf::Vector2f(size.x, size.y - 50), text, 30, 30, 10, GuiNS::GuiText::FormatVer::Ver_Top, GuiNS::GuiText::FormatHor::Hor_Center, GuiNS::GuiText::Type::NewLine),
 			button1(style, *ResourceManager::getFont(), sf::Vector2f(100, 50), button1text, 30, 1, 30, GuiNS::GuiText::FormatVer::Ver_Center, GuiNS::GuiText::FormatHor::Hor_Center, GuiNS::GuiText::Nothing),
 			button2(style, *ResourceManager::getFont(), sf::Vector2f(100, 50), button2text, 30, 1, 30, GuiNS::GuiText::FormatVer::Ver_Center, GuiNS::GuiText::FormatHor::Hor_Center, GuiNS::GuiText::Nothing)
 		{

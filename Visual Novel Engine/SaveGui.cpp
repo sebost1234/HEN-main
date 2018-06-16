@@ -6,28 +6,31 @@ void GuiSaveManager::notifyEvent(GuiNS::GuiElementEvent event, GuiNS::GuiElement
 {
 	if (event.type == GuiNS::GuiElementEvent::Pressed && event.mouse.type == GuiNS::GuiElementEvent::Type::Released)
 	{
-		if (from == &prevpagebutton)
-			changePage(currentpage - 1);
-		else if (from == &nextpagebutton)
-			changePage(currentpage + 1);
-		else
 		{
+			if (from == &deletebutton)
+			{
+				changePage(currentpage, true);
+			}
 			for (unsigned int i = 0; i < savesgui.size(); i++)
-				if (from == &savesgui[i].desc)
+				if (from == &savesgui[i].button)
 				{
-					fatherstate->saveMangerEvent(i + (currentpage - 1)*rows*columns, false);
-					
+					if(savesgui[i].button.getString()=="Save"|| savesgui[i].button.getString() == "Load")
+						fatherstate->saveMangerEvent(i + (currentpage - 1)*rows*columns, false);
+					else
+						fatherstate->saveMangerEvent(i + (currentpage - 1)*rows*columns, true);
 					SoundEngine::playSound("click");
 					return;
 				}
-				else if (from == &savesgui[i].del)
+			for (unsigned int i = 0; i < pages.size(); i++)
+				if (from == pages[i])
 				{
-					fatherstate->saveMangerEvent(i + (currentpage - 1)*rows*columns, true);
+					changePage(i + 1);
 					SoundEngine::playSound("click");
 					return;
 				}
 			return;
 		}
-		SoundEngine::playSound("click");
 	}
 }
+
+

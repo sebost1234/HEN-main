@@ -70,14 +70,17 @@ void MainMenuState::notifyEvent(GuiNS::GuiElementEvent event, GuiNS::GuiElement*
 	if (event.type == GuiNS::GuiElementEvent::Pressed && event.mouse.type == GuiNS::GuiElementEvent::Type::Released)
 	{
 		if (from == &startbutton)
-			setNewState(new GameState(getEngine(), nullptr));
+			setNewState(new GameState(getEngine()));
 		else if (from == &loadbutton)
 		{
 			gui.setPopup(&options);
-			options.changeSubType(new LoadSettings(&options));
+			options.changeSubType(OptionsSubTypeEnum::Load_ST);
 		}
 		else if (from == &optionsbutton)
+		{
 			gui.setPopup(&options);
+			options.changeSubType(OptionsSubTypeEnum::Options_ST);
+		}
 		else if (from == &exitbutton)
 			getWindow()->close();
 		else return;

@@ -59,9 +59,8 @@ void OptionsSaveSubType::load()
 	if (lastclicked == -1)
 		return;
 
-	auto tmp = OptionsSaveSubType::savemanager.getSaveData(lastclicked);
-	if (tmp != nullptr)
-		options->fatherstate->setNewState(new GameState(options->fatherstate->getEngine(), tmp));
+	if (OptionsSaveSubType::savemanager.hasSaveData(lastclicked))
+		options->fatherstate->setNewState(new GameState(options->fatherstate->getEngine(), OptionsSaveSubType::savemanager.getSaveData(lastclicked)));
 }
 
 void OptionsSaveSubType::delet()
@@ -74,8 +73,7 @@ void OptionsSaveSubType::delet()
 
 void OptionsSaveSubType::deletePopup(int slot)
 {
-	auto tmp = OptionsSaveSubType::savemanager.getSaveData(slot);
-	if (tmp != nullptr)
+	if (OptionsSaveSubType::savemanager.hasSaveData(slot))
 	{
 		lastclicked = slot;
 		std::string tmp;
@@ -104,8 +102,7 @@ void LoadSettings::saveMangerEvent(int slot, bool del)
 {
 	if (!del)
 	{
-		auto tmp = OptionsSaveSubType::savemanager.getSaveData(slot);
-		if (tmp != nullptr)
+		if (OptionsSaveSubType::savemanager.hasSaveData(slot))
 		{
 			lastclicked = slot;
 			std::string tmp;

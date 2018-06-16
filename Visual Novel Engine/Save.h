@@ -5,6 +5,10 @@
 
 struct SaveData
 {
+	SaveData()
+	{
+		slot = -1;
+	}
 	unsigned int slot;
 	std::wstring desc;
 	std::wstring date;

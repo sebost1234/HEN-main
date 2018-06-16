@@ -444,7 +444,7 @@ namespace GuiNS
 			{
 			default:
 			case Ver_Center:
-				origin.y = (text.getCharacterSize()*nroflines) / 2.0f;
+				origin.y = textRect.top + textRect.height / 2.0f;
 				position.y = background.getPosition().y + backRect.height / 2.0f;
 				break;
 			case Ver_Top:

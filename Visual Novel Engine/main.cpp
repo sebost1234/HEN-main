@@ -33,11 +33,11 @@ int main()
 int __stdcall wWinMain(HINSTANCE hInst, HINSTANCE prevInst, LPWSTR szCmdLine, int nCmdShow)
 #endif
 {
-
 	sf::RenderWindow window;
-	window.setFramerateLimit(120);
-	window.create(sf::VideoMode(800, 600), "Test", sf::Style::Default);
+	window.setFramerateLimit(100);
 	Engine engine(&window);
+
+	VisualNovelEvent::loadEvents();
 
 	try
 	{

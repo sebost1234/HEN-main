@@ -24,6 +24,12 @@
     <Filter Include="Header Files\States\Game">
       <UniqueIdentifier>{b5ee805d-4150-49fb-9025-d9be3a9d9238}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\States\MainMenu">
+      <UniqueIdentifier>{b0f93de8-d851-48fe-a99f-0eef838f4161}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\States\Load">
+      <UniqueIdentifier>{442c9254-0605-4802-9b17-aefe189fcd79}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -34,9 +40,6 @@
     </ClCompile>
     <ClCompile Include="SoundEngine.cpp">
       <Filter>Header Files\Misc</Filter>
-    </ClCompile>
-    <ClCompile Include="MainMenuState.cpp">
-      <Filter>Header Files\States</Filter>
     </ClCompile>
     <ClCompile Include="Options.cpp">
       <Filter>Header Files\Options</Filter>
@@ -62,11 +65,14 @@
     <ClCompile Include="State.cpp">
       <Filter>Header Files\States</Filter>
     </ClCompile>
-    <ClCompile Include="StartState.cpp">
-      <Filter>Header Files\States</Filter>
-    </ClCompile>
     <ClCompile Include="Gui.cpp">
       <Filter>Header Files\Gui</Filter>
+    </ClCompile>
+    <ClCompile Include="MainMenuState.cpp">
+      <Filter>Header Files\States\MainMenu</Filter>
+    </ClCompile>
+    <ClCompile Include="LoadState.cpp">
+      <Filter>Header Files\States\Load</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -89,9 +95,6 @@
       <Filter>Header Files\Misc</Filter>
     </ClInclude>
     <ClInclude Include="State.h">
-      <Filter>Header Files\States</Filter>
-    </ClInclude>
-    <ClInclude Include="MainMenuState.h">
       <Filter>Header Files\States</Filter>
     </ClInclude>
     <ClInclude Include="Options.h">
@@ -118,14 +121,20 @@
     <ClInclude Include="FXengine.h">
       <Filter>Header Files\States\Game</Filter>
     </ClInclude>
-    <ClInclude Include="StartState.h">
-      <Filter>Header Files\States</Filter>
-    </ClInclude>
     <ClInclude Include="Scene.h">
       <Filter>Header Files\States\Game</Filter>
     </ClInclude>
     <ClInclude Include="Popup.h">
       <Filter>Header Files\Gui</Filter>
+    </ClInclude>
+    <ClInclude Include="LoadState.h">
+      <Filter>Header Files\States\Load</Filter>
+    </ClInclude>
+    <ClInclude Include="MainMenuState.h">
+      <Filter>Header Files\States\MainMenu</Filter>
+    </ClInclude>
+    <ClInclude Include="CGgallery.h">
+      <Filter>Header Files\Options</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

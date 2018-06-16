@@ -3,6 +3,7 @@
 #include "Popup.h"
 #include "State.h"
 #include "GeneralSettings.h"
+#include "CGgallery.h"
 
 enum Optiontype
 {
@@ -44,8 +45,37 @@ public:
 
 	virtual void notifyEvent(GuiNS::GuiEvent event, GuiNS::Gui*from);
 
+	void changeSubType(OptionsSubTypeEnum newtype)
+	{
+		if (subtype != nullptr)
+			if (newtype == subtype->getSubtype())
+				return;
+		switch (newtype)
+		{
+		case Save_ST:
+			changeSubType(new SaveSettings(this));
+			break;
+		case Load_ST:
+			changeSubType(new LoadSettings(this));
+			if (type == Optiontype::Menu)
+				localgui.eraseElement(&saveandloadbutton);
+			break;
+		case Options_ST:
+			changeSubType(new GeneralSettings(this));
+			break;
+		case Gallery_ST:
+			changeSubType(new CGGallerySettings(this));
+			break;
+		default:
+			break;
+		}
+	}
+
+private:
+
 	void changeSubType(OptionsSubType*newsubtype)
 	{
+		localgui.addElement(&saveandloadbutton);
 		if (subtype != nullptr)
 		{
 			subtype->disable(&localgui);
@@ -54,13 +84,14 @@ public:
 		subtype = newsubtype;
 		subtype->enable(&localgui);
 	}
-private:
+
 	GuiNS::GuiRectangle background;
 
 	GuiNS::GuiText optionsbutton;
-	GuiNS::GuiText savebutton;
-	GuiNS::GuiText loadbutton;
-	GuiNS::GuiText mainmenubutton;//In game - go to main menu
+	GuiNS::GuiText gallerybutton;
+	GuiNS::GuiText journalbutton;
+	GuiNS::GuiText saveandloadbutton;
+	GuiNS::GuiText mainmenubutton;
 	GuiNS::GuiText returnbutton;
 
 	OptionsSubType*subtype;

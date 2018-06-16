@@ -81,6 +81,10 @@ public:
 	{
 		for (unsigned int i = 0; i < models.size(); i++)
 			delete models[i];
+		models.clear();
+		for (unsigned int i = 0; i < rows.size(); i++)
+			delete rows[i];
+		rows.clear(); 
 	}
 
 	bool processEvent(VisualNovelEvent event)

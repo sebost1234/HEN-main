@@ -8,7 +8,7 @@
 
 enum StyleTypes
 {
-	transparent,
+	transparentbackground,
 	normal,
 	blankwhite
 };
@@ -48,11 +48,11 @@ public:
 		{
 			switch (type)
 			{
-			case transparent:
-				styles[type] = new GuiNS::Style(sf::Color(50, 50, 50, 150), sf::Color(100, 100, 100, 150), sf::Color(255, 0, 0, 150), sf::Color(100, 0, 0, 150), sf::Color::White);
-				break;
 			case normal:
 				styles[type] = new GuiNS::Style(sf::Color(50, 50, 50), sf::Color(100, 100, 100), sf::Color(255, 0, 0), sf::Color(100, 0, 0), sf::Color::White);
+				break;
+			case transparentbackground:
+				styles[type] = new GuiNS::Style(sf::Color(0, 0, 0, 0), sf::Color(0, 0, 0, 0), sf::Color(0, 0, 0, 0), sf::Color(0, 0, 0, 0), sf::Color::Black);
 				break;
 			case blankwhite:
 				styles[type] = new GuiNS::Style(sf::Color::White, sf::Color::White, sf::Color::White, sf::Color::White, sf::Color::White);

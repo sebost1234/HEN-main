@@ -2,6 +2,8 @@
 
 #include <fstream>
 #include <string>
+#include <map>
+#include <algorithm>
 
 #include <iostream>
 #include <vector>
@@ -55,6 +57,21 @@
 #define FlagData 0
 #define FlagDataSuccessScope 1
 #define FlagDataFailureScope 2
+
+class Comparewstring
+{
+public:
+	bool operator() (const std::wstring& left, const std::wstring& right) const
+	{
+		unsigned int size = std::min(left.size(), right.size());
+		for (unsigned int i = 0u; i < size; i++)
+			if (left[i] < right[i])
+				return true;
+			else if (left[i] > right[i])
+				return false;
+		return left.size()<right.size();
+	}
+};
 
 struct VisualNovelEvent
 {
@@ -142,15 +159,7 @@ struct VisualNovelEvent
 	}
 
 	static std::wstring typeToString(Type typ);
-	static Type stringToType(std::wstring name)
-	{
-		for (Type tmp = STARTOFGAME; tmp < ENDOFCONTROL; tmp = Type((int)tmp + 1))
-		{
-			if (name == typeToString(tmp))
-				return tmp;
-		}
-		return Type::None;
-	}
+	static Type stringToType(std::wstring name);
 
 
 	std::wstring toString() const
@@ -201,6 +210,8 @@ struct VisualNovelEvent
 	{
 		return stof(getArgument(i));
 	}
+
+	static void loadEvents();
 private:
 	std::wstring nextArgument(std::wstring string, size_t&pos)
 	{
@@ -226,6 +237,11 @@ private:
 
 	std::vector <std::wstring> arguments;
 	Type typ;
+
+
+	static void addEvent(VisualNovelEvent::Type typ, std::wstring string);
+	static std::map < std::wstring, Type, Comparewstring> stringtotypemap;
+	static std::map < Type, std::wstring> typetostringmap;
 };
 
 class VisualNovelControler

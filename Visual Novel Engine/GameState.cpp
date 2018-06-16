@@ -1,7 +1,7 @@
 ﻿#include "GameState.h"
 #include "Engine.h"
 
-GameState::GameState(Engine * engine, SaveData*data) :
+GameState::GameState(Engine * engine, SaveData data) :
 	tekst(GuiNS::GuiText(ResourceManager::getStyle(), *ResourceManager::getFont(), sf::Vector2f(300, 40), "", 30, 15, 15, GuiNS::GuiText::FormatVer::Ver_Top, GuiNS::GuiText::FormatHor::Hor_Left, GuiNS::GuiText::NewLine), 0.1f),
 	name(ResourceManager::getStyle(), *ResourceManager::getFont(), sf::Vector2f(300, 150), "Name", 30, 5, 5, GuiNS::GuiText::FormatVer::Ver_Center, GuiNS::GuiText::FormatHor::Hor_Left, GuiNS::GuiText::Nothing),
 	options(Optiontype::InGame, this),
@@ -21,7 +21,7 @@ GameState::GameState(Engine * engine, SaveData*data) :
 	hidegui = false;
 
 
-	if (data == nullptr)
+	if (data.slot == -1)
 	{
 		if (!vnc.gotoScope(L"start"))
 		{
@@ -30,12 +30,23 @@ GameState::GameState(Engine * engine, SaveData*data) :
 	}
 	else
 	{
-		vnc.loadSave(*data);
-		delete data;
+		vnc.loadSave(data);
 	}
+
+	scene = new Scene();
+
 	processing = true;
 	while ((timer == 0) && (processing = process(vnc.next())));
 	timer = 0;
+}
+
+GameState::~GameState()
+{
+	if (scene != nullptr)
+		delete scene;
+	for (unsigned int i = 0; i < choices.size(); i++)
+		delete choices[i];
+	choices.clear();
 }
 
 bool GameState::processEvent(sf::Event event)
@@ -70,6 +81,7 @@ bool GameState::processEvent(sf::Event event)
 		if (event.type == sf::Event::KeyPressed&&event.key.code == sf::Keyboard::Escape)
 		{
 			gui.setPopup(&options);
+			options.changeSubType(OptionsSubTypeEnum::Save_ST);
 			return false;
 		}
 		return true;
@@ -85,7 +97,7 @@ void GameState::sync(float time)
 	{
 		gui.sync(getWindow()->mapPixelToCoords(sf::Mouse::getPosition(*getWindow())), time);
 		fxengine.sync(time);
-		scene.sync(time);
+		scene->sync(time);
 
 		timer -= time;
 		if (timer < 0)
@@ -103,7 +115,7 @@ void GameState::draw()
 	else
 	{
 		fxengine.begin();
-		fxengine.add(scene);
+		fxengine.add(*scene);
 		fxengine.end();
 
 		getWindow()->draw(fxengine);
@@ -142,7 +154,7 @@ void GameState::notifyEvent(GuiNS::GuiElementEvent event, GuiNS::GuiElement * fr
 bool GameState::process(VisualNovelEvent event)
 {
 	if (event.getType() > VisualNovelEvent::STARTOFSCENE&&event.getType() < VisualNovelEvent::ENDOFSCENE)
-		return scene.processEvent(event);
+		return scene->processEvent(event);
 
 
 	switch (event.getType())
@@ -150,7 +162,11 @@ bool GameState::process(VisualNovelEvent event)
 	case VisualNovelEvent::SetScene:
 	{
 		std::wstring tmp = event.getArgument(SetSceneEventtype);
-		scene = Scene(true);
+
+		if (scene != nullptr)
+			delete scene;
+		scene = new Scene(true);
+
 		return true;
 	}
 	case VisualNovelEvent::Say:

@@ -3,11 +3,12 @@
 
 Options::Options(Optiontype type, State*fatherstate) :
 	background(ResourceManager::getStyle(StyleTypes::blankwhite), gamesize),
-	optionsbutton(ResourceManager::getStyle(), *ResourceManager::getFont(), sf::Vector2f(200, 50), "Options", 30, 1, 30, GuiNS::GuiText::FormatVer::Ver_Center, GuiNS::GuiText::FormatHor::Hor_Center, GuiNS::GuiText::Nothing),
-	savebutton(ResourceManager::getStyle(), *ResourceManager::getFont(), sf::Vector2f(200, 50), "Save Game", 30, 1, 30, GuiNS::GuiText::FormatVer::Ver_Center, GuiNS::GuiText::FormatHor::Hor_Center, GuiNS::GuiText::Nothing),
-	loadbutton(ResourceManager::getStyle(), *ResourceManager::getFont(), sf::Vector2f(200, 50), "Load Game", 30, 1, 30, GuiNS::GuiText::FormatVer::Ver_Center, GuiNS::GuiText::FormatHor::Hor_Center, GuiNS::GuiText::Nothing),
-	mainmenubutton(ResourceManager::getStyle(), *ResourceManager::getFont(), sf::Vector2f(200, 50), "Main Menu", 30, 1, 30, GuiNS::GuiText::FormatVer::Ver_Center, GuiNS::GuiText::FormatHor::Hor_Center, GuiNS::GuiText::Nothing),
-	returnbutton(ResourceManager::getStyle(), *ResourceManager::getFont(), sf::Vector2f(200, 50), "Return", 30, 1, 30, GuiNS::GuiText::FormatVer::Ver_Center, GuiNS::GuiText::FormatHor::Hor_Center, GuiNS::GuiText::Nothing),
+	optionsbutton(ResourceManager::getStyle(StyleTypes::transparentbackground), *ResourceManager::getFont(), sf::Vector2f(125, 50), "Options", 30, 1, 10, GuiNS::GuiText::FormatVer::Ver_Top, GuiNS::GuiText::FormatHor::Hor_Center, GuiNS::GuiText::Nothing),
+	gallerybutton(ResourceManager::getStyle(StyleTypes::transparentbackground), *ResourceManager::getFont(), sf::Vector2f(125, 50), "Gallery", 30, 1, 10, GuiNS::GuiText::FormatVer::Ver_Top, GuiNS::GuiText::FormatHor::Hor_Center, GuiNS::GuiText::Nothing),
+	journalbutton(ResourceManager::getStyle(StyleTypes::transparentbackground), *ResourceManager::getFont(), sf::Vector2f(125, 50), "Journal", 30, 1, 10, GuiNS::GuiText::FormatVer::Ver_Top, GuiNS::GuiText::FormatHor::Hor_Center, GuiNS::GuiText::Nothing),
+	saveandloadbutton(ResourceManager::getStyle(StyleTypes::transparentbackground), *ResourceManager::getFont(), sf::Vector2f(125, 50), "Load", 30, 1, 10, GuiNS::GuiText::FormatVer::Ver_Top, GuiNS::GuiText::FormatHor::Hor_Center, GuiNS::GuiText::Nothing),
+	mainmenubutton(ResourceManager::getStyle(StyleTypes::transparentbackground), *ResourceManager::getFont(), sf::Vector2f(250, 70), "Main Menu", 50, 1, 10, GuiNS::GuiText::FormatVer::Ver_Top, GuiNS::GuiText::FormatHor::Hor_Center, GuiNS::GuiText::Nothing),
+	returnbutton(ResourceManager::getStyle(StyleTypes::transparentbackground), *ResourceManager::getFont(), sf::Vector2f(250, 70), "Back", 50, 1, 10, GuiNS::GuiText::FormatVer::Ver_Top, GuiNS::GuiText::FormatHor::Hor_Center, GuiNS::GuiText::Nothing),
 	choicepopup("none", ResourceManager::getStyle(), ""),
 	type(type),
 	fatherstate(fatherstate),
@@ -17,46 +18,63 @@ Options::Options(Optiontype type, State*fatherstate) :
 	background.setClickable(false);
 	background.changeRectangle()->setTexture(ResourceManager::getTexture("Data//OptionsTexture.png"));
 
-	optionsbutton.setPosition(sf::Vector2f(50, 50)); 
+	float padding = 10;
+
+	optionsbutton.setPosition(sf::Vector2f(gamesize.x - optionsbutton.getSize().x - padding, 10)); 
 	optionsbutton.setObserver(this);
 
-	loadbutton.setPosition(optionsbutton.getPosition() + sf::Vector2f(0, 10 + optionsbutton.getSize().y));
-	loadbutton.setObserver(this);
+	gallerybutton.setPosition(optionsbutton.getPosition() + sf::Vector2f(-gallerybutton.getSize().x-padding, 0));
+	gallerybutton.setObserver(this);
 
-	savebutton.setPosition(loadbutton.getPosition() + sf::Vector2f(0, 10 + loadbutton.getSize().y));
-	savebutton.setObserver(this);
+	gallerybutton.setPosition(optionsbutton.getPosition() + sf::Vector2f(-gallerybutton.getSize().x - padding, 0));
+	gallerybutton.setObserver(this);
 
-	mainmenubutton.setPosition(savebutton.getPosition() + sf::Vector2f(0, 10 + savebutton.getSize().y));
-	mainmenubutton.setObserver(this);
 
-	returnbutton.setPosition(mainmenubutton.getPosition() + sf::Vector2f(0, (10 + mainmenubutton.getSize().y)*2));
+
+
+	returnbutton.setPosition(sf::Vector2f(gamesize.x - returnbutton.getSize().x - padding, gamesize.y  - returnbutton.getSize().y - padding));
 	returnbutton.setObserver(this);
+
+	mainmenubutton.setPosition(returnbutton.getPosition() + sf::Vector2f(-returnbutton.getSize().x - padding, 0));
+	mainmenubutton.setObserver(this);
 
 
 	localgui.addElement(&background);
 
 	localgui.addElement(&optionsbutton);
-	localgui.addElement(&loadbutton);
+	localgui.addElement(&gallerybutton);
+
 
 	switch (type)
 	{
 	case Menu:
-		savebutton.setClickable(false);
+
+		saveandloadbutton.setPosition(gallerybutton.getPosition() + sf::Vector2f(-saveandloadbutton.getSize().x - padding, 0));
+		saveandloadbutton.setObserver(this);
+
+		changeSubType(OptionsSubTypeEnum::Load_ST);
 		break;
 	case InGame:
-		localgui.addElement(&savebutton);
+
+		journalbutton.setPosition(gallerybutton.getPosition() + sf::Vector2f(-journalbutton.getSize().x - padding, 0));
+		journalbutton.setObserver(this);
+
+		saveandloadbutton.setPosition(journalbutton.getPosition() + sf::Vector2f(-saveandloadbutton.getSize().x - padding, 0));
+		saveandloadbutton.setObserver(this);
+
+		localgui.addElement(&journalbutton);
 		localgui.addElement(&mainmenubutton);
+		localgui.addElement(&saveandloadbutton);
+		changeSubType(OptionsSubTypeEnum::Save_ST);
 		break;
 	default:
+		changeSubType(OptionsSubTypeEnum::Options_ST);
 		break;
 	}
 
 	localgui.addElement(&returnbutton);
 
 	localgui.setObserver(this);
-
-	changeSubType(new GeneralSettings(this));
-
 }
 
 Options::~Options()
@@ -70,11 +88,33 @@ void Options::notifyEvent(GuiNS::GuiElementEvent event, GuiNS::GuiElement * from
 	if (event.type == GuiNS::GuiElementEvent::Pressed && event.mouse.type == GuiNS::GuiElementEvent::Type::Released)
 	{
 		if (from == &optionsbutton)
-			changeSubType(new GeneralSettings(this));
-		if (from == &savebutton)
-			changeSubType(new SaveSettings(this));
-		else if (from == &loadbutton)
-			changeSubType(new LoadSettings(this));
+		{
+			changeSubType(OptionsSubTypeEnum::Options_ST);
+		}
+		else if (from == &saveandloadbutton)
+		{
+			if (type == Optiontype::InGame)
+			{
+				if (subtype->getSubtype() == OptionsSubTypeEnum::Save_ST)
+				{
+					saveandloadbutton.setString(L"Save");
+					changeSubType(new LoadSettings(this));
+				}
+				else
+				{
+					saveandloadbutton.setString(L"Load");
+					changeSubType(new SaveSettings(this));
+				}
+			}
+			else if (subtype->getSubtype() != OptionsSubTypeEnum::Load_ST)
+			{
+				changeSubType(OptionsSubTypeEnum::Load_ST);
+			}
+		}
+		else if (from == &gallerybutton)
+		{
+			changeSubType(OptionsSubTypeEnum::Gallery_ST);
+		}
 		else if (from == &mainmenubutton)
 		{
 			choicepopup.changeId("gotomainmenu");

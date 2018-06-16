@@ -14,7 +14,8 @@
 class GameState : public State, public GuiNS::GuiElementObserver
 {
 public:
-	GameState(Engine*engine, SaveData*data = nullptr);
+	GameState(Engine*engine, SaveData data = SaveData());
+	~GameState();
 
 	virtual bool processEvent(sf::Event event);
 	virtual void sync(float time) override;
@@ -25,7 +26,7 @@ public:
 	{
 		SaveData data = vnc.createSaveBase();
 		data.toLoad.push_back(L"say;" + name.getString() + L";" + tekst.getString() + ";NS");
-		scene.save(data);
+		scene->save(data);
 		fxengine.save(data);
 		return data;
 	}
@@ -54,7 +55,7 @@ private:
 	Options options;
 
 	//Game
-	Scene scene;
+	Scene*scene;
 
 	VisualNovelControler vnc;
 	bool processing;

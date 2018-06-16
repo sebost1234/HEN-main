@@ -1,57 +1,56 @@
 #include "VisualNovelControler.h"
 
-std::wstring VisualNovelEvent::typeToString(Type typ)
+std::map < std::wstring, VisualNovelEvent::Type, Comparewstring>  VisualNovelEvent::stringtotypemap;
+std::map < VisualNovelEvent::Type, std::wstring>  VisualNovelEvent::typetostringmap;
+
+
+void VisualNovelEvent::loadEvents()
 {
-	switch (typ)
-	{
-	case VisualNovelEvent::None:
-		return L"//";
-	case VisualNovelEvent::Wait:
-		return L"wait";
-	case VisualNovelEvent::Stop:
-		return L"stop";
-	case VisualNovelEvent::Say:
-		return L"say";
-	case VisualNovelEvent::Choice:
-		return L"choice";
-	case VisualNovelEvent::Flag:
-		return L"flag";
-	case VisualNovelEvent::SetScene:
-		return L"setscene";
-	case VisualNovelEvent::SetModelPosition:
-		return L"setmodelposition";
-	case VisualNovelEvent::SetModelTargetPosition:
-		return L"setmodeltargetposition";
-	case VisualNovelEvent::SetModelFreeEvent:
-		return L"setmodelfree";
-	case VisualNovelEvent::MoveIntoRow:
-		return L"moveintorow";
-	case VisualNovelEvent::RemoveFromRow:
-		return L"removefromrow";
-	case VisualNovelEvent::BgChange:
-		return L"changebg";
-	case VisualNovelEvent::AddModel:
-		return L"addmodel";
-	case VisualNovelEvent::TextureModel:
-		return L"texturemodel";
-	case VisualNovelEvent::DeleteModel:
-		return L"deletemodel";
-	case VisualNovelEvent::PlaySound:
-		return L"playsound";
-	case VisualNovelEvent::PlayMusic:
-		return L"playmusic";
-	case VisualNovelEvent::FX:
-		return L"fx";
-	case VisualNovelEvent::ChangeFile:
-		return L"changefile";
-	case VisualNovelEvent::GoTo:
-		return L"goto";
-	case VisualNovelEvent::Scope:
-		return L"scope";
-	case VisualNovelEvent::FlagTest:
-		return L"flagtest";
-	default:
-		break;
-	}
-	return L"ERROR";
+	addEvent(VisualNovelEvent::None, L"//");
+	addEvent(VisualNovelEvent::Wait, L"wait");
+	addEvent(VisualNovelEvent::Stop, L"stop");
+	addEvent(VisualNovelEvent::Say, L"say");
+	addEvent(VisualNovelEvent::Choice, L"choice");
+	addEvent(VisualNovelEvent::Flag, L"flag");
+	addEvent(VisualNovelEvent::SetScene, L"setscene");
+	addEvent(VisualNovelEvent::SetModelPosition, L"setmodelposition");
+	addEvent(VisualNovelEvent::SetModelTargetPosition, L"setmodeltargetposition");
+	addEvent(VisualNovelEvent::SetModelFreeEvent, L"setmodelfree");
+	addEvent(VisualNovelEvent::MoveIntoRow, L"moveintorow");
+	addEvent(VisualNovelEvent::RemoveFromRow, L"removefromrow");
+	addEvent(VisualNovelEvent::BgChange, L"changebg");
+	addEvent(VisualNovelEvent::AddModel, L"addmodel");
+	addEvent(VisualNovelEvent::TextureModel, L"texturemodel");
+	addEvent(VisualNovelEvent::DeleteModel, L"deletemodel");
+	addEvent(VisualNovelEvent::PlaySound, L"playsound");
+	addEvent(VisualNovelEvent::PlayMusic, L"playmusic");
+	addEvent(VisualNovelEvent::FX, L"fx");
+	addEvent(VisualNovelEvent::ChangeFile, L"changefile");
+	addEvent(VisualNovelEvent::GoTo, L"goto");
+	addEvent(VisualNovelEvent::Scope, L"scope");
+	addEvent(VisualNovelEvent::FlagTest, L"flagtest");
+}
+
+
+void VisualNovelEvent::addEvent(VisualNovelEvent::Type typ, std::wstring string)
+{
+	stringtotypemap.emplace(std::make_pair(string, typ));
+	typetostringmap.emplace(std::make_pair(typ, string));
+}
+
+
+std::wstring VisualNovelEvent::typeToString(VisualNovelEvent::Type typ)
+{
+	if (typetostringmap.count(typ) == 0)
+		return L"ERROR";
+	else
+		return typetostringmap[typ];
+}
+
+VisualNovelEvent::Type VisualNovelEvent::stringToType(std::wstring name)
+{
+	if (stringtotypemap.count(name) == 0)
+		return VisualNovelEvent::None;
+	else
+		return stringtotypemap[name];
 }

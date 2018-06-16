@@ -126,6 +126,7 @@
     <ClCompile Include="GameState.cpp" />
     <ClCompile Include="GeneralSettings.cpp" />
     <ClCompile Include="Gui.cpp" />
+    <ClCompile Include="LoadState.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="MainMenuState.cpp" />
     <ClCompile Include="Options.cpp" />
@@ -133,18 +134,19 @@
     <ClCompile Include="Save.cpp" />
     <ClCompile Include="SaveGui.cpp" />
     <ClCompile Include="SoundEngine.cpp" />
-    <ClCompile Include="StartState.cpp" />
     <ClCompile Include="State.cpp" />
     <ClCompile Include="VisualNovelControler.cpp" />
     <ClCompile Include="Warnings.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="CGgallery.h" />
     <ClInclude Include="Defines.h" />
     <ClInclude Include="Engine.h" />
     <ClInclude Include="FXengine.h" />
     <ClInclude Include="GameState.h" />
     <ClInclude Include="Gui.h" />
     <ClInclude Include="GeneralSettings.h" />
+    <ClInclude Include="LoadState.h" />
     <ClInclude Include="MainMenuState.h" />
     <ClInclude Include="Options.h" />
     <ClInclude Include="PlayerInput.h" />
@@ -154,7 +156,6 @@
     <ClInclude Include="SaveGui.h" />
     <ClInclude Include="Scene.h" />
     <ClInclude Include="SoundEngine.h" />
-    <ClInclude Include="StartState.h" />
     <ClInclude Include="State.h" />
     <ClInclude Include="VisualNovelControler.h" />
     <ClInclude Include="Warnings.h" />

@@ -10,9 +10,9 @@
 #include "ResourceManager.h"
 #include "State.h"
 
-#include "StartState.h"
 #include "MainMenuState.h"
 #include "GameState.h"
+#include "LoadState.h"
 
 struct Settings
 {
@@ -46,12 +46,17 @@ public:
 		window(window)
 	{
 		fullscreen = false;
-		state = new MainMenuState(this);
+		window->create(sf::VideoMode(MINWIDTH, MINHEIGHT), "Test", sf::Style::Default);
+		setCursorVisible(true);
+		state = new LoadState(this);
+		window->setMouseCursorVisible(false);
+		//window->setMouseCursorGrabbed(true);
+		cursor.setTexture(*ResourceManager::getTexture("Data\\cursor.png"));
 		resize();
 	}
 	~Engine()
 	{
-		if(state!=nullptr)
+		if (state != nullptr)
 			delete state;
 	}
 
@@ -72,25 +77,26 @@ public:
 					resize();
 					break;
 				default:
-					if(state->processEvent(event))
-					if (event.type == sf::Event::KeyPressed&&event.key.code == sf::Keyboard::F)
-					{
-						window->close();
-						if(fullscreen)
-							window->create(sf::VideoMode(800, 600), "Test", sf::Style::Default);
-						else
-							window->create(sf::VideoMode::getDesktopMode(), "Test", sf::Style::Fullscreen);
-						resize();
-						fullscreen = !fullscreen;
-					}
-					else if (event.type == sf::Event::KeyPressed&&event.key.code == sf::Keyboard::F12)
-					{
-						sf::Texture tmp;
-						tmp.create(window->getSize().x, window->getSize().y);
-						tmp.update(*window);
-						sf::Image tmp2 = tmp.copyToImage();
-						tmp2.saveToFile("screenshot" + std::to_string(time(nullptr)) + ".png");
-					}
+					if (state->processEvent(event))
+						if (event.type == sf::Event::KeyPressed&&event.key.code == sf::Keyboard::F)
+						{
+							window->close();
+							if (fullscreen)
+								window->create(sf::VideoMode(MINWIDTH, MINHEIGHT), "Test", sf::Style::Default);
+							else
+								window->create(sf::VideoMode::getDesktopMode(), "Test", sf::Style::Fullscreen);
+							window->setMouseCursorVisible(false);
+							resize();
+							fullscreen = !fullscreen;
+						}
+						else if (event.type == sf::Event::KeyPressed&&event.key.code == sf::Keyboard::F12)
+						{
+							sf::Texture tmp;
+							tmp.create(window->getSize().x, window->getSize().y);
+							tmp.update(*window);
+							sf::Image tmp2 = tmp.copyToImage();
+							tmp2.saveToFile("screenshot" + std::to_string(time(nullptr)) + ".png");
+						}
 
 					break;
 				}
@@ -108,13 +114,16 @@ public:
 			tmp2 += frametime;
 			if (tmp2 > 5)
 			{
-				std::cout << "FPS:" << 1 / frametime << std::endl;			
-				std::cout << "MS:" << frametime*1000 << std::endl;
+				std::cout << "FPS:" << 1 / frametime << std::endl;
+				std::cout << "MS:" << frametime * 1000 << std::endl;
 				tmp2 = 0;
 			}
+			cursor.setPosition(window->mapPixelToCoords(sf::Mouse::getPosition(*window), window->getView()));
 
 			window->clear();
 			state->draw();
+			if (iscursorvisible)
+				window->draw(cursor);
 			window->display();
 
 			SoundEngine::sync_audio();
@@ -127,6 +136,14 @@ public:
 	Settings*getSettings()
 	{
 		return &settings;
+	}
+	void setCursorVisible(bool set)
+	{
+		iscursorvisible = set;
+	}
+	bool getCursorVisible()
+	{
+		return iscursorvisible;
 	}
 private:
 
@@ -180,7 +197,10 @@ private:
 	}
 
 	sf::RenderWindow*window;
-	bool fullscreen;
+	bool fullscreen; 
+
+	sf::Sprite cursor;
+	bool iscursorvisible;
 
 	Settings settings;
 
