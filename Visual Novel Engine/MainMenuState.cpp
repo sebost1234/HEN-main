@@ -3,41 +3,60 @@
 #include "Options.h"
 
 MainMenuState::MainMenuState(Engine*engine) :
-	startbutton(ResourceManager::getStyle(), *ResourceManager::getFont(), sf::Vector2f(200, 50), L"Start", 30, 1, 30, GuiNS::GuiText::FormatVer::Ver_Center, GuiNS::GuiText::FormatHor::Hor_Center, GuiNS::GuiText::Nothing),
-	loadbutton(ResourceManager::getStyle(), *ResourceManager::getFont(), sf::Vector2f(200, 50), "Load Game", 30, 1, 30, GuiNS::GuiText::FormatVer::Ver_Center, GuiNS::GuiText::FormatHor::Hor_Center, GuiNS::GuiText::Nothing),
-	optionsbutton(ResourceManager::getStyle(), *ResourceManager::getFont(), sf::Vector2f(200, 50), "Options", 30, 1, 30, GuiNS::GuiText::FormatVer::Ver_Center, GuiNS::GuiText::FormatHor::Hor_Center, GuiNS::GuiText::Nothing),
-	exitbutton(ResourceManager::getStyle(), *ResourceManager::getFont(), sf::Vector2f(200, 50), "Exit", 30, 1, 30, GuiNS::GuiText::FormatVer::Ver_Center, GuiNS::GuiText::FormatHor::Hor_Center, GuiNS::GuiText::Nothing),
-	testbutton(ResourceManager::getStyle(), *ResourceManager::getFont(), sf::Vector2f(200, 50), "TEST", 30, 1, 30, GuiNS::GuiText::FormatVer::Ver_Center, GuiNS::GuiText::FormatHor::Hor_Center, GuiNS::GuiText::Nothing),
+	startbutton(ResourceManager::getStyle(StyleTypes::transparentbackground), *ResourceManager::getFont(), sf::Vector2f(200, 50), "Start", 40, 1, 10, GuiNS::GuiText::FormatVer::Ver_Top, GuiNS::GuiText::FormatHor::Hor_Center, GuiNS::GuiText::Nothing),
+	loadbutton(ResourceManager::getStyle(StyleTypes::transparentbackground), *ResourceManager::getFont(), sf::Vector2f(200, 50), "Load", 40, 1, 10, GuiNS::GuiText::FormatVer::Ver_Top, GuiNS::GuiText::FormatHor::Hor_Center, GuiNS::GuiText::Nothing),
+	optionsbutton(ResourceManager::getStyle(StyleTypes::transparentbackground), *ResourceManager::getFont(), sf::Vector2f(200, 50), "Options", 40, 1, 10, GuiNS::GuiText::FormatVer::Ver_Top, GuiNS::GuiText::FormatHor::Hor_Center, GuiNS::GuiText::Nothing),
+	gallerybutton(ResourceManager::getStyle(StyleTypes::transparentbackground), *ResourceManager::getFont(), sf::Vector2f(200, 50), "Gallery", 40, 1, 10, GuiNS::GuiText::FormatVer::Ver_Top, GuiNS::GuiText::FormatHor::Hor_Center, GuiNS::GuiText::Nothing),
+	journalbutton(ResourceManager::getStyle(StyleTypes::transparentbackground), *ResourceManager::getFont(), sf::Vector2f(200, 50), "Journal", 40, 1, 10, GuiNS::GuiText::FormatVer::Ver_Top, GuiNS::GuiText::FormatHor::Hor_Center, GuiNS::GuiText::Nothing),
+	exitbutton(ResourceManager::getStyle(StyleTypes::transparentbackground), *ResourceManager::getFont(), sf::Vector2f(200, 50), "Exit", 40, 1, 10, GuiNS::GuiText::FormatVer::Ver_Top, GuiNS::GuiText::FormatHor::Hor_Center, GuiNS::GuiText::Nothing),
 	options(Optiontype::Menu, this),
 	State(engine)
 {
 
 	background.setSize(gamesize);
-	//background.setFillColor(ResourceManager::getStyle()->backcolor);
-	background.setTexture(ResourceManager::getTexture("Data//MenuTexture.png"));
+	background.setTexture(ResourceManager::getTexture("Data//bgMenu.png"));
+
+	startbutton.fitBackground(true, false);
+	loadbutton.fitBackground(true, false);
+	optionsbutton.fitBackground(true, false);
+	gallerybutton.fitBackground(true, false);
+	journalbutton.fitBackground(true, false);
+	exitbutton.fitBackground(true, false);
+
+	float width = startbutton.getSize().x + loadbutton.getSize().x + optionsbutton.getSize().x + gallerybutton.getSize().x + journalbutton.getSize().x + exitbutton.getSize().x;
+	float padding = 20;
+	width += 5*padding;
 
 
-	startbutton.setPosition(gamesize*0.5f - startbutton.getSize()*0.5f);
+	startbutton.setPosition(sf::Vector2f(sf::Vector2f(gamesize*0.5f - sf::Vector2f(width,50)*0.5f).x, gamesize.y-startbutton.getSize().y-200));
 	startbutton.setObserver(this);
 
-	loadbutton.setPosition(startbutton.getPosition() + sf::Vector2f(0, 10 + startbutton.getSize().y));
+	loadbutton.setPosition(startbutton.getPosition() + sf::Vector2f(padding + startbutton.getSize().x, 0));
 	loadbutton.setObserver(this);
 
-	optionsbutton.setPosition(loadbutton.getPosition() + sf::Vector2f(0, 10 + loadbutton.getSize().y));
+	gallerybutton.setPosition(loadbutton.getPosition() + sf::Vector2f(padding + loadbutton.getSize().x, 0));
+	gallerybutton.setObserver(this);
+
+	journalbutton.setPosition(gallerybutton.getPosition() + sf::Vector2f(padding + gallerybutton.getSize().x, 0));
+	journalbutton.setObserver(this);
+
+	optionsbutton.setPosition(journalbutton.getPosition() + sf::Vector2f(padding + journalbutton.getSize().x, 0));
 	optionsbutton.setObserver(this);
 
-	exitbutton.setPosition(optionsbutton.getPosition() + sf::Vector2f(0, 10 + optionsbutton.getSize().y));
+	exitbutton.setPosition(optionsbutton.getPosition() + sf::Vector2f(padding + optionsbutton.getSize().x, 0));
 	exitbutton.setObserver(this);
-
-	testbutton.setPosition(exitbutton.getPosition() + sf::Vector2f(0, 10 + exitbutton.getSize().y));
-	testbutton.setObserver(this);
 
 
 	gui.addElement(&startbutton);
 	gui.addElement(&loadbutton);
 	gui.addElement(&optionsbutton);
+	gui.addElement(&gallerybutton);
+	gui.addElement(&journalbutton);
 	gui.addElement(&exitbutton);
-	//gui.addElement(&testbutton);
+
+	gui.setObserver(this);
+
+	SoundEngine::changeMusic("menu.ogg", true);
 }
 
 bool MainMenuState::processEvent(sf::Event event)
@@ -46,6 +65,7 @@ bool MainMenuState::processEvent(sf::Event event)
 	{
 		if (event.type == sf::Event::KeyPressed&&event.key.code == sf::Keyboard::Escape)
 		{
+			SoundEngine::changeMusic("options.ogg", true);
 			gui.setPopup(&options);
 			return false;
 		}
@@ -73,17 +93,49 @@ void MainMenuState::notifyEvent(GuiNS::GuiElementEvent event, GuiNS::GuiElement*
 			setNewState(new GameState(getEngine()));
 		else if (from == &loadbutton)
 		{
+			SoundEngine::changeMusic("options.ogg", true);
 			gui.setPopup(&options);
 			options.changeSubType(OptionsSubTypeEnum::Load_ST);
 		}
 		else if (from == &optionsbutton)
 		{
+			SoundEngine::changeMusic("options.ogg", true);
 			gui.setPopup(&options);
 			options.changeSubType(OptionsSubTypeEnum::Options_ST);
+		}
+		else if (from == &gallerybutton)
+		{
+			SoundEngine::changeMusic("options.ogg", true);
+			gui.setPopup(&options);
+			options.changeSubType(OptionsSubTypeEnum::Gallery_ST);
+		}
+		else if (from == &journalbutton)
+		{
+			SoundEngine::changeMusic("options.ogg", true);
+			gui.setPopup(&options);
+			options.changeSubType(OptionsSubTypeEnum::Journal_ST);
 		}
 		else if (from == &exitbutton)
 			getWindow()->close();
 		else return;
 		SoundEngine::playSound("click");
+	}
+}
+
+void MainMenuState::notifyEvent(GuiNS::GuiEvent event, GuiNS::Gui * from)
+{
+	switch (event.type)
+	{
+	case GuiNS::GuiEvent::PopupDeleted:
+	{
+		GuiNS::Popup*tmp = from->getCurrentPopup();
+		if (tmp == &options)
+		{
+			SoundEngine::changeMusic("menu.ogg", true);
+		}
+	}
+	break;
+	default:
+		break;
 	}
 }

@@ -15,8 +15,32 @@ struct Model
 	sf::Sprite sprite;
 	Row*currentrow;
 
+
+	void setPosition(sf::Vector2f position)
+	{
+		sprite.setPosition(sf::Vector2f(sf::Vector2i(position)));
+		smoothedpos = position;
+	}
+
+	void move(sf::Vector2f move)
+	{
+		smoothedpos += move;
+		sprite.setPosition(sf::Vector2f(sf::Vector2i(smoothedpos)));
+	}
+
+	sf::Vector2f getPosition()
+	{
+		return smoothedpos;
+	}
+
+	sf::Vector2f getTruePosition()
+	{
+		return sprite.getPosition();
+	}
+
 	sf::Vector2f speed;
 	sf::Vector2f targetpos;
+	sf::Vector2f smoothedpos;
 	bool free;
 };
 
@@ -34,9 +58,9 @@ struct Row
 		{
 			if (!models[i]->free)
 			{
-				size += models[i]->sprite.getTextureRect().width;
+				size += models[i]->sprite.getGlobalBounds().width;
 				if (i != models.size() - 1)
-					size += 50;
+					size += 100;
 			}
 		}
 
@@ -47,12 +71,14 @@ struct Row
 		{
 			if (!models[i]->free)
 			{
-				models[i]->targetpos = sf::Vector2f(center - size*0.5f + pos, startingposition.y - models[i]->sprite.getTextureRect().height);
-				pos += models[i]->sprite.getTextureRect().width;
-				pos += 50;
+				models[i]->targetpos = sf::Vector2f(center - size*0.5f + pos, startingposition.y - models[i]->sprite.getGlobalBounds().height);
+				pos += models[i]->sprite.getGlobalBounds().width;
+				pos += 100;
 			}
 		}
 	}
+
+
 	std::wstring id;
 	sf::Vector2f startingposition;
 	float width;
@@ -95,6 +121,50 @@ public:
 				gamerectangle.setTexture(ResourceManager::getTexture("Data\\Game\\" + event.getArgumentS(BgchangeEventpath)));
 				currenttexture = event.getArgument(BgchangeEventpath);
 				return true;
+			case VisualNovelEvent::CG:
+			{
+				std::vector<std::string> seencglist;
+
+				{
+					std::fstream file;
+					file.open("Data\\Save\\seencgs.czpal");
+					if (file.is_open())
+						while (!file.eof())
+						{
+							std::string path;
+							std::getline(file, path, '\n');
+							seencglist.push_back(path);
+						}
+
+					file.close();
+				}
+
+
+				bool found = false;
+				for (unsigned int i = 0; i < seencglist.size(); i++)
+					if (seencglist[i] == event.getArgumentS(CGEventpath))
+					{
+						found = true;
+						break;
+					}
+
+				if (!found)
+				{
+					seencglist.push_back(event.getArgumentS(CGEventpath));
+					std::fstream file;
+					file.open("Data\\Save\\seencgs.czpal", std::ios::out | std::ios::trunc);
+					for (unsigned int i = 0; i < seencglist.size(); i++)
+						file << seencglist[i] << std::endl;
+
+				}
+				auto tmp = ResourceManager::getTexture("Data\\Game\\" + event.getArgumentS(CGEventpath));
+				tmp->setSmooth(false);
+				gamerectangle.setTexture(tmp);
+				currenttexture = event.getArgument(CGEventpath);
+
+				return true;
+			}
+
 			case VisualNovelEvent::AddModel:
 			{
 				std::wstring id = event.getArgument(ModelEventid);
@@ -106,7 +176,7 @@ public:
 			{
 				Model*model = findModelbyId(event.getArgument(SetModelPositionEventid));
 				if(model!=nullptr)
-					model->sprite.setPosition(sf::Vector2f(stof(event.getArgument(SetModelPositionEventx)), stof(event.getArgument(SetModelPositionEventy))));
+					model->setPosition(sf::Vector2f(stof(event.getArgument(SetModelPositionEventx)), stof(event.getArgument(SetModelPositionEventy))));
 				return true;
 			}
 			case VisualNovelEvent::SetModelTargetPosition:
@@ -132,7 +202,7 @@ public:
 					if (models[i]->id == id)
 					{
 						models[i]->currenttexture = path;
-						models[i]->sprite.setTexture(*ResourceManager::getTexture("Data\\Game\\" + path));
+						models[i]->sprite.setTexture(*ResourceManager::getCharacterTexture("Data\\Game\\" + path));
 						syncModel(models[i]);
 					}
 				return true;
@@ -197,7 +267,7 @@ public:
 
 			row->calculatePositions();
 			if (teleport)
-				model->sprite.setPosition(model->targetpos);
+				model->setPosition(model->targetpos);
 		}
 	}
 
@@ -216,7 +286,7 @@ public:
 			for (unsigned int o = 0; o < rows[i]->models.size(); o++)
 			{
 				data.toLoad.push_back(L"moveintorow;" + rows[i]->models[o]->id + L';' + rows[i]->id + L';' + std::to_wstring(o) + L";0");
-				data.toLoad.push_back(L"setmodelposition;" + rows[i]->models[o]->id + L';' + std::to_wstring(rows[i]->models[o]->sprite.getPosition().x) + L";" + std::to_wstring(rows[i]->models[o]->sprite.getPosition().y));
+				data.toLoad.push_back(L"setmodelposition;" + rows[i]->models[o]->id + L';' + std::to_wstring(rows[i]->models[o]->getPosition().x) + L";" + std::to_wstring(rows[i]->models[o]->getPosition().y));
 			}
 	}
 
@@ -230,7 +300,7 @@ public:
 
 			for (unsigned int i = 0; i < models.size(); i++)
 			{
-				sf::Vector2f diff = models[i]->targetpos - models[i]->sprite.getPosition();
+				sf::Vector2f diff = models[i]->targetpos - models[i]->getPosition();
 				float lengthsqr = diff.x*diff.x + diff.y*diff.y;
 
 				if (lengthsqr > 10000)//length>100
@@ -244,13 +314,13 @@ public:
 				else
 				{
 					models[i]->speed *= 0.9f;
-					models[i]->sprite.move(diff*timestep*10.0f);
+					models[i]->move(diff*timestep*10.0f);
 
 					if (lengthsqr < 1)//length<1
-					models[i]->sprite.setPosition(models[i]->targetpos);
+						models[i]->setPosition(models[i]->targetpos);
 				}
 
-				models[i]->sprite.move(models[i]->speed*timestep);
+				models[i]->move(models[i]->speed*timestep);
 			}
 		}
 	}

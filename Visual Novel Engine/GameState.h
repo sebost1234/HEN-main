@@ -11,7 +11,7 @@
 #include "Scene.h"
 
 
-class GameState : public State, public GuiNS::GuiElementObserver
+class GameState : public State, public GuiNS::GuiElementObserver, public GuiNS::GuiObserver
 {
 public:
 	GameState(Engine*engine, SaveData data = SaveData());
@@ -21,10 +21,15 @@ public:
 	virtual void sync(float time) override;
 	virtual void draw() override;
 
+	// Inherited via GuiElementObserver
 	virtual void notifyEvent(GuiNS::GuiElementEvent event, GuiNS::GuiElement * from) override;
+	// Inherited via GuiObserver
+	virtual void notifyEvent(GuiNS::GuiEvent event, GuiNS::Gui * from) override;
+
 	SaveData getSave()
 	{
 		SaveData data = vnc.createSaveBase();
+		data.toLoad.push_back(L"playmusic;" + sf::String(currentmusic));
 		data.toLoad.push_back(L"say;" + name.getString() + L";" + tekst.getString() + ";NS");
 		scene->save(data);
 		fxengine.save(data);
@@ -56,6 +61,8 @@ private:
 
 	//Game
 	Scene*scene;
+
+	std::string currentmusic;
 
 	VisualNovelControler vnc;
 	bool processing;

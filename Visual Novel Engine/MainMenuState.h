@@ -4,7 +4,7 @@
 #include "GameState.h"
 #include "Options.h"
 
-class MainMenuState : public State, GuiNS::GuiElementObserver
+class MainMenuState : public State, GuiNS::GuiElementObserver, GuiNS::GuiObserver
 {
 public:
 	MainMenuState(Engine*engine);
@@ -22,9 +22,12 @@ private:
 	GuiNS::GuiText startbutton;
 	GuiNS::GuiText loadbutton;
 	GuiNS::GuiText optionsbutton;
+	GuiNS::GuiText gallerybutton;
+	GuiNS::GuiText journalbutton;
 	GuiNS::GuiText exitbutton;
 
-	GuiNS::GuiText testbutton;
-
 	Options options;
-}; 
+
+	// Inherited via GuiObserver
+	virtual void notifyEvent(GuiNS::GuiEvent event, GuiNS::Gui * from) override;
+};

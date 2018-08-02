@@ -1,68 +1,83 @@
 #pragma once
 
-#include "SaveGui.h"
-
-class Options;
-
-enum OptionsSubTypeEnum
-{
-	Save_ST,
-	Load_ST,
-	Options_ST,
-	Gallery_ST
-};
-
-
-class OptionsSubType : public GuiNS::GuiElementObserver
-{
-public:
-	OptionsSubType(Options*options):options(options)
-	{
-
-	}
-	virtual ~OptionsSubType() {}
-	virtual void enable(GuiNS::Gui*gui)
-	{
-	}
-
-	virtual void disable(GuiNS::Gui*gui)
-	{
-	}
-
-	virtual OptionsSubTypeEnum getSubtype() = 0;
-protected:
-	Options*options;
-};
+#include "OptionsSubtype.h"
 
 class GeneralSettings : public OptionsSubType
 {
 public:
-	GeneralSettings(Options*options) : OptionsSubType(options),
-		volumeinfo(ResourceManager::getStyle(), *ResourceManager::getFont(), sf::Vector2f(200, 50), "Volume", 30, 1, 30, GuiNS::GuiText::FormatVer::Ver_Center, GuiNS::GuiText::FormatHor::Hor_Center, GuiNS::GuiText::Nothing),
-		volumebar(ResourceManager::getStyle(), sf::Vector2f(500, 50), GuiNS::GuiBar::Horizontal)
-	{
-
-		volumeinfo.setPosition(sf::Vector2f(300, 50));
-		volumeinfo.setClickable(false);
-
-		volumebar._changeMax(100);
-		volumebar._changeState(int(sf::Listener::getGlobalVolume()));
-		volumebar.setPosition(volumeinfo.getPosition() + sf::Vector2f(0, 10 + volumeinfo.getSize().y));
-		volumebar.setObserver(this);
-
-	}
+	GeneralSettings(Options*options);
 	~GeneralSettings();
 
 	virtual void enable(GuiNS::Gui*gui) override
 	{
-		gui->addElement(&volumebar);
+		gui->addElement(&pagename);
 		gui->addElement(&volumeinfo);
+		gui->addElement(&windowmodeinfo);
+
+		gui->addElement(&checkboxfullscreen);
+		gui->addElement(&checkboxwindowed);
+
+		gui->addElement(&checkboxfullscreeninfo);
+		gui->addElement(&checkboxwindowedinfo);
+
+		gui->addElement(&mastervolumeinfo);
+		gui->addElement(&mastervolumebar);
+
+		gui->addElement(&bgmvolumeinfo);
+		gui->addElement(&bgmvolumebar);
+
+		gui->addElement(&sfxvolumeinfo);
+		gui->addElement(&sfxvolumebar);
+
+		gui->addElement(&systemvolumeinfo);
+		gui->addElement(&systemvolumebar);
+
+
+		gui->addElement(&gameconfiginfo);
+
+		gui->addElement(&textspeedinfo);
+		gui->addElement(&textspeedbar);
+
+		gui->addElement(&checkboxskipinfo);
+		gui->addElement(&checkboxskip);
+
+		gui->addElement(&defaultsbutton);
 	}
 
 	virtual void disable(GuiNS::Gui*gui)override
 	{
-		gui->eraseElement(&volumebar);
+		gui->eraseElement(&pagename);
 		gui->eraseElement(&volumeinfo);
+		gui->eraseElement(&windowmodeinfo);
+
+		gui->eraseElement(&checkboxfullscreen);
+		gui->eraseElement(&checkboxwindowed);
+
+		gui->eraseElement(&checkboxfullscreeninfo);
+		gui->eraseElement(&checkboxwindowedinfo);
+
+		gui->eraseElement(&mastervolumeinfo);
+		gui->eraseElement(&mastervolumebar);
+
+		gui->eraseElement(&bgmvolumeinfo);
+		gui->eraseElement(&bgmvolumebar);
+
+		gui->eraseElement(&sfxvolumeinfo);
+		gui->eraseElement(&sfxvolumebar);
+
+		gui->eraseElement(&systemvolumeinfo);
+		gui->eraseElement(&systemvolumebar);
+
+
+		gui->eraseElement(&gameconfiginfo);
+
+		gui->eraseElement(&textspeedinfo);
+		gui->eraseElement(&textspeedbar);
+
+		gui->eraseElement(&checkboxskipinfo);
+		gui->eraseElement(&checkboxskip);
+
+		gui->eraseElement(&defaultsbutton);
 	}
 
 	virtual OptionsSubTypeEnum getSubtype()
@@ -70,101 +85,54 @@ public:
 		return OptionsSubTypeEnum::Options_ST;
 	}
 
+	void sync()
+	{
+		syncFullscreen();
+		syncSkipping();
+		syncBars();
+	}
+	
+	void syncFullscreen();
+	void syncSkipping();
+	void syncBars();
+
 	void notifyEvent(GuiNS::GuiElementEvent event, GuiNS::GuiElement * from);
 private:
+
+	GuiNS::GuiText windowmodeinfo;
+
+	GuiNS::GuiRectangle checkboxfullscreen;
+	GuiNS::GuiText checkboxfullscreeninfo;
+
+	GuiNS::GuiRectangle checkboxwindowed;
+	GuiNS::GuiText checkboxwindowedinfo;
+
+
 	GuiNS::GuiText volumeinfo;
-	GuiNS::GuiBar volumebar;
-};
 
-class OptionsSaveSubType : public OptionsSubType
-{
-public:
-	OptionsSaveSubType(Options*options) : OptionsSubType(options), savemanager(this),
-		pagename(ResourceManager::getStyle(StyleTypes::transparentbackground), *ResourceManager::getFont(), sf::Vector2f(100,70), "", 60, 5, 10, GuiNS::GuiText::FormatVer::Ver_Down, GuiNS::GuiText::FormatHor::Hor_Left, GuiNS::GuiText::Nothing)
-	{
-		pagename.setPosition(sf::Vector2f(10,60));
-		pagename.setClickable(false);
-		lastclicked = -1;
-	}
-	virtual void saveMangerEvent(int slot, bool del) = 0;
+	GuiNS::GuiText mastervolumeinfo;
+	GuiNS::GuiBarSprite mastervolumebar;
 
-	void save();
-	void load();
-	void delet();
+	GuiNS::GuiText bgmvolumeinfo;
+	GuiNS::GuiBarSprite bgmvolumebar;
 
-protected:
-	void deletePopup(int slot);
-	GuiSaveManager savemanager;
-	int lastclicked;
+	GuiNS::GuiText sfxvolumeinfo;
+	GuiNS::GuiBarSprite sfxvolumebar;
+
+	GuiNS::GuiText systemvolumeinfo;
+	GuiNS::GuiBarSprite systemvolumebar;
+
 	GuiNS::GuiText pagename;
-};
 
-class SaveSettings : public OptionsSaveSubType
-{
-public:
-	SaveSettings(Options*options) : OptionsSaveSubType(options)
-	{
-		pagename.setString("Save");
-		pagename.fitBackground(true, false);
-	}
 
-	virtual void enable(GuiNS::Gui*gui) override
-	{
-		savemanager.enable(gui, true);
-		gui->addElement(&pagename);
-	}
 
-	virtual void disable(GuiNS::Gui*gui)override
-	{
-		savemanager.disable(gui);
-		gui->eraseElement(&pagename);
-	}
+	GuiNS::GuiText gameconfiginfo;
 
-	void notifyEvent(GuiNS::GuiElementEvent event, GuiNS::GuiElement * from)
-	{
+	GuiNS::GuiText textspeedinfo;
+	GuiNS::GuiBarSprite textspeedbar;
 
-	}
+	GuiNS::GuiRectangle checkboxskip;
+	GuiNS::GuiText checkboxskipinfo;
 
-	virtual OptionsSubTypeEnum getSubtype()
-	{
-		return OptionsSubTypeEnum::Save_ST;
-	}
-
-	virtual void saveMangerEvent(int slot, bool del) override;
-private:
-};
-
-class LoadSettings : public OptionsSaveSubType
-{
-public:
-	LoadSettings(Options*options) : OptionsSaveSubType(options)
-	{
-		pagename.setString("Load");
-		pagename.fitBackground(true, false);
-	}
-
-	virtual void enable(GuiNS::Gui*gui) override
-	{
-		savemanager.enable(gui, false);
-		gui->addElement(&pagename);
-	}
-
-	virtual void disable(GuiNS::Gui*gui) override
-	{
-		savemanager.disable(gui);
-		gui->eraseElement(&pagename);
-	}
-
-	void notifyEvent(GuiNS::GuiElementEvent event, GuiNS::GuiElement * from)
-	{
-
-	}
-
-	virtual OptionsSubTypeEnum getSubtype()
-	{
-		return OptionsSubTypeEnum::Load_ST;
-	}
-
-	virtual void saveMangerEvent(int slot, bool del) override;
-private:
+	GuiNS::GuiTextSprite defaultsbutton;
 };

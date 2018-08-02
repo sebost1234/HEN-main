@@ -1,14 +1,23 @@
 #include "Options.h"
 #include "MainMenuState.h"
+#include "Engine.h"
 
 Options::Options(Optiontype type, State*fatherstate) :
 	background(ResourceManager::getStyle(StyleTypes::blankwhite), gamesize),
-	optionsbutton(ResourceManager::getStyle(StyleTypes::transparentbackground), *ResourceManager::getFont(), sf::Vector2f(125, 50), "Options", 30, 1, 10, GuiNS::GuiText::FormatVer::Ver_Top, GuiNS::GuiText::FormatHor::Hor_Center, GuiNS::GuiText::Nothing),
-	gallerybutton(ResourceManager::getStyle(StyleTypes::transparentbackground), *ResourceManager::getFont(), sf::Vector2f(125, 50), "Gallery", 30, 1, 10, GuiNS::GuiText::FormatVer::Ver_Top, GuiNS::GuiText::FormatHor::Hor_Center, GuiNS::GuiText::Nothing),
-	journalbutton(ResourceManager::getStyle(StyleTypes::transparentbackground), *ResourceManager::getFont(), sf::Vector2f(125, 50), "Journal", 30, 1, 10, GuiNS::GuiText::FormatVer::Ver_Top, GuiNS::GuiText::FormatHor::Hor_Center, GuiNS::GuiText::Nothing),
-	saveandloadbutton(ResourceManager::getStyle(StyleTypes::transparentbackground), *ResourceManager::getFont(), sf::Vector2f(125, 50), "Load", 30, 1, 10, GuiNS::GuiText::FormatVer::Ver_Top, GuiNS::GuiText::FormatHor::Hor_Center, GuiNS::GuiText::Nothing),
-	mainmenubutton(ResourceManager::getStyle(StyleTypes::transparentbackground), *ResourceManager::getFont(), sf::Vector2f(250, 70), "Main Menu", 50, 1, 10, GuiNS::GuiText::FormatVer::Ver_Top, GuiNS::GuiText::FormatHor::Hor_Center, GuiNS::GuiText::Nothing),
-	returnbutton(ResourceManager::getStyle(StyleTypes::transparentbackground), *ResourceManager::getFont(), sf::Vector2f(250, 70), "Back", 50, 1, 10, GuiNS::GuiText::FormatVer::Ver_Top, GuiNS::GuiText::FormatHor::Hor_Center, GuiNS::GuiText::Nothing),
+	optionsbutton(GuiNS::GuiText(ResourceManager::getStyle(StyleTypes::blankwhite), *ResourceManager::getFont(), sf::Vector2f(200, 70), "Options", 50, 1, 10, GuiNS::GuiText::FormatVer::Ver_Center, GuiNS::GuiText::FormatHor::Hor_Center, GuiNS::GuiText::Nothing),
+		"ButtonNormal.png", "ButtonHover.png", "ButtonHover.png", "Data\\", 5),
+	gallerybutton(GuiNS::GuiText(ResourceManager::getStyle(StyleTypes::blankwhite), *ResourceManager::getFont(), sf::Vector2f(200, 70), "Gallery", 50, 1, 10, GuiNS::GuiText::FormatVer::Ver_Center, GuiNS::GuiText::FormatHor::Hor_Center, GuiNS::GuiText::Nothing),
+		"ButtonNormal.png", "ButtonHover.png", "ButtonHover.png", "Data\\", 5),
+	journalbutton(GuiNS::GuiText(ResourceManager::getStyle(StyleTypes::blankwhite), *ResourceManager::getFont(), sf::Vector2f(200, 70), "Journal", 50, 1, 10, GuiNS::GuiText::FormatVer::Ver_Center, GuiNS::GuiText::FormatHor::Hor_Center, GuiNS::GuiText::Nothing),
+		"ButtonNormal.png", "ButtonHover.png", "ButtonHover.png", "Data\\", 5),
+	saveandloadbutton(GuiNS::GuiText(ResourceManager::getStyle(StyleTypes::blankwhite), *ResourceManager::getFont(), sf::Vector2f(200, 70), "Load", 50, 1, 10, GuiNS::GuiText::FormatVer::Ver_Center, GuiNS::GuiText::FormatHor::Hor_Center, GuiNS::GuiText::Nothing),
+		"ButtonNormal.png", "ButtonHover.png", "ButtonHover.png", "Data\\", 5),
+	mainmenubutton(GuiNS::GuiText(ResourceManager::getStyle(StyleTypes::blankwhite), *ResourceManager::getFont(), sf::Vector2f(250, 70), "Main Menu", 45, 1, 10, GuiNS::GuiText::FormatVer::Ver_Center, GuiNS::GuiText::FormatHor::Hor_Center, GuiNS::GuiText::Nothing),
+		"BigButtonNormal.png", "BigButtonHover.png", "BigButtonHover.png", "Data\\", 5),
+	returnbutton(GuiNS::GuiText(ResourceManager::getStyle(StyleTypes::blankwhite), *ResourceManager::getFont(), sf::Vector2f(250, 70), "Back", 45, 1, 10, GuiNS::GuiText::FormatVer::Ver_Center, GuiNS::GuiText::FormatHor::Hor_Center, GuiNS::GuiText::Nothing),
+		"BigButtonNormal.png", "BigButtonHover.png", "BigButtonHover.png", "Data\\", 5),
+	musicandgallerybutton(GuiNS::GuiText(ResourceManager::getStyle(StyleTypes::blankwhite), *ResourceManager::getFont(), sf::Vector2f(250, 70), "Music", 45, 1, 10, GuiNS::GuiText::FormatVer::Ver_Center, GuiNS::GuiText::FormatHor::Hor_Center, GuiNS::GuiText::Nothing),
+		"BigButtonNormal.png", "BigButtonHover.png", "BigButtonHover.png", "Data\\", 5),
 	choicepopup("none", ResourceManager::getStyle(), ""),
 	type(type),
 	fatherstate(fatherstate),
@@ -16,7 +25,6 @@ Options::Options(Optiontype type, State*fatherstate) :
 	Popup("options")
 {
 	background.setClickable(false);
-	background.changeRectangle()->setTexture(ResourceManager::getTexture("Data//OptionsTexture.png"));
 
 	float padding = 10;
 
@@ -30,44 +38,45 @@ Options::Options(Optiontype type, State*fatherstate) :
 	gallerybutton.setObserver(this);
 
 
-
-
-	returnbutton.setPosition(sf::Vector2f(gamesize.x - returnbutton.getSize().x - padding, gamesize.y  - returnbutton.getSize().y - padding));
+	returnbutton.setPosition(sf::Vector2f(gamesize.x - returnbutton.getSize().x - padding*2, gamesize.y  - returnbutton.getSize().y - padding*4));
 	returnbutton.setObserver(this);
 
 	mainmenubutton.setPosition(returnbutton.getPosition() + sf::Vector2f(-returnbutton.getSize().x - padding, 0));
 	mainmenubutton.setObserver(this);
 
+	journalbutton.setPosition(gallerybutton.getPosition() + sf::Vector2f(-journalbutton.getSize().x - padding, 0));
+	journalbutton.setObserver(this);
+
 
 	localgui.addElement(&background);
 
+	localgui.addElement(&journalbutton);
 	localgui.addElement(&optionsbutton);
 	localgui.addElement(&gallerybutton);
 
+	musicandgallerybutton.setPosition(sf::Vector2f(25, gamesize.y - musicandgallerybutton.getSize().y - 10 * 4));
+	musicandgallerybutton.setObserver(this);
 
 	switch (type)
 	{
 	case Menu:
 
-		saveandloadbutton.setPosition(gallerybutton.getPosition() + sf::Vector2f(-saveandloadbutton.getSize().x - padding, 0));
+		saveandloadbutton.setPosition(journalbutton.getPosition() + sf::Vector2f(-saveandloadbutton.getSize().x - padding, 0));
 		saveandloadbutton.setObserver(this);
 
 		changeSubType(OptionsSubTypeEnum::Load_ST);
 		break;
 	case InGame:
 
-		journalbutton.setPosition(gallerybutton.getPosition() + sf::Vector2f(-journalbutton.getSize().x - padding, 0));
-		journalbutton.setObserver(this);
-
 		saveandloadbutton.setPosition(journalbutton.getPosition() + sf::Vector2f(-saveandloadbutton.getSize().x - padding, 0));
 		saveandloadbutton.setObserver(this);
 
-		localgui.addElement(&journalbutton);
 		localgui.addElement(&mainmenubutton);
 		localgui.addElement(&saveandloadbutton);
 		changeSubType(OptionsSubTypeEnum::Save_ST);
 		break;
 	default:
+
 		changeSubType(OptionsSubTypeEnum::Options_ST);
 		break;
 	}
@@ -115,6 +124,17 @@ void Options::notifyEvent(GuiNS::GuiElementEvent event, GuiNS::GuiElement * from
 		{
 			changeSubType(OptionsSubTypeEnum::Gallery_ST);
 		}
+		else if (from == &journalbutton)
+		{
+			changeSubType(OptionsSubTypeEnum::Journal_ST);
+		}
+		else if (from == &musicandgallerybutton)
+		{
+			if(subtype->getSubtype() == OptionsSubTypeEnum::Music_ST)
+				changeSubType(OptionsSubTypeEnum::Gallery_ST);
+			else
+				changeSubType(OptionsSubTypeEnum::Music_ST);
+		}
 		else if (from == &mainmenubutton)
 		{
 			choicepopup.changeId("gotomainmenu");
@@ -160,6 +180,21 @@ void Options::notifyEvent(GuiNS::GuiEvent event, GuiNS::Gui * from)
 				if (choicepopup.getClicked() == GuiNS::ChoicePopup::Clicked::Button1)
 				{
 					reinterpret_cast<OptionsSaveSubType*>(subtype)->delet();
+				}
+			}
+			else if (tmp->getId() == "copy")
+			{
+				if (choicepopup.getClicked() == GuiNS::ChoicePopup::Clicked::Button1)
+				{
+					reinterpret_cast<OptionsSaveSubType*>(subtype)->copy();
+				}
+			}
+			else if (tmp->getId() == "defaults")
+			{
+				if (choicepopup.getClicked() == GuiNS::ChoicePopup::Clicked::Button1)
+				{
+					fatherstate->getEngine()->getSettings()->restoreDefaults();
+					reinterpret_cast<GeneralSettings*>(subtype)->sync();
 				}
 			}
 		}

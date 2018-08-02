@@ -123,8 +123,12 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="CGgallery.cpp" />
     <ClCompile Include="GameState.cpp" />
     <ClCompile Include="GeneralSettings.cpp" />
+    <ClCompile Include="Journal.cpp" />
+    <ClCompile Include="Music.cpp" />
+    <ClCompile Include="SaveSettings.cpp" />
     <ClCompile Include="Gui.cpp" />
     <ClCompile Include="LoadState.cpp" />
     <ClCompile Include="main.cpp" />
@@ -144,8 +148,12 @@
     <ClInclude Include="Engine.h" />
     <ClInclude Include="FXengine.h" />
     <ClInclude Include="GameState.h" />
-    <ClInclude Include="Gui.h" />
     <ClInclude Include="GeneralSettings.h" />
+    <ClInclude Include="Gui.h" />
+    <ClInclude Include="Journal.h" />
+    <ClInclude Include="Music.h" />
+    <ClInclude Include="OptionsSubtype.h" />
+    <ClInclude Include="SaveSettings.h" />
     <ClInclude Include="LoadState.h" />
     <ClInclude Include="MainMenuState.h" />
     <ClInclude Include="Options.h" />

@@ -22,7 +22,7 @@ namespace GuiNS
 			Text,
 			BarValueChanged
 		};
-
+		
 		enum Type
 		{
 			Pressed,
@@ -88,6 +88,7 @@ namespace GuiNS
 			clickable = true;
 			focusable = false;
 			observer = nullptr;
+			frozen = false;
 			gui = nullptr;
 			style = nullptr;
 		}
@@ -125,9 +126,15 @@ namespace GuiNS
 		virtual void setStyle(Style*_style)
 		{
 			style = _style;
-			changeState(nothing);
+			changeState(currentstate);
 		}
-		virtual void changeState(States newstate){}
+
+		void changeState(States newstate)
+		{
+			currentstate = newstate;
+			if(!frozen)
+				changeStateInternal(currentstate);
+		}
 
 		void move(sf::Vector2f move)
 		{
@@ -154,6 +161,10 @@ namespace GuiNS
 		{
 			clickable = _clickable;
 		}
+		void setFrozen(bool _frozen)
+		{
+			frozen = _frozen;
+		}
 		bool isFocusable() const
 		{
 			return focusable;
@@ -161,6 +172,10 @@ namespace GuiNS
 		bool isClickable() const
 		{
 			return clickable;
+		}
+		bool isFrozen() const
+		{
+			return frozen;
 		}
 
 		virtual bool contains(sf::Vector2f position) const
@@ -172,32 +187,17 @@ namespace GuiNS
 		}
 	
 	protected:
+		virtual void changeStateInternal(States newstate)
+		{
+		}
+		States currentstate;
 		GuiElementObserver * observer;
 		Style*style;
 		Gui*gui;
 
 		bool clickable;
 		bool focusable;
-	};
-
-	class Father : private GuiElement
-	{
-	public:
-		virtual ~Father()
-		{
-
-		}
-		virtual void processEvent(sf::Event event, sf::Vector2f mousepos)override
-		{
-			for (unsigned int i = 0; i < elements.size(); ++i)
-				if (elements[i]->contains(mousepos))
-				{
-					elements[i]->processEvent(event, mousepos);
-					return;
-				}
-		}
-	protected:
-		std::vector < GuiElement* > elements;
+		bool frozen;
 	};
 
 	class Popup;
@@ -375,7 +375,7 @@ namespace GuiNS
 			GuiElement::setStyle(style);
 		}
 
-		virtual void changeState(States newstate) override
+		virtual void changeStateInternal(States newstate) override
 		{
 			switch (newstate)
 			{
@@ -413,8 +413,9 @@ namespace GuiNS
 
 
 			background.setSize(sf::Vector2f(width, height));
+			formatText();
 		}
-
+		
 		void formatText()
 		{
 			sf::FloatRect backRect = background.getLocalBounds();
@@ -767,7 +768,7 @@ namespace GuiNS
 			return tocut.substring(0, i);
 		}
 		
-	private:
+	protected:
 		int nroflines;
 		sf::String string;
 		sf::Text text;
@@ -783,6 +784,96 @@ namespace GuiNS
 		FormatHor formathor;
 		FormatVer formatver;
 		Type type;
+	};
+
+	class GuiTextSprite : public GuiText
+	{
+	public:
+		GuiTextSprite(GuiText text, std::string nothingtexture = "none", std::string hovertexture = "none", std::string heldtexture = "none", std::string location = "", int border = 0) :
+			GuiText(text), nothingtexture(location + nothingtexture), hovertexture(location + hovertexture), heldtexture(location + heldtexture), border(border)
+		{
+			changeState(nothing);
+		}
+
+		virtual void changeStateInternal(States newstate) override
+		{
+			switch (newstate)
+			{
+			default:
+			case GuiElement::nothing:
+				background.setFillColor(style->backcolor);
+				break;
+			case GuiElement::hover:
+				if (isClickable())
+					SoundEngine::playSound("hover");
+			case GuiElement::held:
+			case GuiElement::focused:
+				if (isClickable())
+					background.setFillColor(style->backcolor2);
+				else
+					background.setFillColor(style->backcolor);
+
+				break;
+			}
+			sync();
+		}
+
+		void sync()
+		{
+			switch (currentstate)
+			{
+			default:
+			case GuiNS::GuiElement::nothing:
+				if (nothingtexture != "none")
+					background.setTexture(ResourceManager::getTexture(nothingtexture));
+				else
+					background.setTexture(NULL);
+				break;
+			case GuiNS::GuiElement::hover:
+				if (isClickable())
+				{
+					if (hovertexture != "none")
+						background.setTexture(ResourceManager::getTexture(hovertexture));
+					else
+						background.setTexture(NULL);
+				}
+				else
+				{
+					if (nothingtexture != "none")
+						background.setTexture(ResourceManager::getTexture(nothingtexture));
+					else
+						background.setTexture(NULL);
+				}
+
+				break;
+			case GuiNS::GuiElement::held:
+			case GuiNS::GuiElement::focused:
+				if (nothingtexture != "none")
+					background.setTexture(ResourceManager::getTexture(heldtexture));
+				else
+					background.setTexture(NULL);
+				break;
+			}
+			background.setTextureRect(sf::IntRect(border, border, background.getTexture()->getSize().x - border * 2, background.getTexture()->getSize().y - border * 2));
+		}
+
+		void setNothingTexture(std::string newtexture)
+		{
+			nothingtexture = newtexture;
+		}
+		void setHoverTexture(std::string newtexture)
+		{
+			hovertexture = newtexture;
+		}
+		void setHeldTexture(std::string newtexture)
+		{
+			heldtexture = newtexture;
+		}
+	private:
+		std::string nothingtexture;
+		std::string hovertexture;
+		std::string heldtexture;
+		int border;
 	};
 
 	class GuiTextInputBox : public GuiText
@@ -807,10 +898,8 @@ namespace GuiNS
 		}
 
 
-		virtual void changeState(States newstate) override
+		virtual void changeStateInternal(States newstate) override
 		{
-			GuiText::changeState(newstate);
-		
 			switch (newstate)
 			{
 			default:
@@ -961,24 +1050,24 @@ namespace GuiNS
 	{
 	public:
 		GuiRectangle(Style*style, sf::Vector2f backgroundsize) :
-			rectangle(backgroundsize)
+			background(backgroundsize)
 		{
 			setStyle(style);
 		}
 
 		virtual void setStyle(Style*style) override
 		{
-			rectangle.setFillColor(style->backcolor);
-			rectangle.setOutlineColor(style->decalcolor);
+			background.setFillColor(style->backcolor);
+			background.setOutlineColor(style->decalcolor);
 			GuiElement::setStyle(style);
 		}
-		virtual void changeState(States newstate)
+		virtual void changeStateInternal(States newstate)
 		{
 			switch (newstate)
 			{
 			default:
 			case GuiElement::nothing:
-				rectangle.setFillColor(style->backcolor);
+				background.setFillColor(style->backcolor);
 				break;
 
 			case GuiElement::States::hover:
@@ -986,46 +1075,119 @@ namespace GuiNS
 					SoundEngine::playSound("hover");	
 			case GuiElement::held:
 				if (isClickable())
-					rectangle.setFillColor(style->backcolor2);
+					background.setFillColor(style->backcolor2);
 				else
-					rectangle.setFillColor(style->backcolor);
+					background.setFillColor(style->backcolor);
 				break;
 			}
 		}
 
 		virtual void setPosition(sf::Vector2f position) override
 		{
-			rectangle.setPosition(position);
+			background.setPosition(position);
 		}
 		virtual sf::Vector2f getPosition() const override
 		{
-			return rectangle.getPosition();
+			return background.getPosition();
 		}
 		virtual void setSize(sf::Vector2f size) override
 		{
-			rectangle.setSize(size);
+			background.setSize(size);
 		}
 		virtual sf::Vector2f getSize() const override
 		{
-			return rectangle.getSize();
-		}
-
-
-		virtual void heldEvent(sf::Vector2f mousepos, sf::Vector2f mousemove, float time) override
-		{
+			return background.getSize();
 		}
 
 		sf::RectangleShape*changeRectangle()
 		{
-			return &rectangle;
+			return &background;
 		}
 		virtual void draw(sf::RenderTarget & target, sf::RenderStates states) const override
 		{
-			target.draw(rectangle, states);
+			target.draw(background, states);
+		}
+	protected:
+		sf::RectangleShape background;
+	};
+
+	class GuiRectangleSprite : public GuiRectangle
+	{
+	public:
+		GuiRectangleSprite(GuiRectangle rectangle, std::string nothingtexture = "none", std::string hovertexture = "none", std::string heldtexture = "none", std::string location = "", int border = 0) :
+			GuiRectangle(rectangle), nothingtexture(location + nothingtexture), hovertexture(location + hovertexture), heldtexture(location + heldtexture), border(border)
+		{
+			changeState(nothing);
+		}
+
+		virtual void changeStateInternal(States newstate) override
+		{
+			switch (newstate)
+			{
+			default:
+			case GuiElement::nothing:
+				background.setFillColor(style->backcolor);
+				break;
+			case GuiElement::hover:
+				if (isClickable())
+					SoundEngine::playSound("hover");
+			case GuiElement::held:
+			case GuiElement::focused:
+				if (isClickable())
+					background.setFillColor(style->backcolor2);
+				else
+					background.setFillColor(style->backcolor);
+
+				break;
+			}
+			sync();
+		}
+
+		void sync()
+		{
+			switch (currentstate)
+			{
+			default:
+			case GuiNS::GuiElement::nothing:
+				if (nothingtexture != "none")
+					background.setTexture(ResourceManager::getTexture(nothingtexture));
+				else
+					background.setTexture(NULL);
+				break;
+			case GuiNS::GuiElement::hover:
+				if (hovertexture != "none")
+					background.setTexture(ResourceManager::getTexture(hovertexture));
+				else
+					background.setTexture(NULL);
+				break;
+			case GuiNS::GuiElement::held:
+			case GuiNS::GuiElement::focused:
+				if (nothingtexture != "none")
+					background.setTexture(ResourceManager::getTexture(heldtexture));
+				else
+					background.setTexture(NULL);
+				break;
+			}
+			background.setTextureRect(sf::IntRect(border, border, background.getTexture()->getSize().x-border*2, background.getTexture()->getSize().y - border * 2));
+		}
+
+		void setNothingTexture(std::string newtexture)
+		{
+			nothingtexture = newtexture;
+		}
+		void setHoverTexture(std::string newtexture)
+		{
+			hovertexture = newtexture;
+		}
+		void setHeldTexture(std::string newtexture)
+		{
+			heldtexture = newtexture;
 		}
 	private:
-		sf::RectangleShape rectangle;
-
+		std::string nothingtexture;
+		std::string hovertexture;
+		std::string heldtexture;
+		int border;
 	};
 
 	class GuiBar : public GuiElement
@@ -1050,7 +1212,7 @@ namespace GuiNS
 		}
 
 		
-		virtual void changeState(States newstate)
+		virtual void changeStateInternal(States newstate)
 		{
 			switch (newstate)
 			{
@@ -1171,235 +1333,163 @@ namespace GuiNS
 		Type type;
 	};
 
-	class HolderVertical : public GuiElement
+	class GuiBarSprite : public GuiElement
 	{
 	public:
-		HolderVertical(Style*style, sf::Vector2f position, sf::Vector2f size,
-			float padding_between = 10,
-			float padding_top = 10,
-			float padding_bottom = 10,
-			float padding_left = 10,
-			float padding_right = 10
-		) :
-			padding_between(padding_between),
-			padding_top(padding_top),
-			padding_bottom(padding_bottom),
-			padding_left(padding_left),
-			padding_right(padding_right)
+
+		GuiBarSprite(Style*style, sf::Vector2f backgroundsize, sf::Vector2f barsize, std::string nothingtexture = "none", std::string hovertexture = "none", std::string heldtexture = "none", std::string backgroundtexture = "none", std::string location = "") :
+			background(backgroundsize), bar(barsize), nothingtexture(location + nothingtexture), hovertexture(location + hovertexture), heldtexture(location + heldtexture), backgroundtexture(location + backgroundtexture)
 		{
-			background.setPosition(position);
-			background.setSize(size);
+			min = 1;
+			state = 1;
+			max = 1;
+
+			bar.setOrigin(barsize.x*0.5f, 0);
 
 			setStyle(style);
+
+			_sync();
 		}
 
+
+		virtual void changeStateInternal(States newstate)
+		{
+			switch (newstate)
+			{
+			default:
+			case GuiElement::nothing:
+				bar.setFillColor(style->decalcolor);
+				break;
+			case GuiElement::held:
+				bar.setFillColor(style->decalcolor2);
+				break;
+			}
+
+			if (backgroundtexture != "none")
+				background.setTexture(ResourceManager::getTexture(backgroundtexture));
+			else
+				background.setTexture(NULL);
+
+			switch (newstate)
+			{
+			default:
+			case GuiNS::GuiElement::nothing:
+				if (nothingtexture != "none")
+					bar.setTexture(ResourceManager::getTexture(nothingtexture));
+				else
+					bar.setTexture(NULL);
+				break;
+			case GuiNS::GuiElement::hover:
+				if (hovertexture != "none")
+					bar.setTexture(ResourceManager::getTexture(hovertexture));
+				else
+					bar.setTexture(NULL);
+				break;
+			case GuiNS::GuiElement::held:
+			case GuiNS::GuiElement::focused:
+				if (nothingtexture != "none")
+					bar.setTexture(ResourceManager::getTexture(heldtexture));
+				else
+					bar.setTexture(NULL);
+				break;
+			}
+		}
 		virtual void setStyle(Style*style) override
 		{
 			background.setFillColor(style->backcolor);
 			background.setOutlineColor(style->decalcolor);
-			for (unsigned int i = 0; i < elements.size(); i++)
-				elements[i]->setStyle(style);
+			bar.setFillColor(style->decalcolor);
 			GuiElement::setStyle(style);
 		}
 
-		bool _addElement(GuiElement*toadd)
+		void _changeState(int value)
 		{
-			if (_formatElement(toadd, elements.size()))
-			{
-				elements.push_back(toadd);
-				return true;
-			}
-			else return false;
+			state = value;
+			_sync();
 		}
-		bool _formatElement(GuiElement*toformat, int nr)
+		void _changeMin(int value)
 		{
-			if (nr == 0)
-				toformat->setPosition(background.getPosition() + sf::Vector2f(padding_left, padding_top));
-			else
-				toformat->setPosition(sf::Vector2f(background.getPosition().x + padding_left, padding_between + elements[nr - 1]->getPosition().y + elements[nr - 1]->getSize().y));
-
-
-			toformat->setSize(sf::Vector2f(background.getSize().x - padding_left - padding_right, toformat->getSize().y));
-
-
-			float tmp = (background.getPosition().y + background.getSize().y) - (toformat->getPosition().y + toformat->getSize().y + padding_bottom);
-			if (tmp < 0)
-			{
-				if (toformat->getSize().y + tmp > 0)
-					toformat->setSize(sf::Vector2f(toformat->getSize().x, toformat->getSize().y + tmp));
-				else
-					return false;
-			}
-
-			return true;
+			min = value;
+			_sync();
+		}
+		void _changeMax(int value)
+		{
+			max = value + 1;
+			_sync();
 		}
 
-		void _clearElements(bool deletion = false)
+		int _getState()
 		{
-			if (deletion)
-				for (const auto&tmp : elements)
-					delete tmp;
-			elements.clear();
-		}
-		void _formatElements()
-		{
-			for (unsigned int i = 0; i < elements.size(); i++)
-				_formatElement(elements[i], i);
+			return state + 1;
 		}
 
-		sf::RectangleShape*changeBackground()
-		{
-			return &background;
-		}
-
-		virtual void setPosition(sf::Vector2f newPosition) override
-		{
-			sf::Vector2f move = newPosition - background.getPosition();
-
-			for (auto&tmp : elements)
-				tmp->setPosition(tmp->getPosition() + move);
-
-			background.setPosition(newPosition);
-		}
-		virtual sf::Vector2f getPosition() const override
-		{
-			return background.getPosition();
-		}
-
-		virtual void setSize(sf::Vector2f newSize) override
-		{
-			background.setSize(newSize);
-
-			_formatElements();
-		}
-		virtual sf::Vector2f getSize() const override
-		{
-			return background.getSize();
-		}
-
-		virtual void draw(sf::RenderTarget & target, sf::RenderStates states) const override
-		{
-			target.draw(background, states);
-			for (const auto&tmp : elements)
-				target.draw(*tmp, states);
-		}
-	protected:
-		//std::vector <GuiElement*> elements; FROM FATHER
-
-		sf::RectangleShape background;
-
-		float padding_between;
-		float padding_top;
-		float padding_bottom;
-		float padding_left;
-		float padding_right;
-
-		std::vector <GuiElement*> elements;
-	};
-
-	class HolderHorizontal : public GuiElement
-	{
-	public:
-		HolderHorizontal(Style*style, sf::Vector2f position, sf::Vector2f size,
-			float padding_between = 10,
-			float padding_top = 10,
-			float padding_bottom = 10,
-			float padding_left = 10,
-			float padding_right = 10
-		) :
-			padding_between(padding_between),
-			padding_top(padding_top),
-			padding_bottom(padding_bottom),
-			padding_left(padding_left),
-			padding_right(padding_right)
+		virtual void setPosition(sf::Vector2f position) override
 		{
 			background.setPosition(position);
-			background.setSize(size);
-
-			background.setFillColor(style->backcolor);
-
-			setStyle(style);
-		}
-
-
-		void _addElement(GuiElement*toadd)
-		{
-			_formatElement(toadd, elements.empty());
-			elements.push_back(toadd);
-		}
-		void _formatElement(GuiElement*toformat, bool first = false)
-		{
-			if (first)
-				toformat->setPosition(background.getPosition() + sf::Vector2f(padding_left, padding_top));
-			else
-				toformat->setPosition(sf::Vector2f(elements.back()->getPosition().x + elements.back()->getSize().x + padding_between, background.getPosition().y + padding_top));
-
-			toformat->setSize(sf::Vector2f(toformat->getSize().x, background.getSize().y - padding_top - padding_bottom));
-		}
-
-		void _clearElements(bool deletion = false)
-		{
-			if (deletion)
-				for (const auto&tmp : elements)
-					delete tmp;
-			elements.clear();
-		}
-		void _formatElements()
-		{
-
-			for (unsigned int i = 0; i < elements.size(); i++)
-				_formatElement(elements[i], i == 0);
-		}
-
-		sf::RectangleShape*changeBackground()
-		{
-			return &background;
-		}
-
-		virtual void setPosition(sf::Vector2f newPosition) override
-		{
-			sf::Vector2f move = newPosition - background.getPosition();
-
-			for (auto&tmp : elements)
-				tmp->setPosition(tmp->getPosition() + move);
-			background.setPosition(newPosition);
+			_sync();
 		}
 		virtual sf::Vector2f getPosition() const override
 		{
 			return background.getPosition();
 		}
-
-		virtual void setSize(sf::Vector2f newSize) override
+		virtual void setSize(sf::Vector2f size) override
 		{
-			background.setSize(newSize);
-
-			for (auto&tmp : elements)
-				tmp->setSize(sf::Vector2f(tmp->getSize().x, background.getSize().y - padding_top - padding_bottom));
-
+			background.setSize(size);
+			_sync();
 		}
 		virtual sf::Vector2f getSize() const override
 		{
 			return background.getSize();
 		}
 
+		virtual void heldEvent(sf::Vector2f mousepos, sf::Vector2f mousemove, float time) override
+		{
+			int newstate = int((mousepos.x - background.getPosition().x) / ((background.getSize().x-bar.getSize().x)*(float(min) / (max-1))));
+
+			if (newstate != state)
+			{
+				state = newstate;
+				_sync();
+				if (state == newstate)
+				{
+					GuiElementEvent newevent;
+					newevent.type = GuiElementEvent::EventType::BarValueChanged;
+					newevent.bar.min = min - 1;
+					newevent.bar.max = max - 1;
+					newevent.bar.state = state;
+
+					notifyObserver(newevent);
+				}
+			}
+		}
+
 		virtual void draw(sf::RenderTarget & target, sf::RenderStates states) const override
 		{
 			target.draw(background, states);
-			for (const auto&tmp : elements)
-				target.draw(*tmp, states);
+			target.draw(bar, states);
 		}
-	protected:
-		//std::vector <GuiElement*> elements; FROM FATHER
+	private:
+		void _sync()
+		{
+			if (state < 0)
+				state = 0;
+			else if (state > max - 1)
+				state = max - 1;
 
+
+			bar.setPosition(background.getPosition().x + state*(background.getSize().x - bar.getSize().x)*(float(min) / (max-1)) + bar.getSize().x*0.5f, background.getPosition().y);
+		}
+
+		sf::RectangleShape bar;
 		sf::RectangleShape background;
+		int min;
+		int state;
+		int max;
 
-		float padding_between;
-		float padding_top;
-		float padding_bottom;
-		float padding_left;
-		float padding_right;
-
-		std::vector <GuiElement*> elements;
+		std::string nothingtexture;
+		std::string hovertexture;
+		std::string heldtexture;
+		std::string backgroundtexture;
 	};
 }
 

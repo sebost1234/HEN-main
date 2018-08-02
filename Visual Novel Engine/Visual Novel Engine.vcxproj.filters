@@ -30,6 +30,21 @@
     <Filter Include="Header Files\States\Load">
       <UniqueIdentifier>{442c9254-0605-4802-9b17-aefe189fcd79}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\Options\Save">
+      <UniqueIdentifier>{8ff134b6-0b88-48b3-9ceb-a05a50becce9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Options\Gallery">
+      <UniqueIdentifier>{ea89ec7c-aef0-48c3-8cc3-c2bb19eb0530}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Options\General Settings">
+      <UniqueIdentifier>{f3284ca9-6791-486e-8b69-1a6058642912}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Options\Journal">
+      <UniqueIdentifier>{a1225c82-92a7-460b-b745-2433db1f67b9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Options\Music">
+      <UniqueIdentifier>{9d9d3f3e-7339-4057-ad24-afa99843478e}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -38,23 +53,11 @@
     <ClCompile Include="ResourceManager.cpp">
       <Filter>Header Files\Misc</Filter>
     </ClCompile>
-    <ClCompile Include="SoundEngine.cpp">
-      <Filter>Header Files\Misc</Filter>
-    </ClCompile>
     <ClCompile Include="Options.cpp">
       <Filter>Header Files\Options</Filter>
     </ClCompile>
     <ClCompile Include="Warnings.cpp">
       <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="SaveGui.cpp">
-      <Filter>Header Files\Options</Filter>
-    </ClCompile>
-    <ClCompile Include="Save.cpp">
-      <Filter>Header Files\Options</Filter>
-    </ClCompile>
-    <ClCompile Include="GeneralSettings.cpp">
-      <Filter>Header Files\Options</Filter>
     </ClCompile>
     <ClCompile Include="GameState.cpp">
       <Filter>Header Files\States\Game</Filter>
@@ -73,6 +76,30 @@
     </ClCompile>
     <ClCompile Include="LoadState.cpp">
       <Filter>Header Files\States\Load</Filter>
+    </ClCompile>
+    <ClCompile Include="SoundEngine.cpp">
+      <Filter>Header Files\Misc</Filter>
+    </ClCompile>
+    <ClCompile Include="SaveGui.cpp">
+      <Filter>Header Files\Options\Save</Filter>
+    </ClCompile>
+    <ClCompile Include="Save.cpp">
+      <Filter>Header Files\Options\Save</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneralSettings.cpp">
+      <Filter>Header Files\Options\General Settings</Filter>
+    </ClCompile>
+    <ClCompile Include="SaveSettings.cpp">
+      <Filter>Header Files\Options\Save</Filter>
+    </ClCompile>
+    <ClCompile Include="CGgallery.cpp">
+      <Filter>Header Files\Options\Gallery</Filter>
+    </ClCompile>
+    <ClCompile Include="Journal.cpp">
+      <Filter>Header Files\Options\Journal</Filter>
+    </ClCompile>
+    <ClCompile Include="Music.cpp">
+      <Filter>Header Files\Options\Music</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -103,15 +130,6 @@
     <ClInclude Include="Warnings.h">
       <Filter>Source Files</Filter>
     </ClInclude>
-    <ClInclude Include="GeneralSettings.h">
-      <Filter>Header Files\Options</Filter>
-    </ClInclude>
-    <ClInclude Include="SaveGui.h">
-      <Filter>Header Files\Options</Filter>
-    </ClInclude>
-    <ClInclude Include="Save.h">
-      <Filter>Header Files\Options</Filter>
-    </ClInclude>
     <ClInclude Include="GameState.h">
       <Filter>Header Files\States\Game</Filter>
     </ClInclude>
@@ -133,8 +151,29 @@
     <ClInclude Include="MainMenuState.h">
       <Filter>Header Files\States\MainMenu</Filter>
     </ClInclude>
-    <ClInclude Include="CGgallery.h">
+    <ClInclude Include="OptionsSubtype.h">
       <Filter>Header Files\Options</Filter>
+    </ClInclude>
+    <ClInclude Include="SaveGui.h">
+      <Filter>Header Files\Options\Save</Filter>
+    </ClInclude>
+    <ClInclude Include="Save.h">
+      <Filter>Header Files\Options\Save</Filter>
+    </ClInclude>
+    <ClInclude Include="CGgallery.h">
+      <Filter>Header Files\Options\Gallery</Filter>
+    </ClInclude>
+    <ClInclude Include="GeneralSettings.h">
+      <Filter>Header Files\Options\General Settings</Filter>
+    </ClInclude>
+    <ClInclude Include="SaveSettings.h">
+      <Filter>Header Files\Options\Save</Filter>
+    </ClInclude>
+    <ClInclude Include="Journal.h">
+      <Filter>Header Files\Options\Journal</Filter>
+    </ClInclude>
+    <ClInclude Include="Music.h">
+      <Filter>Header Files\Options\Music</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

@@ -3,116 +3,215 @@
 #include "Options.h"
 #include "Engine.h"
 
-#include <chrono>
-#include <iomanip>
-#include <sstream>
-#include <time.h>
 
+GeneralSettings::GeneralSettings(Options * options) : OptionsSubType(options),
+	pagename(ResourceManager::getStyle(StyleTypes::transparentbackground), *ResourceManager::getFont(), sf::Vector2f(100, 70), "Options", 60, 5, 10, GuiNS::GuiText::FormatVer::Ver_Center, GuiNS::GuiText::FormatHor::Hor_Left, GuiNS::GuiText::Nothing),
+	windowmodeinfo(ResourceManager::getStyle(StyleTypes::transparentbackground), *ResourceManager::getFont(), sf::Vector2f(200, 50), "Window Mode:", 50, 1, 0, GuiNS::GuiText::FormatVer::Ver_Center, GuiNS::GuiText::FormatHor::Hor_Left, GuiNS::GuiText::Nothing),
+	checkboxfullscreen(GuiNS::GuiRectangle(ResourceManager::getStyle(StyleTypes::blankwhite), sf::Vector2f(20, 20))),
+	checkboxfullscreeninfo(ResourceManager::getStyle(StyleTypes::transparentbackground), *ResourceManager::getFont(), sf::Vector2f(200, 20), "Fullscreen", 30, 1, 0, GuiNS::GuiText::FormatVer::Ver_Center, GuiNS::GuiText::FormatHor::Hor_Left, GuiNS::GuiText::Nothing),
+	checkboxwindowed(GuiNS::GuiRectangle(ResourceManager::getStyle(StyleTypes::blankwhite), sf::Vector2f(20, 20))),
+	checkboxwindowedinfo(ResourceManager::getStyle(StyleTypes::transparentbackground), *ResourceManager::getFont(), sf::Vector2f(200, 20), "Windowed", 30, 1, 0, GuiNS::GuiText::FormatVer::Ver_Center, GuiNS::GuiText::FormatHor::Hor_Left, GuiNS::GuiText::Nothing),
+	volumeinfo(ResourceManager::getStyle(StyleTypes::transparentbackground), *ResourceManager::getFont(), sf::Vector2f(200, 50), "Volume:", 50, 1, 0, GuiNS::GuiText::FormatVer::Ver_Center, GuiNS::GuiText::FormatHor::Hor_Left, GuiNS::GuiText::Nothing),
+	mastervolumeinfo(ResourceManager::getStyle(StyleTypes::transparentbackground), *ResourceManager::getFont(), sf::Vector2f(200, 50), "Master Volume:", 30, 1, 0, GuiNS::GuiText::FormatVer::Ver_Center, GuiNS::GuiText::FormatHor::Hor_Left, GuiNS::GuiText::Nothing),
+	mastervolumebar(ResourceManager::getStyle(StyleTypes::blankwhite), sf::Vector2f(400, 40), sf::Vector2f(20, 40), "OptionsBarNormal.png", "OptionsBarHeld.png", "OptionsBarHeld.png", "OptionsBarBackground.png", "Data\\"),
+	bgmvolumeinfo(ResourceManager::getStyle(StyleTypes::transparentbackground), *ResourceManager::getFont(), sf::Vector2f(200, 50), "BGM Volume:", 30, 1, 0, GuiNS::GuiText::FormatVer::Ver_Center, GuiNS::GuiText::FormatHor::Hor_Left, GuiNS::GuiText::Nothing),
+	bgmvolumebar(ResourceManager::getStyle(StyleTypes::blankwhite), sf::Vector2f(400, 40), sf::Vector2f(20, 40), "OptionsBarNormal.png", "OptionsBarHeld.png", "OptionsBarHeld.png", "OptionsBarBackground.png", "Data\\"),
+	sfxvolumeinfo(ResourceManager::getStyle(StyleTypes::transparentbackground), *ResourceManager::getFont(), sf::Vector2f(200, 50), "SFX Volume:", 30, 1, 0, GuiNS::GuiText::FormatVer::Ver_Center, GuiNS::GuiText::FormatHor::Hor_Left, GuiNS::GuiText::Nothing),
+	sfxvolumebar(ResourceManager::getStyle(StyleTypes::blankwhite), sf::Vector2f(400, 40), sf::Vector2f(20, 40), "OptionsBarNormal.png", "OptionsBarHeld.png", "OptionsBarHeld.png", "OptionsBarBackground.png", "Data\\"),
+	systemvolumeinfo(ResourceManager::getStyle(StyleTypes::transparentbackground), *ResourceManager::getFont(), sf::Vector2f(200, 50), "System Volume:", 30, 1, 0, GuiNS::GuiText::FormatVer::Ver_Center, GuiNS::GuiText::FormatHor::Hor_Left, GuiNS::GuiText::Nothing),
+	systemvolumebar(ResourceManager::getStyle(StyleTypes::blankwhite), sf::Vector2f(400, 40), sf::Vector2f(20, 40), "OptionsBarNormal.png", "OptionsBarHeld.png", "OptionsBarHeld.png", "OptionsBarBackground.png", "Data\\"),
+	gameconfiginfo(ResourceManager::getStyle(StyleTypes::transparentbackground), *ResourceManager::getFont(), sf::Vector2f(200, 50), "Game Config:", 50, 1, 0, GuiNS::GuiText::FormatVer::Ver_Center, GuiNS::GuiText::FormatHor::Hor_Left, GuiNS::GuiText::Nothing),
+	textspeedinfo(ResourceManager::getStyle(StyleTypes::transparentbackground), *ResourceManager::getFont(), sf::Vector2f(200, 50), "Text Speed:", 30, 1, 0, GuiNS::GuiText::FormatVer::Ver_Center, GuiNS::GuiText::FormatHor::Hor_Left, GuiNS::GuiText::Nothing),
+	textspeedbar(ResourceManager::getStyle(StyleTypes::blankwhite), sf::Vector2f(400, 40), sf::Vector2f(20, 40), "OptionsBarNormal.png", "OptionsBarHeld.png", "OptionsBarHeld.png", "OptionsBarBackground.png", "Data\\"),
+	checkboxskip(GuiNS::GuiRectangle(ResourceManager::getStyle(StyleTypes::blankwhite), sf::Vector2f(40, 40))),
+	checkboxskipinfo(ResourceManager::getStyle(StyleTypes::transparentbackground), *ResourceManager::getFont(), sf::Vector2f(200, 50), "Skip previously unseen text.", 30, 1, 0, GuiNS::GuiText::FormatVer::Ver_Center, GuiNS::GuiText::FormatHor::Hor_Left, GuiNS::GuiText::Nothing),
+	defaultsbutton(GuiNS::GuiText(ResourceManager::getStyle(StyleTypes::blankwhite), *ResourceManager::getFont(), sf::Vector2f(200, 70), "Default", 40, 1, 10, GuiNS::GuiText::FormatVer::Ver_Center, GuiNS::GuiText::FormatHor::Hor_Center, GuiNS::GuiText::Nothing),
+		"ButtonNormal.png", "ButtonHover.png", "ButtonHover.png", "Data\\", 5)
+{
+	options->background.changeRectangle()->setTexture(ResourceManager::getTexture("Data//bgOptions.png"));
+
+	pagename.setPosition(sf::Vector2f(10, 100));
+	pagename.setClickable(false);
+
+
+	windowmodeinfo.setPosition(sf::Vector2f(300, 170));
+	windowmodeinfo.setClickable(false);
+
+	checkboxfullscreen.setPosition(windowmodeinfo.getPosition() + sf::Vector2f(50, 20 + windowmodeinfo.getSize().y));
+	checkboxfullscreen.setObserver(this);
+	checkboxfullscreeninfo.setPosition(checkboxfullscreen.getPosition() + sf::Vector2f(checkboxfullscreen.getSize().x+ 10, 0));
+	checkboxfullscreeninfo.setObserver(this);
+	checkboxwindowed.setPosition(checkboxfullscreen.getPosition() + sf::Vector2f(0, 20 + checkboxfullscreen.getSize().y));
+	checkboxwindowed.setObserver(this);
+	checkboxwindowedinfo.setPosition(checkboxwindowed.getPosition() + sf::Vector2f(checkboxwindowed.getSize().x + 10, 0));
+	checkboxwindowedinfo.setObserver(this);
+
+	syncFullscreen();
+
+	volumeinfo.setPosition(sf::Vector2f(300, 400));
+	volumeinfo.setClickable(false);
+	////////////////////////////////////////////////////////////////////
+	mastervolumeinfo.setPosition(volumeinfo.getPosition() + sf::Vector2f(50, 20 + volumeinfo.getSize().y));
+	mastervolumeinfo.setClickable(false);
+
+	mastervolumebar._changeMax(20);
+	mastervolumebar._changeState(int(sf::Listener::getGlobalVolume()/5));
+	mastervolumebar.setPosition(mastervolumeinfo.getPosition() + sf::Vector2f(0, 0 + mastervolumeinfo.getSize().y));
+	mastervolumebar.setObserver(this);
+	////////////////////////////////////////////////////////////////////
+	bgmvolumeinfo.setPosition(mastervolumebar.getPosition() + sf::Vector2f(0, 20 + mastervolumebar.getSize().y));
+	bgmvolumeinfo.setClickable(false);
+
+	bgmvolumebar._changeMax(20);
+	bgmvolumebar._changeState(int(options->fatherstate->getEngine()->getSettings()->getBgVolume()/5));
+	bgmvolumebar.setPosition(bgmvolumeinfo.getPosition() + sf::Vector2f(0, 0 + bgmvolumeinfo.getSize().y));
+	bgmvolumebar.setObserver(this);
+	////////////////////////////////////////////////////////////////////
+	sfxvolumeinfo.setPosition(bgmvolumebar.getPosition() + sf::Vector2f(0, 20 + bgmvolumebar.getSize().y));
+	sfxvolumeinfo.setClickable(false);
+
+	sfxvolumebar._changeMax(20);
+	sfxvolumebar._changeState(int(options->fatherstate->getEngine()->getSettings()->getSfxVolume()/5));
+	sfxvolumebar.setPosition(sfxvolumeinfo.getPosition() + sf::Vector2f(0, 0 + sfxvolumeinfo.getSize().y));
+	sfxvolumebar.setObserver(this);
+	////////////////////////////////////////////////////////////////////
+	systemvolumeinfo.setPosition(sfxvolumebar.getPosition() + sf::Vector2f(0, 20 + sfxvolumebar.getSize().y));
+	systemvolumeinfo.setClickable(false);
+
+	systemvolumebar._changeMax(20);
+	systemvolumebar._changeState(int(options->fatherstate->getEngine()->getSettings()->getSystemVolume()/5));
+	systemvolumebar.setPosition(systemvolumeinfo.getPosition() + sf::Vector2f(0, 0 + systemvolumeinfo.getSize().y));
+	systemvolumebar.setObserver(this);
+	////////////////////////////////////////////////////////////////////
+
+	gameconfiginfo.setPosition(sf::Vector2f(1110, 400));
+	gameconfiginfo.setClickable(false);
+
+	textspeedinfo.setPosition(gameconfiginfo.getPosition() + sf::Vector2f(50, 20 + gameconfiginfo.getSize().y));
+	textspeedinfo.setClickable(false);
+
+	textspeedbar._changeMax(20);
+	textspeedbar._changeState(int(sf::Listener::getGlobalVolume() / 5));
+	textspeedbar.setPosition(textspeedinfo.getPosition() + sf::Vector2f(0, 0 + textspeedinfo.getSize().y));
+	textspeedbar.setObserver(this);
+
+	checkboxskip.setPosition(sf::Vector2f(textspeedbar.getPosition().x, bgmvolumebar.getPosition().y));
+	checkboxskip.setObserver(this);
+	checkboxskipinfo.setPosition(checkboxskip.getPosition() + sf::Vector2f(checkboxskip.getSize().x + 10, 0));
+	checkboxskipinfo.setObserver(this);
+
+	syncSkipping();
+
+
+	defaultsbutton.setPosition(sf::Vector2f(textspeedbar.getPosition().x, systemvolumebar.getPosition().y + systemvolumebar.getSize().y - defaultsbutton.getSize().y));
+	defaultsbutton.setObserver(this);
+}
 
 GeneralSettings::~GeneralSettings()
 {
 	options->fatherstate->getEngine()->getSettings()->saveToFile();
 }
 
+
+void GeneralSettings::syncFullscreen()
+{
+	if (options->fatherstate->getEngine()->getSettings()->isFullscreen())
+	{
+		checkboxfullscreen.changeRectangle()->setTexture(ResourceManager::getTexture("Data\\OptionsCheckCircleChecked.png"));
+		checkboxwindowed.changeRectangle()->setTexture(ResourceManager::getTexture("Data\\OptionsCheckCircleNormal.png"));
+		checkboxfullscreen.setClickable(false);
+		checkboxfullscreeninfo.setClickable(false);
+		checkboxwindowed.setClickable(true);
+		checkboxwindowedinfo.setClickable(true);
+	}
+	else
+	{
+		checkboxfullscreen.changeRectangle()->setTexture(ResourceManager::getTexture("Data\\OptionsCheckCircleNormal.png"));
+		checkboxwindowed.changeRectangle()->setTexture(ResourceManager::getTexture("Data\\OptionsCheckCircleChecked.png"));
+		checkboxfullscreen.setClickable(true);
+		checkboxfullscreeninfo.setClickable(true);
+		checkboxwindowed.setClickable(false);
+		checkboxwindowedinfo.setClickable(false);
+	}
+}
+
+void GeneralSettings::syncSkipping()
+{
+	if (options->fatherstate->getEngine()->getSettings()->isSkipping())
+		checkboxskip.changeRectangle()->setTexture(ResourceManager::getTexture("Data\\OptionsCheckSquareChecked.png"));
+	else
+		checkboxskip.changeRectangle()->setTexture(ResourceManager::getTexture("Data\\OptionsCheckSquareNormal.png"));
+}
+
+void GeneralSettings::syncBars()
+{
+	mastervolumebar._changeState(int(sf::Listener::getGlobalVolume() / 5));
+	bgmvolumebar._changeState(int(options->fatherstate->getEngine()->getSettings()->getBgVolume() / 5));
+	sfxvolumebar._changeState(int(options->fatherstate->getEngine()->getSettings()->getSfxVolume() / 5));
+	systemvolumebar._changeState(int(options->fatherstate->getEngine()->getSettings()->getSfxVolume() / 5));
+	textspeedbar._changeState(int(sf::Listener::getGlobalVolume() / 5));
+}
+
 void GeneralSettings::notifyEvent(GuiNS::GuiElementEvent event, GuiNS::GuiElement * from)
 {
-	if (event.type == GuiNS::GuiElementEvent::BarValueChanged&&from == &volumebar)
+	if (event.type == GuiNS::GuiElementEvent::BarValueChanged)
 	{
-		options->fatherstate->getEngine()->getSettings()->changeVolume(event.bar.state);
+		if (from == &mastervolumebar)
+		{
+			options->fatherstate->getEngine()->getSettings()->setMasterVolume(event.bar.state * 5);
+		}
+		else if (from == &bgmvolumebar)
+		{
+			options->fatherstate->getEngine()->getSettings()->setBgVolume(event.bar.state * 5);
+		}
+		else if (from == &sfxvolumebar)
+		{
+			options->fatherstate->getEngine()->getSettings()->setSfxVolume(event.bar.state * 5);
+		}
+		else if (from == &systemvolumebar)
+		{
+			options->fatherstate->getEngine()->getSettings()->setSystemVolume(event.bar.state * 5);
+		}
+		else if (from == &textspeedbar)
+		{
+			options->fatherstate->getEngine()->getSettings()->setTextspeed(event.bar.state * 5);
+		}
 		SoundEngine::playSound("hover");
 	}
-}
-
-
-void OptionsSaveSubType::save()
-{
-	if (lastclicked == -1)
-		return;
-
-	auto gamestate = reinterpret_cast<GameState*>(options->fatherstate);
-	SaveData currentstate = gamestate->getSave();
-	currentstate.slot = lastclicked;
-	auto in_time_t = std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
-	struct tm timeinfo;
-
-	localtime_s(&timeinfo, &in_time_t);
-
-	std::wstringstream ss;
-	ss << std::put_time(&timeinfo, L"%Y-%m-%d %X");
-	currentstate.date = ss.str();
-
-	auto&tmp = gamestate->getCapturedScreenTexture();
-	sf::Vector2i size(355,200);
-	sf::Sprite tmp2(tmp);
-	tmp2.setScale((float)size.x / tmp.getSize().x, (float)size.y / tmp.getSize().y);
-	sf::RenderTexture tmp3;
-	tmp3.create(size.x, size.y);
-	tmp3.clear();
-	tmp3.draw(tmp2);
-	tmp3.display();
-	tmp3.getTexture().copyToImage().saveToFile("Data\\Save\\" + std::to_string(lastclicked) + ".png");
-	OptionsSaveSubType::savemanager.addSaveData(currentstate);
-}
-
-void OptionsSaveSubType::load()
-{
-	if (lastclicked == -1)
-		return;
-
-	if (OptionsSaveSubType::savemanager.hasSaveData(lastclicked))
-		options->fatherstate->setNewState(new GameState(options->fatherstate->getEngine(), OptionsSaveSubType::savemanager.getSaveData(lastclicked)));
-}
-
-void OptionsSaveSubType::delet()
-{
-	if (lastclicked == -1)
-		return;
-
-	OptionsSaveSubType::savemanager.deleteSaveData(lastclicked);
-}
-
-void OptionsSaveSubType::deletePopup(int slot)
-{
-	if (OptionsSaveSubType::savemanager.hasSaveData(slot))
+	else if (event.type == GuiNS::GuiElementEvent::Pressed && event.mouse.type == GuiNS::GuiElementEvent::Type::Released)
 	{
-		lastclicked = slot;
-		std::string tmp;
-		tmp += "Are you sure you want to delete a save a slot nr." + std::to_string(slot+1) + "?";
-		tmp += "(You can't undo this)";
-		options->choicepopup.changeText(tmp);
-		options->choicepopup.changeId("delete");
-		options->localgui.setPopup(&options->choicepopup);
-	}
-}
-
-
-void SaveSettings::saveMangerEvent(int slot, bool del)
-{
-	if (!del)
-	{
-		lastclicked = slot;
-		options->choicepopup.changeText("Are you sure you want to save the game on a slot nr." + std::to_string(slot+1) + "?");
-		options->localgui.setPopup(&options->choicepopup);
-		options->choicepopup.changeId("save");
-	}
-	else deletePopup(slot);
-}
-
-void LoadSettings::saveMangerEvent(int slot, bool del)
-{
-	if (!del)
-	{
-		if (OptionsSaveSubType::savemanager.hasSaveData(slot))
+		if (from == &checkboxfullscreen|| from == &checkboxfullscreeninfo)
 		{
-			lastclicked = slot;
-			std::string tmp;
-			tmp += "Are you sure you want to load on a slot nr." + std::to_string(slot+1) + "?";
-			if (options->type == Optiontype::InGame)
-				tmp += "(Any unsaved progress will be lost)";
-			options->choicepopup.changeText(tmp);
-			options->choicepopup.changeId("load");
-			options->localgui.setPopup(&options->choicepopup);
+			if (!options->fatherstate->getEngine()->getSettings()->isFullscreen())
+			{
+				options->fatherstate->getEngine()->getSettings()->setFullscreen(true);
+				options->fatherstate->getEngine()->syncWindow();
+				syncFullscreen();
+			}
+			return;
 		}
+		else if (from == &checkboxwindowed || from == &checkboxwindowedinfo)
+		{
+			if (options->fatherstate->getEngine()->getSettings()->isFullscreen())
+			{
+				options->fatherstate->getEngine()->getSettings()->setFullscreen(false);
+				options->fatherstate->getEngine()->syncWindow();
+				syncFullscreen();
+			}
+			return;
+		}
+		else if (from == &checkboxskip || from == &checkboxskipinfo)
+		{
+			options->fatherstate->getEngine()->getSettings()->setSkipping(!options->fatherstate->getEngine()->getSettings()->isSkipping());
+			syncSkipping();
+		}
+		else if (from == &defaultsbutton)
+		{
+			options->choicepopup.changeText("Are you sure you want to restore default settings?");
+			options->localgui.setPopup(&options->choicepopup);
+			options->choicepopup.changeId("defaults");
+		}
+		else return;
+		SoundEngine::playSound("click");
 	}
-	else deletePopup(slot);
 }

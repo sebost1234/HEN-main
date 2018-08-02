@@ -34,10 +34,10 @@ int __stdcall wWinMain(HINSTANCE hInst, HINSTANCE prevInst, LPWSTR szCmdLine, in
 #endif
 {
 	sf::RenderWindow window;
-	window.setFramerateLimit(100);
 	Engine engine(&window);
 
 	VisualNovelEvent::loadEvents();
+	SoundEngine::clear_audio();
 
 	try
 	{

@@ -14,6 +14,8 @@ GameState::GameState(Engine * engine, SaveData data) :
 	name.setSize(sf::Vector2f(150, 40));
 	name.setPosition(sf::Vector2f(x, float(gamesize.y) - 240));
 
+	gui.setObserver(this);
+
 	gui.addElement(&tekst);
 	gui.addElement(&name);
 	tekst.setClickable(false);
@@ -32,6 +34,9 @@ GameState::GameState(Engine * engine, SaveData data) :
 	{
 		vnc.loadSave(data);
 	}
+
+	SoundEngine::changeMusic("NONE");
+	currentmusic = "NONE";
 
 	scene = new Scene();
 
@@ -80,6 +85,7 @@ bool GameState::processEvent(sf::Event event)
 
 		if (event.type == sf::Event::KeyPressed&&event.key.code == sf::Keyboard::Escape)
 		{
+			SoundEngine::changeMusic("options.ogg", true);
 			gui.setPopup(&options);
 			options.changeSubType(OptionsSubTypeEnum::Save_ST);
 			return false;
@@ -211,8 +217,12 @@ bool GameState::process(VisualNovelEvent event)
 		SoundEngine::playSound(event.getArgumentS(SoundEventpath));
 		return true;
 	case VisualNovelEvent::PlayMusic:
-		SoundEngine::changeMusic(event.getArgumentS(MusicEventpath));
+	{
+		std::string name = event.getArgumentS(MusicEventpath);
+		SoundEngine::changeMusic(name);
+		currentmusic = name;
 		return true;
+	}
 	case VisualNovelEvent::None:
 		return true;
 	case VisualNovelEvent::Stop:
@@ -228,4 +238,22 @@ bool GameState::process(VisualNovelEvent event)
 	}
 	
 	return false;
+}
+
+void GameState::notifyEvent(GuiNS::GuiEvent event, GuiNS::Gui * from)
+{
+	switch (event.type)
+	{
+	case GuiNS::GuiEvent::PopupDeleted:
+	{
+		GuiNS::Popup*tmp = from->getCurrentPopup();
+		if (tmp == &options)
+		{
+			SoundEngine::changeMusic(currentmusic);
+		}
+	}
+	break;
+	default:
+		break;
+	}
 }

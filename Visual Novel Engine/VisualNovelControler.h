@@ -26,6 +26,7 @@
 #define RemoveFromRowEventmodelid 0
 
 #define BgchangeEventpath 0
+#define CGEventpath 0
 
 #define ModelEventid 0
 
@@ -109,6 +110,7 @@ struct VisualNovelEvent
 		RemoveFromRow,
 
 		BgChange,
+		CG,
 
 		AddModel,
 		TextureModel,
@@ -148,7 +150,7 @@ struct VisualNovelEvent
 
 		for (int i = type.size()-1;i>=0;i--)
 		{
-			if (type[i] == L'\t')
+			if (type[i] == L'\t' || type[i] == L' ')
 				type.erase(type.begin() + i);
 			else
 				type[i] = towlower(type[i]);

@@ -203,6 +203,7 @@ public:
 	{
 		rendertexture.create((unsigned int)gamesize.x, (unsigned int)gamesize.y);
 		rendertexture.setView(sf::View(sf::FloatRect(0, 0, gamesize.x, gamesize.y)));
+		rendertexture.setSmooth(true);
 	}
 
 	~FXengine()

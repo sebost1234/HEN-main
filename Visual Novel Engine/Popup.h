@@ -140,10 +140,13 @@ namespace GuiNS
 	public:
 		ChoicePopup(std::string id, Style*style, sf::String text, sf::String button1text = "Yes", sf::String button2text = "No", sf::Vector2f size = sf::Vector2f(800, 400)) :
 			Popup(id),
-			rectangle(style, size),
-			info(style, *ResourceManager::getFont(), sf::Vector2f(size.x, size.y - 50), text, 30, 30, 10, GuiNS::GuiText::FormatVer::Ver_Top, GuiNS::GuiText::FormatHor::Hor_Center, GuiNS::GuiText::Type::NewLine),
-			button1(style, *ResourceManager::getFont(), sf::Vector2f(100, 50), button1text, 30, 1, 30, GuiNS::GuiText::FormatVer::Ver_Center, GuiNS::GuiText::FormatHor::Hor_Center, GuiNS::GuiText::Nothing),
-			button2(style, *ResourceManager::getFont(), sf::Vector2f(100, 50), button2text, 30, 1, 30, GuiNS::GuiText::FormatVer::Ver_Center, GuiNS::GuiText::FormatHor::Hor_Center, GuiNS::GuiText::Nothing)
+			rectangle(GuiNS::GuiRectangle(ResourceManager::getStyle(StyleTypes::blankwhite), size),
+				"Popup.png", "Popup.png", "Popup.png", "Data\\"),
+			info(ResourceManager::getStyle(StyleTypes::transparentbackground), *ResourceManager::getFont(), sf::Vector2f(size.x, size.y - 50), text, 40, 50, 50, GuiNS::GuiText::FormatVer::Ver_Top, GuiNS::GuiText::FormatHor::Hor_Center, GuiNS::GuiText::Type::NewLine),
+			button1(GuiNS::GuiText(ResourceManager::getStyle(StyleTypes::blankwhite), *ResourceManager::getFont(), sf::Vector2f(200, 70), button1text, 45, 5, 5, GuiNS::GuiText::FormatVer::Ver_Center, GuiNS::GuiText::FormatHor::Hor_Center, GuiNS::GuiText::Nothing),
+				"ButtonNormal.png", "ButtonHover.png", "ButtonHover.png", "Data\\", 5),
+			button2(GuiNS::GuiText(ResourceManager::getStyle(StyleTypes::blankwhite), *ResourceManager::getFont(), sf::Vector2f(200, 70), button2text, 45, 5, 5, GuiNS::GuiText::FormatVer::Ver_Center, GuiNS::GuiText::FormatHor::Hor_Center, GuiNS::GuiText::Nothing),
+				"ButtonNormal.png", "ButtonHover.png", "ButtonHover.png", "Data\\", 5)
 		{
 			rectangle.setPosition(gamesize*0.5f - rectangle.getSize()*0.5f);
 			rectangle.setClickable(false);
@@ -151,8 +154,8 @@ namespace GuiNS
 
 
 			info.setPosition(rectangle.getPosition());
-			button1.setPosition(rectangle.getPosition() + sf::Vector2f(rectangle.getSize().x*0.25f - button1.getSize().x*0.5f, size.y - 50));
-			button2.setPosition(rectangle.getPosition() + sf::Vector2f(rectangle.getSize().x*0.75f - button2.getSize().x*0.5f, size.y - 50));
+			button1.setPosition(rectangle.getPosition() + sf::Vector2f(rectangle.getSize().x*0.25f - button1.getSize().x*0.5f, size.y - 90));
+			button2.setPosition(rectangle.getPosition() + sf::Vector2f(rectangle.getSize().x*0.75f - button2.getSize().x*0.5f, size.y - 90));
 
 
 
@@ -198,10 +201,10 @@ namespace GuiNS
 			Button2
 		};
 	private:
-		GuiRectangle rectangle;
+		GuiRectangleSprite rectangle;
 		GuiText info;
-		GuiText button1;
-		GuiText button2;
+		GuiTextSprite button1;
+		GuiTextSprite button2;
 
 		Clicked clickedButton;
 	public:

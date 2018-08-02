@@ -26,9 +26,10 @@ void VisualNovelEvent::loadEvents()
 	addEvent(VisualNovelEvent::PlayMusic, L"playmusic");
 	addEvent(VisualNovelEvent::FX, L"fx");
 	addEvent(VisualNovelEvent::ChangeFile, L"changefile");
-	addEvent(VisualNovelEvent::GoTo, L"goto");
-	addEvent(VisualNovelEvent::Scope, L"scope");
+	addEvent(VisualNovelEvent::GoTo, L"jump");
+	addEvent(VisualNovelEvent::Scope, L"label");
 	addEvent(VisualNovelEvent::FlagTest, L"flagtest");
+	addEvent(VisualNovelEvent::CG, L"cg");
 }
 
 

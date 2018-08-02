@@ -2,8 +2,7 @@
 
 #include "Popup.h"
 #include "State.h"
-#include "GeneralSettings.h"
-#include "CGgallery.h"
+#include "OptionsSubtype.h"
 
 enum Optiontype
 {
@@ -50,6 +49,9 @@ public:
 		if (subtype != nullptr)
 			if (newtype == subtype->getSubtype())
 				return;
+
+		SoundEngine::changeMusic("options.ogg", true);
+		localgui.eraseElement(&musicandgallerybutton);
 		switch (newtype)
 		{
 		case Save_ST:
@@ -64,7 +66,17 @@ public:
 			changeSubType(new GeneralSettings(this));
 			break;
 		case Gallery_ST:
-			changeSubType(new CGGallerySettings(this));
+			changeSubType(new CGGallery(this));
+			localgui.addElement(&musicandgallerybutton);
+			musicandgallerybutton.setString("Music");
+			break;
+		case Journal_ST:
+			changeSubType(new Journal(this));
+			break;
+		case Music_ST:
+			changeSubType(new Music(this));
+			localgui.addElement(&musicandgallerybutton);
+			musicandgallerybutton.setString("Gallery");
 			break;
 		default:
 			break;
@@ -87,12 +99,14 @@ private:
 
 	GuiNS::GuiRectangle background;
 
-	GuiNS::GuiText optionsbutton;
-	GuiNS::GuiText gallerybutton;
-	GuiNS::GuiText journalbutton;
-	GuiNS::GuiText saveandloadbutton;
-	GuiNS::GuiText mainmenubutton;
-	GuiNS::GuiText returnbutton;
+	GuiNS::GuiTextSprite optionsbutton;
+	GuiNS::GuiTextSprite gallerybutton;
+	GuiNS::GuiTextSprite journalbutton;
+	GuiNS::GuiTextSprite saveandloadbutton;
+	GuiNS::GuiTextSprite mainmenubutton;
+	GuiNS::GuiTextSprite returnbutton;
+
+	GuiNS::GuiTextSprite musicandgallerybutton;
 
 	OptionsSubType*subtype;
 
@@ -106,4 +120,7 @@ private:
 	friend class OptionsSaveSubType;
 	friend class SaveSettings;
 	friend class LoadSettings;
+	friend class CGGallery;
+	friend class Journal;
+	friend class Music;
 };
