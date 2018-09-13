@@ -1,4 +1,5 @@
 #include "Save.h"
+#include "VisualNovelControler.h"
 
 #include <fstream>
 
@@ -12,7 +13,8 @@ std::wostream& operator<<(std::wostream& str, SaveData&save)
 
 	str << save.toLoad.size() << '\n';
 	for (unsigned int i = 0; i < save.toLoad.size(); i++)
-		str << save.toLoad[i] << '\n';
+		str << save.toLoad[i].toString() << '\n';
+
 	return str;
 }
 
@@ -32,8 +34,9 @@ std::wistream& operator >> (std::wistream&is, SaveData&save)
 	int nr = stoi(tmp);
 	for (int i = 0; i < nr; i++)
 	{
-		std::getline(is, tmp, L'\n');
-		save.toLoad.push_back(tmp);
+		VisualNovelEvent newvne;
+		newvne.loadFromFile(is);
+		save.toLoad.push_back(newvne);
 	}
 
 	return is;

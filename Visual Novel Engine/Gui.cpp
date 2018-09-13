@@ -19,9 +19,9 @@ void GuiNS::Gui::sync(sf::Vector2f mousepos, float time)
 
 				if (hover != elements[i])
 				{
-					elements[i]->changeState(GuiElement::States::hover);//hover
 					if (hover != nullptr)
 						hover->changeState(GuiElement::States::nothing);//unhover
+					elements[i]->changeState(GuiElement::States::hover);//hover
 				}
 				hover = elements[i];
 				return;

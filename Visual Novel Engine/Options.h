@@ -21,6 +21,8 @@ public:
 
 	bool sync(sf::Vector2f mousepos, float time) override //1 - delete 0 - don't
 	{
+		if (subtype != nullptr)
+			subtype->sync(time);
 		localgui.sync(mousepos, time);
 		return to_delete;
 	}
@@ -44,13 +46,15 @@ public:
 
 	virtual void notifyEvent(GuiNS::GuiEvent event, GuiNS::Gui*from);
 
-	void changeSubType(OptionsSubTypeEnum newtype)
+	void changeSubType(OptionsSubTypeEnum newtype, bool music = false)
 	{
 		if (subtype != nullptr)
 			if (newtype == subtype->getSubtype())
 				return;
 
-		SoundEngine::changeMusic("options.ogg", true);
+		if(music)
+			SoundEngine::changeMusic("options.ogg", true);
+
 		localgui.eraseElement(&musicandgallerybutton);
 		switch (newtype)
 		{
@@ -97,7 +101,7 @@ private:
 		subtype->enable(&localgui);
 	}
 
-	GuiNS::GuiRectangle background;
+	GuiNS::GuiSprite background;
 
 	GuiNS::GuiTextSprite optionsbutton;
 	GuiNS::GuiTextSprite gallerybutton;

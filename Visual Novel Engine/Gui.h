@@ -18,15 +18,17 @@ namespace GuiNS
 		GuiElementEvent(){ }
 		enum EventType
 		{
-			Mouse,
-			Text,
-			BarValueChanged
+			Mouse=0,
+			Text=1,
+			BarValueChanged=2
 		};
 		
 		enum Type
 		{
-			Pressed,
-			Released
+			Pressed=0,
+			Released=1,
+			Hover=2,
+			Unhover=3
 		};
 
 		struct MouseEvent
@@ -131,9 +133,26 @@ namespace GuiNS
 
 		void changeState(States newstate)
 		{
+			if (!frozen)
+			{
+				changeStateInternal(newstate);
+
+				if (newstate == States::hover)
+				{
+					GuiElementEvent newevent;
+					newevent.type = GuiElementEvent::EventType::Mouse;
+					newevent.mouse.type = GuiElementEvent::Type::Hover;
+					notifyObserver(newevent);
+				}
+				else if (currentstate == States::hover&&newstate != States::hover)
+				{
+					GuiElementEvent newevent;
+					newevent.type = GuiElementEvent::EventType::Mouse;
+					newevent.mouse.type = GuiElementEvent::Type::Unhover;
+					notifyObserver(newevent);
+				}
+			}
 			currentstate = newstate;
-			if(!frozen)
-				changeStateInternal(currentstate);
 		}
 
 		void move(sf::Vector2f move)
@@ -468,6 +487,8 @@ namespace GuiNS
 		}
 
 
+
+
 		void setString(sf::String newstring)
 		{
 			string = newstring;
@@ -517,42 +538,18 @@ namespace GuiNS
 				int lastspace = 0;
 				for (int i = 0; i < int(text.getString().getSize()); ++i)
 				{
-					if (text.findCharacterPos(i + 1).x + paddinghor >= getSize().x + getPosition().x)
+					if (text.getString()[i] == ' ')
 					{
-						nroflines++;
-						if (nroflines > maxLines())
+						if (text.findCharacterPos(i + 1).x + paddinghor >= getSize().x + getPosition().x)
 						{
-
-							if (hidepostfix)
-							{
-								text.setString(text.getString().substring(0, i));
-								string = text.getString().substring(prefix.getSize(), std::max(i - (int)prefix.getSize(),0));
-
-								text.setString(getTextWithFixes(true));
-							}
-							else
-							{
-								text.setString(text.getString().substring(0, i));
-								string = text.getString().substring(prefix.getSize(), std::max(i - (int)prefix.getSize() - (int)postfix.getSize(),0));
-
-								text.setString(getTextWithFixes());
-							}
-
-							for (int o = string.getSize() - 1; o >= 0; --o)
-								if (string[o] == '\n')
-									string.erase(o, 1);
-							break;
-						}
-						else
-						{
+							nroflines++;
 							auto str = text.getString();
-							str.insert(lastspace+1, "\n");
+							str.insert(lastspace + 1, "\n");
 							text.setString(str);
 							i++;
 						}
-					}
-					if (text.getString()[i] == ' ')
 						lastspace = i;
+					}
 				}
 			}
 			break;
@@ -564,6 +561,7 @@ namespace GuiNS
 			formatText();
 			
 		}
+		
 		void forceSetString(sf::String newstring)
 		{
 			string = newstring;
@@ -815,12 +813,12 @@ namespace GuiNS
 
 				break;
 			}
-			sync();
+			sync(newstate);
 		}
 
-		void sync()
+		void sync(States newstate)
 		{
-			switch (currentstate)
+			switch (newstate)
 			{
 			default:
 			case GuiNS::GuiElement::nothing:
@@ -1005,24 +1003,40 @@ namespace GuiNS
 
 		void show()
 		{
-			setString(getString() + to_show);
+			forceSetString(getVisibleString() + to_show);
 			to_show.clear();
 		}
 
 		void setText(sf::String string)
 		{
+			setString(string);
+			to_show = getVisibleString();
 			setString("");
-			to_show = string;
 		}
 
 		void addText(sf::String string)
 		{
+			sf::String current = getVisibleString();
 			to_show += string;
+			setString(current+to_show);
+
+			to_show = getVisibleString();
+
+			if(to_show.getSize()>=current.getSize())
+				to_show = to_show.substring(current.getSize());
+			else to_show = "";
+
+			setString(current);
 		}
 
 		bool isDone() const
 		{
 			return to_show.getSize() == 0;
+		}
+
+		void setSpeed(float newspeed)
+		{
+			new_every = newspeed;
 		}
 
 		virtual void sync(float time) override
@@ -1032,9 +1046,8 @@ namespace GuiNS
 			{
 				if (to_show.getSize() > 0)
 				{
-					setString(getString() + to_show[0]);
+					forceSetString(getString() + to_show[0]);
 					to_show.erase(0, 1);
-					SoundEngine::playSound("Type");
 				}
 				timer = 0;
 			}
@@ -1111,11 +1124,82 @@ namespace GuiNS
 		sf::RectangleShape background;
 	};
 
+	class GuiSprite : public GuiElement
+	{
+	public:
+		GuiSprite(Style*style)
+		{
+			background.setTexture(*ResourceManager::getBigTexture("Data\\empty.png"));
+			setStyle(style);
+		}
+
+		void setTexture(thor::BigTexture*texture)
+		{
+			background.setTexture(*texture);
+		}
+	
+
+		virtual void setStyle(Style*style) override
+		{
+			background.setColor(style->backcolor);
+			GuiElement::setStyle(style);
+		}
+		virtual void changeStateInternal(States newstate)
+		{
+			switch (newstate)
+			{
+			default:
+			case GuiElement::nothing:
+				background.setColor(style->backcolor);
+				break;
+
+			case GuiElement::States::hover:
+				if (isClickable())
+					SoundEngine::playSound("hover");
+			case GuiElement::held:
+				if (isClickable())
+					background.setColor(style->backcolor2);
+				else
+					background.setColor(style->backcolor);
+				break;
+			}
+		}
+
+		virtual void setPosition(sf::Vector2f position) override
+		{
+			background.setPosition(position);
+		}
+		virtual sf::Vector2f getPosition() const override
+		{
+			return background.getPosition();
+		}
+		virtual void setSize(sf::Vector2f size) override
+		{
+			auto tmp = background.getLocalBounds();
+			background.setScale(size.x / tmp.width, size.y / tmp.height);
+		}
+		virtual sf::Vector2f getSize() const override
+		{
+			return sf::Vector2f(background.getLocalBounds().width, background.getLocalBounds().height);
+		}
+
+		thor::BigSprite*changeSprite()
+		{
+			return &background;
+		}
+		virtual void draw(sf::RenderTarget & target, sf::RenderStates states) const override
+		{
+			target.draw(background, states);
+		}
+	protected:
+		thor::BigSprite background;
+	};
+
 	class GuiRectangleSprite : public GuiRectangle
 	{
 	public:
-		GuiRectangleSprite(GuiRectangle rectangle, std::string nothingtexture = "none", std::string hovertexture = "none", std::string heldtexture = "none", std::string location = "", int border = 0) :
-			GuiRectangle(rectangle), nothingtexture(location + nothingtexture), hovertexture(location + hovertexture), heldtexture(location + heldtexture), border(border)
+		GuiRectangleSprite(GuiRectangle rectangle, std::string nothingtexture = "none", std::string hovertexture = "none", std::string heldtexture = "none", std::string location = "", int border = 0, bool flipver = false) :
+			GuiRectangle(rectangle), nothingtexture(location + nothingtexture), hovertexture(location + hovertexture), heldtexture(location + heldtexture), border(border), flipver(flipver)
 		{
 			changeState(nothing);
 		}
@@ -1140,12 +1224,12 @@ namespace GuiNS
 
 				break;
 			}
-			sync();
+			sync(newstate);
 		}
 
-		void sync()
+		void sync(States newstate)
 		{
-			switch (currentstate)
+			switch (newstate)
 			{
 			default:
 			case GuiNS::GuiElement::nothing:
@@ -1168,7 +1252,10 @@ namespace GuiNS
 					background.setTexture(NULL);
 				break;
 			}
-			background.setTextureRect(sf::IntRect(border, border, background.getTexture()->getSize().x-border*2, background.getTexture()->getSize().y - border * 2));
+			if(!flipver)
+				background.setTextureRect(sf::IntRect(border, border, background.getTexture()->getSize().x-border*2, background.getTexture()->getSize().y - border * 2));
+			else
+				background.setTextureRect(sf::IntRect(int(background.getTexture()->getSize().x) - border, border, -(int(background.getTexture()->getSize().x) - border * 2), background.getTexture()->getSize().y - border * 2));
 		}
 
 		void setNothingTexture(std::string newtexture)
@@ -1188,6 +1275,8 @@ namespace GuiNS
 		std::string hovertexture;
 		std::string heldtexture;
 		int border;
+
+		bool flipver;
 	};
 
 	class GuiBar : public GuiElement
@@ -1350,7 +1439,6 @@ namespace GuiNS
 
 			_sync();
 		}
-
 
 		virtual void changeStateInternal(States newstate)
 		{

@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Defines.h"
-#include "VisualNovelControler.h"
+#include "VisualNovelEvent.h"
 
 struct FXbase
 {
@@ -216,8 +216,9 @@ public:
 	{
 		for (int i = fx.size() - 1; i >= 0; i--)
 		{
-			data.toLoad.push_back(fx[i]->getString());
-			std::wcout << fx[i]->getString() << std::endl;
+			VisualNovelEvent tmp;
+			tmp.loadFromString(fx[i]->getString());
+			data.toLoad.push_back(tmp);
 		}
 	}
 

@@ -3,7 +3,7 @@
 #include "Engine.h"
 
 Options::Options(Optiontype type, State*fatherstate) :
-	background(ResourceManager::getStyle(StyleTypes::blankwhite), gamesize),
+	background(ResourceManager::getStyle(StyleTypes::blankwhite)),
 	optionsbutton(GuiNS::GuiText(ResourceManager::getStyle(StyleTypes::blankwhite), *ResourceManager::getFont(), sf::Vector2f(200, 70), "Options", 50, 1, 10, GuiNS::GuiText::FormatVer::Ver_Center, GuiNS::GuiText::FormatHor::Hor_Center, GuiNS::GuiText::Nothing),
 		"ButtonNormal.png", "ButtonHover.png", "ButtonHover.png", "Data\\", 5),
 	gallerybutton(GuiNS::GuiText(ResourceManager::getStyle(StyleTypes::blankwhite), *ResourceManager::getFont(), sf::Vector2f(200, 70), "Gallery", 50, 1, 10, GuiNS::GuiText::FormatVer::Ver_Center, GuiNS::GuiText::FormatHor::Hor_Center, GuiNS::GuiText::Nothing),
@@ -94,7 +94,7 @@ Options::~Options()
 
 void Options::notifyEvent(GuiNS::GuiElementEvent event, GuiNS::GuiElement * from)
 {
-	if (event.type == GuiNS::GuiElementEvent::Pressed && event.mouse.type == GuiNS::GuiElementEvent::Type::Released)
+	if (event.type == GuiNS::GuiElementEvent::Mouse && event.mouse.type == GuiNS::GuiElementEvent::Type::Released)
 	{
 		if (from == &optionsbutton)
 		{
@@ -138,7 +138,7 @@ void Options::notifyEvent(GuiNS::GuiElementEvent event, GuiNS::GuiElement * from
 		else if (from == &mainmenubutton)
 		{
 			choicepopup.changeId("gotomainmenu");
-			choicepopup.changeText("Do you really want to go back to mainmenu? (All unsaved progress will be lost)");
+			choicepopup.changeText("Do you really want to go back to main menu? (All unsaved progress will be lost)");
 			localgui.setPopup(&choicepopup);
 		}
 		else if (from == &returnbutton)

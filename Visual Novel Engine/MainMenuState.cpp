@@ -3,19 +3,21 @@
 #include "Options.h"
 
 MainMenuState::MainMenuState(Engine*engine) :
-	startbutton(ResourceManager::getStyle(StyleTypes::transparentbackground), *ResourceManager::getFont(), sf::Vector2f(200, 50), "Start", 40, 1, 10, GuiNS::GuiText::FormatVer::Ver_Top, GuiNS::GuiText::FormatHor::Hor_Center, GuiNS::GuiText::Nothing),
-	loadbutton(ResourceManager::getStyle(StyleTypes::transparentbackground), *ResourceManager::getFont(), sf::Vector2f(200, 50), "Load", 40, 1, 10, GuiNS::GuiText::FormatVer::Ver_Top, GuiNS::GuiText::FormatHor::Hor_Center, GuiNS::GuiText::Nothing),
-	optionsbutton(ResourceManager::getStyle(StyleTypes::transparentbackground), *ResourceManager::getFont(), sf::Vector2f(200, 50), "Options", 40, 1, 10, GuiNS::GuiText::FormatVer::Ver_Top, GuiNS::GuiText::FormatHor::Hor_Center, GuiNS::GuiText::Nothing),
-	gallerybutton(ResourceManager::getStyle(StyleTypes::transparentbackground), *ResourceManager::getFont(), sf::Vector2f(200, 50), "Gallery", 40, 1, 10, GuiNS::GuiText::FormatVer::Ver_Top, GuiNS::GuiText::FormatHor::Hor_Center, GuiNS::GuiText::Nothing),
-	journalbutton(ResourceManager::getStyle(StyleTypes::transparentbackground), *ResourceManager::getFont(), sf::Vector2f(200, 50), "Journal", 40, 1, 10, GuiNS::GuiText::FormatVer::Ver_Top, GuiNS::GuiText::FormatHor::Hor_Center, GuiNS::GuiText::Nothing),
-	exitbutton(ResourceManager::getStyle(StyleTypes::transparentbackground), *ResourceManager::getFont(), sf::Vector2f(200, 50), "Exit", 40, 1, 10, GuiNS::GuiText::FormatVer::Ver_Top, GuiNS::GuiText::FormatHor::Hor_Center, GuiNS::GuiText::Nothing),
+	startbutton(ResourceManager::getStyle(StyleTypes::transparentbackgrounddarktext), *ResourceManager::getFont(), sf::Vector2f(200, 50), "Start", 40, 1, 10, GuiNS::GuiText::FormatVer::Ver_Top, GuiNS::GuiText::FormatHor::Hor_Center, GuiNS::GuiText::Nothing),
+	loadbutton(ResourceManager::getStyle(StyleTypes::transparentbackgrounddarktext), *ResourceManager::getFont(), sf::Vector2f(200, 50), "Load", 40, 1, 10, GuiNS::GuiText::FormatVer::Ver_Top, GuiNS::GuiText::FormatHor::Hor_Center, GuiNS::GuiText::Nothing),
+	optionsbutton(ResourceManager::getStyle(StyleTypes::transparentbackgrounddarktext), *ResourceManager::getFont(), sf::Vector2f(200, 50), "Options", 40, 1, 10, GuiNS::GuiText::FormatVer::Ver_Top, GuiNS::GuiText::FormatHor::Hor_Center, GuiNS::GuiText::Nothing),
+	gallerybutton(ResourceManager::getStyle(StyleTypes::transparentbackgrounddarktext), *ResourceManager::getFont(), sf::Vector2f(200, 50), "Gallery", 40, 1, 10, GuiNS::GuiText::FormatVer::Ver_Top, GuiNS::GuiText::FormatHor::Hor_Center, GuiNS::GuiText::Nothing),
+	journalbutton(ResourceManager::getStyle(StyleTypes::transparentbackgrounddarktext), *ResourceManager::getFont(), sf::Vector2f(200, 50), "Journal", 40, 1, 10, GuiNS::GuiText::FormatVer::Ver_Top, GuiNS::GuiText::FormatHor::Hor_Center, GuiNS::GuiText::Nothing),
+	exitbutton(ResourceManager::getStyle(StyleTypes::transparentbackgrounddarktext), *ResourceManager::getFont(), sf::Vector2f(200, 50), "Exit", 40, 1, 10, GuiNS::GuiText::FormatVer::Ver_Top, GuiNS::GuiText::FormatHor::Hor_Center, GuiNS::GuiText::Nothing),
 	options(Optiontype::Menu, this),
 	State(engine)
 {
+	SoundEngine::changeMusic("menu.ogg", true);
 
-	background.setSize(gamesize);
-	background.setTexture(ResourceManager::getTexture("Data//bgMenu.png"));
 
+	background.setTexture(*ResourceManager::getBigTexture("Data//bgMenu.png"));
+
+	
 	startbutton.fitBackground(true, false);
 	loadbutton.fitBackground(true, false);
 	optionsbutton.fitBackground(true, false);
@@ -55,8 +57,6 @@ MainMenuState::MainMenuState(Engine*engine) :
 	gui.addElement(&exitbutton);
 
 	gui.setObserver(this);
-
-	SoundEngine::changeMusic("menu.ogg", true);
 }
 
 bool MainMenuState::processEvent(sf::Event event)
@@ -87,38 +87,53 @@ void MainMenuState::draw()
 
 void MainMenuState::notifyEvent(GuiNS::GuiElementEvent event, GuiNS::GuiElement*from)
 {
-	if (event.type == GuiNS::GuiElementEvent::Pressed && event.mouse.type == GuiNS::GuiElementEvent::Type::Released)
+	if (event.type == GuiNS::GuiElementEvent::Mouse)
 	{
-		if (from == &startbutton)
-			setNewState(new GameState(getEngine()));
-		else if (from == &loadbutton)
+		if (event.mouse.type == GuiNS::GuiElementEvent::Type::Released)
 		{
-			SoundEngine::changeMusic("options.ogg", true);
-			gui.setPopup(&options);
-			options.changeSubType(OptionsSubTypeEnum::Load_ST);
+			if (from == &startbutton)
+				setNewState(new GameState(getEngine()));
+			else if (from == &loadbutton)
+			{
+				SoundEngine::changeMusic("options.ogg", true);
+				gui.setPopup(&options);
+				options.changeSubType(OptionsSubTypeEnum::Load_ST);
+			}
+			else if (from == &optionsbutton)
+			{
+				SoundEngine::changeMusic("options.ogg", true);
+				gui.setPopup(&options);
+				options.changeSubType(OptionsSubTypeEnum::Options_ST);
+			}
+			else if (from == &gallerybutton)
+			{
+				SoundEngine::changeMusic("options.ogg", true);
+				gui.setPopup(&options);
+				options.changeSubType(OptionsSubTypeEnum::Gallery_ST);
+			}
+			else if (from == &journalbutton)
+			{
+				SoundEngine::changeMusic("options.ogg", true);
+				gui.setPopup(&options);
+				options.changeSubType(OptionsSubTypeEnum::Journal_ST);
+			}
+			else if (from == &exitbutton)
+				getWindow()->close();
+			else return;
+			SoundEngine::playSound("click");
 		}
-		else if (from == &optionsbutton)
+		else if(event.mouse.type == GuiNS::GuiElementEvent::Type::Hover)
 		{
-			SoundEngine::changeMusic("options.ogg", true);
-			gui.setPopup(&options);
-			options.changeSubType(OptionsSubTypeEnum::Options_ST);
+			auto tmp = reinterpret_cast<GuiNS::GuiText*>(from);
+			if (tmp != nullptr)
+				tmp->changeTextApperance()->setStyle(sf::Text::Style::Underlined);
 		}
-		else if (from == &gallerybutton)
+		else if (event.mouse.type == GuiNS::GuiElementEvent::Type::Unhover)
 		{
-			SoundEngine::changeMusic("options.ogg", true);
-			gui.setPopup(&options);
-			options.changeSubType(OptionsSubTypeEnum::Gallery_ST);
+			auto tmp = reinterpret_cast<GuiNS::GuiText*>(from);
+			if (tmp != nullptr)
+				tmp->changeTextApperance()->setStyle(sf::Text::Style::Regular);
 		}
-		else if (from == &journalbutton)
-		{
-			SoundEngine::changeMusic("options.ogg", true);
-			gui.setPopup(&options);
-			options.changeSubType(OptionsSubTypeEnum::Journal_ST);
-		}
-		else if (from == &exitbutton)
-			getWindow()->close();
-		else return;
-		SoundEngine::playSound("click");
 	}
 }
 

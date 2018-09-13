@@ -4,7 +4,7 @@
 
 void GuiSaveManager::notifyEvent(GuiNS::GuiElementEvent event, GuiNS::GuiElement * from)
 {
-	if (event.type == GuiNS::GuiElementEvent::Pressed && event.mouse.type == GuiNS::GuiElementEvent::Type::Released)
+	if (event.type == GuiNS::GuiElementEvent::Mouse && event.mouse.type == GuiNS::GuiElementEvent::Type::Released)
 	{
 		{
 			if (from == &deletebutton)

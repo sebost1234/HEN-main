@@ -29,21 +29,22 @@ public:
 	SaveData getSave()
 	{
 		SaveData data = vnc.createSaveBase();
-		data.toLoad.push_back(L"playmusic;" + sf::String(currentmusic));
-		data.toLoad.push_back(L"say;" + name.getString() + L";" + tekst.getString() + ";NS");
-		scene->save(data);
-		fxengine.save(data);
+		data.toLoad.push_back(VisualNovelEvent(VisualNovelEvent::PlayMusic, { sf::String(currentmusic) }));
+		data.toLoad.push_back(VisualNovelEvent(VisualNovelEvent::Say, { name.getString().toWideString(), tekst.getString().toWideString(), L"NS" }));
+		scene.save(data);
 		return data;
 	}
 
 	sf::Image getCapturedScreen()
 	{
-		return fxengine.getTexture()->getTexture().copyToImage();
+		return sf::Image();
 	}
 	sf::Texture getCapturedScreenTexture()
 	{
-		return fxengine.getTexture()->getTexture();
+		return sf::Texture();
 	}
+
+	void syncTextSpeed();
 private:
 	
 	bool process(VisualNovelEvent event);
@@ -54,20 +55,20 @@ private:
 
 	GuiNS::GuiTextSlowShow tekst;
 	GuiNS::GuiText name;
+	sf::Sprite textbackground;
+
+
 
 	std::vector <GuiNS::GuiText*> choices;
 
 	Options options;
 
 	//Game
-	Scene*scene;
+	Scene scene;
 
 	std::string currentmusic;
 
 	VisualNovelControler vnc;
 	bool processing;
 	float timer;
-
-	//FX
-	FXengine fxengine;
 };

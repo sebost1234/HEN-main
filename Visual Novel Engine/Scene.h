@@ -152,6 +152,10 @@ public:
 				{
 					seencglist.push_back(event.getArgumentS(CGEventpath));
 					std::fstream file;
+
+					std::locale  defaultLocale("");
+					file.imbue(defaultLocale);
+
 					file.open("Data\\Save\\seencgs.czpal", std::ios::out | std::ios::trunc);
 					for (unsigned int i = 0; i < seencglist.size(); i++)
 						file << seencglist[i] << std::endl;
@@ -275,18 +279,18 @@ public:
 	{
 		for (unsigned int i = 0; i < models.size(); i++)
 		{
-			data.toLoad.push_back(L"addmodel;" + models[i]->id);
+			data.toLoad.push_back(VisualNovelEvent(VisualNovelEvent::AddModel, { models[i]->id }));
 			if (models[i]->sprite.getTexture() != nullptr)
-				data.toLoad.push_back(L"texturemodel;" + models[i]->id + L';' + sf::String(models[i]->currenttexture).toWideString());
+				data.toLoad.push_back(VisualNovelEvent(VisualNovelEvent::TextureModel, { models[i]->id, sf::String(models[i]->currenttexture).toWideString() }));
 		}
 		if (gamerectangle.getTexture() != nullptr)
-			data.toLoad.push_back(L"changebg;" + currenttexture);
+			data.toLoad.push_back(VisualNovelEvent(VisualNovelEvent::BgChange, { currenttexture }));
 
 		for (unsigned int i = 0; i < rows.size(); i++)
 			for (unsigned int o = 0; o < rows[i]->models.size(); o++)
 			{
-				data.toLoad.push_back(L"moveintorow;" + rows[i]->models[o]->id + L';' + rows[i]->id + L';' + std::to_wstring(o) + L";0");
-				data.toLoad.push_back(L"setmodelposition;" + rows[i]->models[o]->id + L';' + std::to_wstring(rows[i]->models[o]->getPosition().x) + L";" + std::to_wstring(rows[i]->models[o]->getPosition().y));
+				data.toLoad.push_back(VisualNovelEvent(VisualNovelEvent::MoveIntoRow, { rows[i]->models[o]->id,  rows[i]->id, std::to_wstring(o), L"0" }));
+				data.toLoad.push_back(VisualNovelEvent(VisualNovelEvent::SetModelPosition, { rows[i]->models[o]->id, std::to_wstring(rows[i]->models[o]->getPosition().x), std::to_wstring(rows[i]->models[o]->getPosition().y) }));
 			}
 	}
 

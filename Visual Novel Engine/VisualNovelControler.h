@@ -10,241 +10,7 @@
 
 #include "Save.h"
 #include "Warnings.h"
-
-
-#define SayEventname 0
-#define SayEventstring 1
-#define SayEventtype 2
-
-#define SetSceneEventtype 0
-
-#define MoveIntoRowEventmodelid 0
-#define MoveIntoRowEventrowid 1
-#define MoveIntoRowEventpos 2
-#define MoveIntoRowEventteleport 3
-
-#define RemoveFromRowEventmodelid 0
-
-#define BgchangeEventpath 0
-#define CGEventpath 0
-
-#define ModelEventid 0
-
-#define TextureModelEventid 0
-#define TextureModelEventpath 1
-
-#define SetModelPositionEventid 0
-#define SetModelPositionEventx 1
-#define SetModelPositionEventy 2
-
-#define SetModelFreeEventid 0
-#define SetModelFreeEventbool 1
-
-#define WaitEventtime 0
-
-#define ChangeFileEventpath 0
-#define GoToEventScope 0
-
-#define ScopeEventId 0
-
-#define ChoiceEventnr 0
-#define ChoiceEventstart 1
-
-#define SoundEventpath 0
-
-#define MusicEventpath 0
-#define MusicEventloop 1
-
-#define FlagData 0
-#define FlagDataSuccessScope 1
-#define FlagDataFailureScope 2
-
-class Comparewstring
-{
-public:
-	bool operator() (const std::wstring& left, const std::wstring& right) const
-	{
-		unsigned int size = std::min(left.size(), right.size());
-		for (unsigned int i = 0u; i < size; i++)
-			if (left[i] < right[i])
-				return true;
-			else if (left[i] > right[i])
-				return false;
-		return left.size()<right.size();
-	}
-};
-
-struct VisualNovelEvent
-{
-	//Say event 1s-string 2s-name
-	//BgChangeEvent event 1s-path
-	//ModelEvent event 1s-id
-	//TextureModelEvent 1s-id 2s-path
-	//WaitEvent 1f-time
-	//ChangeFileEvent 1s-path
-	//ScopeEvent 1s-id
-	//ChoiceEvent 1i - n 1s*n - names 1s*n - scopeid
-	//SoundEvent 1s - path
-	//MusicEvent 1s - path 1i - loop
-
-
-
-	enum Type : int
-	{
-		STARTOFGAME,
-		None,
-		//Game
-		Wait,
-		Stop,
-		Say,
-		Choice,
-		Flag,
-
-		SetScene,
-
-		ENDOFGAME,
-		//Scene manipulation
-		STARTOFSCENE,
-
-		MoveIntoRow,
-		RemoveFromRow,
-
-		BgChange,
-		CG,
-
-		AddModel,
-		TextureModel,
-		DeleteModel,
-
-		SetModelPosition,
-		SetModelTargetPosition,
-		SetModelFreeEvent,
-
-
-		ENDOFSCENE,
-		//Sound and fx
-		STARTOFFX,
-
-		PlaySound,
-		PlayMusic,
-
-		FX,
-
-		ENDOFFX,
-		STARTOFCONTROL,
-		//Control
-		ChangeFile,
-		GoTo,
-		Scope,
-		FlagTest,
-
-		ENDOFCONTROL,
-	};
-
-	VisualNovelEvent(VisualNovelEvent::Type type = VisualNovelEvent::None) : typ(type) {}
-
-	void loadFromString(std::wstring line)
-	{
-		size_t tmp=0;
-		std::wstring type = nextArgument(line, tmp);
-
-		for (int i = type.size()-1;i>=0;i--)
-		{
-			if (type[i] == L'\t' || type[i] == L' ')
-				type.erase(type.begin() + i);
-			else
-				type[i] = towlower(type[i]);
-		}
-
-		typ = stringToType(type);
-		loadArguments(line, tmp);
-	}
-
-	static std::wstring typeToString(Type typ);
-	static Type stringToType(std::wstring name);
-
-
-	std::wstring toString() const
-	{
-		std::wstring string;
-		string += typeToString(typ) + L';';
-		for (unsigned int i = 0; i < arguments.size(); i++)
-			string += arguments[i] + L';';
-		return string;
-	}
-
-	Type getType() const
-	{
-		return typ;
-	}
-
-	bool isArgument(unsigned int i)
-	{
-		return i >= 0u && i < arguments.size();
-	}
-	std::wstring getArgument(unsigned int i)
-	{
-		if(i>=0u&&i<arguments.size())
-			return arguments[i];
-		else
-		{
-			throwWarning(L"At line: " + toString());
-			throwWarning(L"Trying to access argument nr " + std::to_wstring(i) + L" out of " + std::to_wstring(arguments.size()) + L" arguments.");
-			return L"0";
-		}
-	}
-	std::string getArgumentS(unsigned int i)
-	{
-		if (i >= 0u && i<arguments.size())
-			return std::string(arguments[i].begin(), arguments[i].end());
-		else
-		{
-			throwWarning(L"At line: " + toString());
-			throwWarning(L"Trying to access argument nr " + std::to_wstring(i) + L" out of " + std::to_wstring(arguments.size()) + L" arguments.");
-			return "0";
-		}
-	}
-	int getArgumentAsInt(int i)
-	{
-		return stoi(getArgument(i));
-	}
-	float getArgumentAsFloat(int i)
-	{
-		return stof(getArgument(i));
-	}
-
-	static void loadEvents();
-private:
-	std::wstring nextArgument(std::wstring string, size_t&pos)
-	{
-		size_t find = string.find(';', pos);
-		std::wstring to_return;
-		if (find == std::wstring::npos)
-		{
-			to_return = string.substr(pos, string.size() - pos);
-			pos = std::wstring::npos;
-		}
-		else
-		{
-			to_return = string.substr(pos, find - pos);
-			pos = find + 1;
-		}
-		return to_return;
-	}
-	void loadArguments(std::wstring string, size_t pos)
-	{
-		while (pos != std::wstring::npos)
-			arguments.push_back(nextArgument(string, pos));
-	}
-
-	std::vector <std::wstring> arguments;
-	Type typ;
-
-
-	static void addEvent(VisualNovelEvent::Type typ, std::wstring string);
-	static std::map < std::wstring, Type, Comparewstring> stringtotypemap;
-	static std::map < Type, std::wstring> typetostringmap;
-};
+#include "VisualNovelEvent.h"
 
 class VisualNovelControler
 {
@@ -283,8 +49,10 @@ public:
 				events.push_back(tmp);
 		}
 		
-		//for (unsigned int i = 0; i < events.size(); i++)
-		//	std::wcout << events[i].toString() << std::endl;
+		/*
+		for (unsigned int i = 0; i < events.size(); i++)
+			std::wcout << events[i].toString() << std::endl;
+		*/
 
 		file.close();
 	}
@@ -293,13 +61,9 @@ public:
 		loadFile(data.file);
 		nextevent = data.currentline;
 
-		for (unsigned int i = 0; i < data.toLoad.size(); i++)
-		{
-			VisualNovelEvent tmp;
-			tmp.loadFromString(data.toLoad[i]);
-			loadevents.push_back(tmp);
-		}
+		loadevents = data.toLoad;
 	}
+
 	SaveData createSaveBase()
 	{
 		SaveData data;
@@ -308,7 +72,11 @@ public:
 		data.currentline = lasttext;
 
 		for (unsigned int i = 0; i < flags.size(); i++)
-			data.toLoad.push_back(L"flag;" + flags[i]);
+		{
+			VisualNovelEvent tmp(VisualNovelEvent::Flag);
+			tmp.addArgument(flags[i]);
+			data.toLoad.push_back(tmp);
+		}
 
 		return data;
 	}
@@ -356,6 +124,16 @@ public:
 					else
 						gotoScope(tmp.getArgument(FlagDataFailureScope));
 					break;
+				case VisualNovelEvent::GlobalFlagTest:
+				{
+					std::vector<std::wstring> globalflags = getGlobalFlags();
+
+					if (std::find(globalflags.begin(), globalflags.end(), tmp.getArgument(0)) != globalflags.end())
+						gotoScope(tmp.getArgument(FlagDataSuccessScope));
+					else
+						gotoScope(tmp.getArgument(FlagDataFailureScope));
+					break;
+				}
 				default:
 					break;
 				}
@@ -386,22 +164,64 @@ public:
 			gotoScope(events[nextevent-1].getArgument(ChoiceEventstart+nrofchoices + nr));
 		}
 	}
+
+	static std::vector<std::wstring> getGlobalFlags()
+	{
+		std::vector<std::wstring> globalflags;
+
+		std::wfstream file;
+
+		file.open("Data\\Save\\globalflags.czpal");
+		if (file.is_open())
+			while (!file.eof())
+			{
+				std::wstring path;
+				std::getline(file, path, L'\n');
+				globalflags.push_back(path);
+			}
+
+		file.close();
+
+		return globalflags;
+	}
 private:
 	void flagCheck(VisualNovelEvent&tmp)
 	{
 		if(tmp.getType() == VisualNovelEvent::Flag)
 			flags.push_back(tmp.getArgument(0));
+		else if (tmp.getType() == VisualNovelEvent::GlobalFlag)
+		{
+			std::vector<std::wstring> globalflags = getGlobalFlags();
+
+			bool found = false;
+			for (unsigned int i = 0; i < globalflags.size(); i++)
+				if (globalflags[i] == tmp.getArgument(0))
+				{
+					found = true;
+					break;
+				}
+
+			if (!found)
+			{
+				globalflags.push_back(tmp.getArgument(0));
+				std::wfstream file;
+
+				std::locale  defaultLocale("");
+				file.imbue(defaultLocale);
+
+				file.open("Data\\Save\\globalflags.czpal", std::ios::out | std::ios::trunc);
+				for (unsigned int i = 0; i < globalflags.size(); i++)
+					file << globalflags[i] << std::endl;
+
+				file.close();
+			}
+		}
 	}
 	VisualNovelEvent loadNext(std::wfstream&file)
 	{
 		VisualNovelEvent to_return;
-		std::wstring line = getLine(file);
-		if (line.size() > 3)
-			if (line.substr(0, 3) == L"\xEF\xBB\xBF")
-				line = line.substr(3, line.size() - 3);
 
-		to_return.loadFromString(line);
-
+		to_return.loadFromFile(file);
 
 		return to_return;
 	}

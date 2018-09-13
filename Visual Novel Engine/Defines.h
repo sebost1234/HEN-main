@@ -6,3 +6,5 @@
 #define gamesize sf::Vector2f(1920, 1080)
 //#define gamesize sf::Vector2f(1280, 800)
 
+#define mystring std::basic_string<char16_t>
+

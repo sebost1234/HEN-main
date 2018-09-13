@@ -12,7 +12,7 @@
 struct GuiSaveData
 {
 	GuiSaveData(sf::Vector2f offset, sf::Vector2f size, int x, int y, int padding, float innerpadding = 10) :
-		desc(ResourceManager::getStyle(StyleTypes::transparentbackground), *ResourceManager::getFont(), sf::Vector2f(200, 200), "", 45, 5, 5, GuiNS::GuiText::FormatVer::Ver_Top, GuiNS::GuiText::FormatHor::Hor_Left, GuiNS::GuiText::NewLine),
+		desc(ResourceManager::getStyle(StyleTypes::transparentbackgrounddarktext), *ResourceManager::getFont(), sf::Vector2f(200, 200), "", 45, 5, 5, GuiNS::GuiText::FormatVer::Ver_Top, GuiNS::GuiText::FormatHor::Hor_Left, GuiNS::GuiText::NewLine),
 		picture(ResourceManager::getStyle(StyleTypes::blankwhite), sf::Vector2f( float(int((size.y - innerpadding * 2.0)*(16.0f / 9.0f))), size.y-innerpadding*2.0f)),
 		pictureborder(GuiNS::GuiRectangle(ResourceManager::getStyle(StyleTypes::blankwhite), sf::Vector2f(float(int((size.y - innerpadding * 2.0)*(16.0f / 9.0f))), size.y - innerpadding*2.0f)),
 			"SaveImageBorder.png", "SaveImageBorder.png", "SaveImageBorder.png", "Data\\"),
@@ -132,7 +132,7 @@ class GuiSaveManager : public GuiNS::GuiElementObserver
 {
 public:
 	GuiSaveManager(OptionsSaveSubType*fatherstate, bool save, unsigned int rows = 3, unsigned int columns = 2, sf::Vector2f pos = sf::Vector2f(20, 170), float width = 1880) :
-		description(ResourceManager::getStyle(StyleTypes::transparentbackground), *ResourceManager::getFont(), sf::Vector2f(230, 70), "", 50, 1, 10, GuiNS::GuiText::FormatVer::Ver_Center, GuiNS::GuiText::FormatHor::Hor_Center, GuiNS::GuiText::Nothing),
+		description(ResourceManager::getStyle(StyleTypes::transparentbackgrounddarktext), *ResourceManager::getFont(), sf::Vector2f(230, 70), "", 50, 1, 10, GuiNS::GuiText::FormatVer::Ver_Center, GuiNS::GuiText::FormatHor::Hor_Center, GuiNS::GuiText::Nothing),
 		deletebutton(GuiNS::GuiRectangle(ResourceManager::getStyle(StyleTypes::blankwhite), sf::Vector2f(100, 100)), "DeleteButtonNormal.png", "DeleteButtonHover.png", "DeleteButtonHover.png", "Data\\"),
 		copybutton(GuiNS::GuiText(ResourceManager::getStyle(StyleTypes::blankwhite), *ResourceManager::getFont(), sf::Vector2f(200, 70), "Copy", 45, 5, 5, GuiNS::GuiText::FormatVer::Ver_Center, GuiNS::GuiText::FormatHor::Hor_Center, GuiNS::GuiText::Nothing),
 			"ButtonNormal.png", "ButtonHover.png", "ButtonHover.png", "Data\\", 5),
@@ -148,6 +148,7 @@ public:
 		////////////////////////LOADING SAVE DATA////////////////////
 		std::string path = "Data\\Save\\save.czpal";
 		std::wfstream file;
+
 		file.open(path, std::ios::in);
 		if (!file.is_open())
 			std::throw_with_nested(std::runtime_error("ERROR 01: Failed to load game file: " + path));
@@ -363,7 +364,12 @@ public:
 	void saveDataToFile()
 	{
 		std::string path = "Data\\Save\\save.czpal";
+
 		std::wfstream file;
+
+		std::locale  defaultLocale("");
+		file.imbue(defaultLocale);
+
 		file.open(path, std::ios::trunc | std::ios::out);
 		file << savedata.size() << L'\n';
 		for (unsigned int i = 0; i < savedata.size(); i++)

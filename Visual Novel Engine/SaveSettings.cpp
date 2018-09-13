@@ -11,13 +11,13 @@
 
 
 OptionsSaveSubType::OptionsSaveSubType(Options * options, bool save) : OptionsSubType(options), savemanager(this, save),
-pagename(ResourceManager::getStyle(StyleTypes::transparentbackground), *ResourceManager::getFont(), sf::Vector2f(100, 70), "", 60, 5, 10, GuiNS::GuiText::FormatVer::Ver_Center, GuiNS::GuiText::FormatHor::Hor_Left, GuiNS::GuiText::Nothing)
+pagename(ResourceManager::getStyle(StyleTypes::transparentbackgrounddarktext), *ResourceManager::getFont(), sf::Vector2f(100, 70), "", 60, 5, 10, GuiNS::GuiText::FormatVer::Ver_Center, GuiNS::GuiText::FormatHor::Hor_Left, GuiNS::GuiText::Nothing)
 {
 	pagename.setPosition(sf::Vector2f(10, 100));
 	pagename.setClickable(false);
 	lastclicked = -1;
 	lastclicked2 = -1;
-	options->background.changeRectangle()->setTexture(ResourceManager::getTexture("Data//bgSave.png"));
+	options->background.setTexture(ResourceManager::getBigTexture("Data//bgSave.png"));
 }
 
 

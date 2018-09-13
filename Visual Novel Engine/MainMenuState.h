@@ -4,6 +4,8 @@
 #include "GameState.h"
 #include "Options.h"
 
+#include <Thor\Graphics.hpp>
+
 class MainMenuState : public State, GuiNS::GuiElementObserver, GuiNS::GuiObserver
 {
 public:
@@ -18,7 +20,8 @@ public:
 private:
 	GuiNS::Gui gui;
 
-	sf::RectangleShape background;
+	thor::BigSprite background;
+
 	GuiNS::GuiText startbutton;
 	GuiNS::GuiText loadbutton;
 	GuiNS::GuiText optionsbutton;

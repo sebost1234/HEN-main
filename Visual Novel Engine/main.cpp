@@ -10,7 +10,6 @@
 
 #include <windows.h>
 
-
 //#include <vld.h>
 
 void print_exception(const std::exception& e, int level = 0)
@@ -27,17 +26,19 @@ void print_exception(const std::exception& e, int level = 0)
 }
 
 
-#ifdef _DEBUG
+//#ifdef _DEBUG
 int main()
-#else
-int __stdcall wWinMain(HINSTANCE hInst, HINSTANCE prevInst, LPWSTR szCmdLine, int nCmdShow)
-#endif
+//#else
+//int __stdcall wWinMain(HINSTANCE hInst, HINSTANCE prevInst, LPWSTR szCmdLine, int nCmdShow)
+//#endif
 {
-	sf::RenderWindow window;
-	Engine engine(&window);
+	setlocale(LC_ALL, "pl_PL.UTF-8");
 
 	VisualNovelEvent::loadEvents();
 	SoundEngine::clear_audio();
+
+	sf::RenderWindow window;
+	Engine engine(&window);
 
 	try
 	{

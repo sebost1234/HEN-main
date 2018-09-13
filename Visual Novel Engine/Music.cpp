@@ -2,16 +2,15 @@
 #include "Options.h"
 
 Music::Music(Options * options) : OptionsSubType(options),
-pagename(ResourceManager::getStyle(StyleTypes::transparentbackground), *ResourceManager::getFont(), sf::Vector2f(100, 70), "", 60, 5, 10, GuiNS::GuiText::FormatVer::Ver_Center, GuiNS::GuiText::FormatHor::Hor_Left, GuiNS::GuiText::Nothing),
-currentsonginfo(ResourceManager::getStyle(StyleTypes::transparentbackground), *ResourceManager::getFont(), sf::Vector2f(250, 70), "", 45, 1, 10, GuiNS::GuiText::FormatVer::Ver_Top, GuiNS::GuiText::FormatHor::Hor_Left, GuiNS::GuiText::NewLine),
+pagename(ResourceManager::getStyle(StyleTypes::transparentbackgroundwhitetext), *ResourceManager::getFont(), sf::Vector2f(290, 70), "", 60, 5, 10, GuiNS::GuiText::FormatVer::Ver_Center, GuiNS::GuiText::FormatHor::Hor_Center, GuiNS::GuiText::Nothing),
+currentsonginfo(ResourceManager::getStyle(StyleTypes::transparentbackgroundwhitetext), *ResourceManager::getFont(), sf::Vector2f(250, 70), "", 45, 1, 10, GuiNS::GuiText::FormatVer::Ver_Top, GuiNS::GuiText::FormatHor::Hor_Left, GuiNS::GuiText::NewLine),
 columns(2), rows(4)
 {
 	pagename.setString("Music");
-	pagename.fitBackground(true, false);
-	pagename.setPosition(sf::Vector2f(10, 100));
+	pagename.setPosition(sf::Vector2f(0, 110));
 	pagename.setClickable(false);
 
-	options->background.changeRectangle()->setTexture(ResourceManager::getTexture("Data//bgMusic.png"));
+	options->background.setTexture(ResourceManager::getBigTexture("Data//bgMusic.png"));
 
 
 	std::fstream file;
@@ -57,17 +56,19 @@ columns(2), rows(4)
 		}
 
 	pos.x = 1390.0f + padding;
+	pos.y += 100.0f;
 
 	currentsonginfo.setPosition(pos);
 
-	currentsonginfo.setSize(sf::Vector2f(1920 - padding - pos.x, 800));
+	currentsonginfo.setSize(sf::Vector2f(1920 - padding - pos.x, 700));
+	currentsonginfo.setClickable(false);
 
 	syncInfo();
 }
 
 void Music::notifyEvent(GuiNS::GuiElementEvent event, GuiNS::GuiElement * from)
 {
-	if (event.type == GuiNS::GuiElementEvent::Pressed && event.mouse.type == GuiNS::GuiElementEvent::Type::Released)
+	if (event.type == GuiNS::GuiElementEvent::Mouse && event.mouse.type == GuiNS::GuiElementEvent::Type::Released)
 	{
 		
 			for (unsigned int i = 0; i < songs.size(); i++)

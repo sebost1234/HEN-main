@@ -85,7 +85,7 @@ void LoadState::nextLogo()
 	{
 		currentnr = 1;
 	}
-	logo.setTexture(*ResourceManager::getTexture("data\\Logo" + std::to_string(currentnr) + ".png"));
+	logo.setTexture(*ResourceManager::getBigTexture("data\\Logo" + std::to_string(currentnr) + ".png"));
 	logo.setOrigin(logo.getGlobalBounds().width / 2, logo.getGlobalBounds().height / 2);
 	logo.setPosition(gamesize.x / 2.0f, gamesize.y / 2.0f);
 }

@@ -1,6 +1,7 @@
 #pragma once
 
 #include <SFML\Graphics.hpp>
+#include <Thor\Graphics.hpp>
 #include <map>
 #include <array>
 
@@ -8,7 +9,8 @@
 
 enum StyleTypes
 {
-	transparentbackground,
+	transparentbackgrounddarktext,
+	transparentbackgroundwhitetext,
 	normal,
 	blankwhite,
 	blankwhiteshaded
@@ -52,8 +54,11 @@ public:
 			case normal:
 				styles[type] = new GuiNS::Style(sf::Color(50, 50, 50), sf::Color(100, 100, 100), sf::Color(255, 0, 0), sf::Color(100, 0, 0), sf::Color::White);
 				break;
-			case transparentbackground:
+			case transparentbackgrounddarktext:
 				styles[type] = new GuiNS::Style(sf::Color(0, 0, 0, 0), sf::Color(0, 0, 0, 0), sf::Color(0, 0, 0, 0), sf::Color(0, 0, 0, 0), sf::Color::Black);
+				break;
+			case transparentbackgroundwhitetext:
+				styles[type] = new GuiNS::Style(sf::Color(0, 0, 0, 0), sf::Color(0, 0, 0, 0), sf::Color(0, 0, 0, 0), sf::Color(0, 0, 0, 0), sf::Color::White);
 				break;
 			case blankwhite:
 				styles[type] = new GuiNS::Style(sf::Color::White, sf::Color::White, sf::Color::White, sf::Color::White, sf::Color::White);
@@ -71,11 +76,22 @@ public:
 	{
 		if (textures.count(texture) == 0)
 		{
-			textures[texture] = new sf::Texture();
+			textures[texture] = new sf::Texture;
 			textures[texture]->loadFromFile(texture);
 			textures[texture]->setSmooth(true);
 		}
 		return textures[texture];
+	}
+
+	static thor::BigTexture*getBigTexture(std::string texture)
+	{
+		if (bigtextures.count(texture) == 0)
+		{
+			bigtextures[texture] = new thor::BigTexture();
+			bigtextures[texture]->loadFromFile(texture);
+			bigtextures[texture]->setSmooth(true);
+		}
+		return bigtextures[texture];
 	}
 
 
@@ -151,6 +167,7 @@ private:
 	static sf::Font*font;
 	static std::map<StyleTypes, GuiNS::Style*> styles;
 	static std::map<std::string, sf::Texture*> textures;
+	static std::map<std::string, thor::BigTexture*> bigtextures;
 	static std::map<int, sf::Texture*> savetextures;
 
 	static std::map<std::string, std::pair<sf::Texture*, sf::Texture*>> charactertextures;

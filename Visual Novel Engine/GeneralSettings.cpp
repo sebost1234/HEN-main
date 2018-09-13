@@ -5,30 +5,30 @@
 
 
 GeneralSettings::GeneralSettings(Options * options) : OptionsSubType(options),
-	pagename(ResourceManager::getStyle(StyleTypes::transparentbackground), *ResourceManager::getFont(), sf::Vector2f(100, 70), "Options", 60, 5, 10, GuiNS::GuiText::FormatVer::Ver_Center, GuiNS::GuiText::FormatHor::Hor_Left, GuiNS::GuiText::Nothing),
-	windowmodeinfo(ResourceManager::getStyle(StyleTypes::transparentbackground), *ResourceManager::getFont(), sf::Vector2f(200, 50), "Window Mode:", 50, 1, 0, GuiNS::GuiText::FormatVer::Ver_Center, GuiNS::GuiText::FormatHor::Hor_Left, GuiNS::GuiText::Nothing),
+	pagename(ResourceManager::getStyle(StyleTypes::transparentbackgrounddarktext), *ResourceManager::getFont(), sf::Vector2f(100, 70), "Options", 60, 5, 10, GuiNS::GuiText::FormatVer::Ver_Center, GuiNS::GuiText::FormatHor::Hor_Left, GuiNS::GuiText::Nothing),
+	windowmodeinfo(ResourceManager::getStyle(StyleTypes::transparentbackgrounddarktext), *ResourceManager::getFont(), sf::Vector2f(200, 50), "Window Mode:", 50, 1, 0, GuiNS::GuiText::FormatVer::Ver_Center, GuiNS::GuiText::FormatHor::Hor_Left, GuiNS::GuiText::Nothing),
 	checkboxfullscreen(GuiNS::GuiRectangle(ResourceManager::getStyle(StyleTypes::blankwhite), sf::Vector2f(20, 20))),
-	checkboxfullscreeninfo(ResourceManager::getStyle(StyleTypes::transparentbackground), *ResourceManager::getFont(), sf::Vector2f(200, 20), "Fullscreen", 30, 1, 0, GuiNS::GuiText::FormatVer::Ver_Center, GuiNS::GuiText::FormatHor::Hor_Left, GuiNS::GuiText::Nothing),
+	checkboxfullscreeninfo(ResourceManager::getStyle(StyleTypes::transparentbackgrounddarktext), *ResourceManager::getFont(), sf::Vector2f(200, 20), "Fullscreen", 30, 1, 0, GuiNS::GuiText::FormatVer::Ver_Center, GuiNS::GuiText::FormatHor::Hor_Left, GuiNS::GuiText::Nothing),
 	checkboxwindowed(GuiNS::GuiRectangle(ResourceManager::getStyle(StyleTypes::blankwhite), sf::Vector2f(20, 20))),
-	checkboxwindowedinfo(ResourceManager::getStyle(StyleTypes::transparentbackground), *ResourceManager::getFont(), sf::Vector2f(200, 20), "Windowed", 30, 1, 0, GuiNS::GuiText::FormatVer::Ver_Center, GuiNS::GuiText::FormatHor::Hor_Left, GuiNS::GuiText::Nothing),
-	volumeinfo(ResourceManager::getStyle(StyleTypes::transparentbackground), *ResourceManager::getFont(), sf::Vector2f(200, 50), "Volume:", 50, 1, 0, GuiNS::GuiText::FormatVer::Ver_Center, GuiNS::GuiText::FormatHor::Hor_Left, GuiNS::GuiText::Nothing),
-	mastervolumeinfo(ResourceManager::getStyle(StyleTypes::transparentbackground), *ResourceManager::getFont(), sf::Vector2f(200, 50), "Master Volume:", 30, 1, 0, GuiNS::GuiText::FormatVer::Ver_Center, GuiNS::GuiText::FormatHor::Hor_Left, GuiNS::GuiText::Nothing),
+	checkboxwindowedinfo(ResourceManager::getStyle(StyleTypes::transparentbackgrounddarktext), *ResourceManager::getFont(), sf::Vector2f(200, 20), "Windowed", 30, 1, 0, GuiNS::GuiText::FormatVer::Ver_Center, GuiNS::GuiText::FormatHor::Hor_Left, GuiNS::GuiText::Nothing),
+	volumeinfo(ResourceManager::getStyle(StyleTypes::transparentbackgrounddarktext), *ResourceManager::getFont(), sf::Vector2f(200, 50), "Volume:", 50, 1, 0, GuiNS::GuiText::FormatVer::Ver_Center, GuiNS::GuiText::FormatHor::Hor_Left, GuiNS::GuiText::Nothing),
+	mastervolumeinfo(ResourceManager::getStyle(StyleTypes::transparentbackgrounddarktext), *ResourceManager::getFont(), sf::Vector2f(200, 50), "Master Volume:", 30, 1, 0, GuiNS::GuiText::FormatVer::Ver_Center, GuiNS::GuiText::FormatHor::Hor_Left, GuiNS::GuiText::Nothing),
 	mastervolumebar(ResourceManager::getStyle(StyleTypes::blankwhite), sf::Vector2f(400, 40), sf::Vector2f(20, 40), "OptionsBarNormal.png", "OptionsBarHeld.png", "OptionsBarHeld.png", "OptionsBarBackground.png", "Data\\"),
-	bgmvolumeinfo(ResourceManager::getStyle(StyleTypes::transparentbackground), *ResourceManager::getFont(), sf::Vector2f(200, 50), "BGM Volume:", 30, 1, 0, GuiNS::GuiText::FormatVer::Ver_Center, GuiNS::GuiText::FormatHor::Hor_Left, GuiNS::GuiText::Nothing),
+	bgmvolumeinfo(ResourceManager::getStyle(StyleTypes::transparentbackgrounddarktext), *ResourceManager::getFont(), sf::Vector2f(200, 50), "BGM Volume:", 30, 1, 0, GuiNS::GuiText::FormatVer::Ver_Center, GuiNS::GuiText::FormatHor::Hor_Left, GuiNS::GuiText::Nothing),
 	bgmvolumebar(ResourceManager::getStyle(StyleTypes::blankwhite), sf::Vector2f(400, 40), sf::Vector2f(20, 40), "OptionsBarNormal.png", "OptionsBarHeld.png", "OptionsBarHeld.png", "OptionsBarBackground.png", "Data\\"),
-	sfxvolumeinfo(ResourceManager::getStyle(StyleTypes::transparentbackground), *ResourceManager::getFont(), sf::Vector2f(200, 50), "SFX Volume:", 30, 1, 0, GuiNS::GuiText::FormatVer::Ver_Center, GuiNS::GuiText::FormatHor::Hor_Left, GuiNS::GuiText::Nothing),
+	sfxvolumeinfo(ResourceManager::getStyle(StyleTypes::transparentbackgrounddarktext), *ResourceManager::getFont(), sf::Vector2f(200, 50), "SFX Volume:", 30, 1, 0, GuiNS::GuiText::FormatVer::Ver_Center, GuiNS::GuiText::FormatHor::Hor_Left, GuiNS::GuiText::Nothing),
 	sfxvolumebar(ResourceManager::getStyle(StyleTypes::blankwhite), sf::Vector2f(400, 40), sf::Vector2f(20, 40), "OptionsBarNormal.png", "OptionsBarHeld.png", "OptionsBarHeld.png", "OptionsBarBackground.png", "Data\\"),
-	systemvolumeinfo(ResourceManager::getStyle(StyleTypes::transparentbackground), *ResourceManager::getFont(), sf::Vector2f(200, 50), "System Volume:", 30, 1, 0, GuiNS::GuiText::FormatVer::Ver_Center, GuiNS::GuiText::FormatHor::Hor_Left, GuiNS::GuiText::Nothing),
+	systemvolumeinfo(ResourceManager::getStyle(StyleTypes::transparentbackgrounddarktext), *ResourceManager::getFont(), sf::Vector2f(200, 50), "System Volume:", 30, 1, 0, GuiNS::GuiText::FormatVer::Ver_Center, GuiNS::GuiText::FormatHor::Hor_Left, GuiNS::GuiText::Nothing),
 	systemvolumebar(ResourceManager::getStyle(StyleTypes::blankwhite), sf::Vector2f(400, 40), sf::Vector2f(20, 40), "OptionsBarNormal.png", "OptionsBarHeld.png", "OptionsBarHeld.png", "OptionsBarBackground.png", "Data\\"),
-	gameconfiginfo(ResourceManager::getStyle(StyleTypes::transparentbackground), *ResourceManager::getFont(), sf::Vector2f(200, 50), "Game Config:", 50, 1, 0, GuiNS::GuiText::FormatVer::Ver_Center, GuiNS::GuiText::FormatHor::Hor_Left, GuiNS::GuiText::Nothing),
-	textspeedinfo(ResourceManager::getStyle(StyleTypes::transparentbackground), *ResourceManager::getFont(), sf::Vector2f(200, 50), "Text Speed:", 30, 1, 0, GuiNS::GuiText::FormatVer::Ver_Center, GuiNS::GuiText::FormatHor::Hor_Left, GuiNS::GuiText::Nothing),
+	gameconfiginfo(ResourceManager::getStyle(StyleTypes::transparentbackgrounddarktext), *ResourceManager::getFont(), sf::Vector2f(200, 50), "Game Config:", 50, 1, 0, GuiNS::GuiText::FormatVer::Ver_Center, GuiNS::GuiText::FormatHor::Hor_Left, GuiNS::GuiText::Nothing),
+	textspeedinfo(ResourceManager::getStyle(StyleTypes::transparentbackgrounddarktext), *ResourceManager::getFont(), sf::Vector2f(200, 50), "Text Speed:", 30, 1, 0, GuiNS::GuiText::FormatVer::Ver_Center, GuiNS::GuiText::FormatHor::Hor_Left, GuiNS::GuiText::Nothing),
 	textspeedbar(ResourceManager::getStyle(StyleTypes::blankwhite), sf::Vector2f(400, 40), sf::Vector2f(20, 40), "OptionsBarNormal.png", "OptionsBarHeld.png", "OptionsBarHeld.png", "OptionsBarBackground.png", "Data\\"),
 	checkboxskip(GuiNS::GuiRectangle(ResourceManager::getStyle(StyleTypes::blankwhite), sf::Vector2f(40, 40))),
-	checkboxskipinfo(ResourceManager::getStyle(StyleTypes::transparentbackground), *ResourceManager::getFont(), sf::Vector2f(200, 50), "Skip previously unseen text.", 30, 1, 0, GuiNS::GuiText::FormatVer::Ver_Center, GuiNS::GuiText::FormatHor::Hor_Left, GuiNS::GuiText::Nothing),
+	checkboxskipinfo(ResourceManager::getStyle(StyleTypes::transparentbackgrounddarktext), *ResourceManager::getFont(), sf::Vector2f(200, 50), "Skip previously unseen text.", 30, 1, 0, GuiNS::GuiText::FormatVer::Ver_Center, GuiNS::GuiText::FormatHor::Hor_Left, GuiNS::GuiText::Nothing),
 	defaultsbutton(GuiNS::GuiText(ResourceManager::getStyle(StyleTypes::blankwhite), *ResourceManager::getFont(), sf::Vector2f(200, 70), "Default", 40, 1, 10, GuiNS::GuiText::FormatVer::Ver_Center, GuiNS::GuiText::FormatHor::Hor_Center, GuiNS::GuiText::Nothing),
 		"ButtonNormal.png", "ButtonHover.png", "ButtonHover.png", "Data\\", 5)
 {
-	options->background.changeRectangle()->setTexture(ResourceManager::getTexture("Data//bgOptions.png"));
+	options->background.setTexture(ResourceManager::getBigTexture("Data//bgOptions.png"));
 
 	pagename.setPosition(sf::Vector2f(10, 100));
 	pagename.setClickable(false);
@@ -91,7 +91,7 @@ GeneralSettings::GeneralSettings(Options * options) : OptionsSubType(options),
 	textspeedinfo.setClickable(false);
 
 	textspeedbar._changeMax(20);
-	textspeedbar._changeState(int(sf::Listener::getGlobalVolume() / 5));
+	textspeedbar._changeState(int(options->fatherstate->getEngine()->getSettings()->getTextspeed() / 5));
 	textspeedbar.setPosition(textspeedinfo.getPosition() + sf::Vector2f(0, 0 + textspeedinfo.getSize().y));
 	textspeedbar.setObserver(this);
 
@@ -149,7 +149,7 @@ void GeneralSettings::syncBars()
 	bgmvolumebar._changeState(int(options->fatherstate->getEngine()->getSettings()->getBgVolume() / 5));
 	sfxvolumebar._changeState(int(options->fatherstate->getEngine()->getSettings()->getSfxVolume() / 5));
 	systemvolumebar._changeState(int(options->fatherstate->getEngine()->getSettings()->getSfxVolume() / 5));
-	textspeedbar._changeState(int(sf::Listener::getGlobalVolume() / 5));
+	textspeedbar._changeState(int(options->fatherstate->getEngine()->getSettings()->getTextspeed() / 5));
 }
 
 void GeneralSettings::notifyEvent(GuiNS::GuiElementEvent event, GuiNS::GuiElement * from)
@@ -178,7 +178,7 @@ void GeneralSettings::notifyEvent(GuiNS::GuiElementEvent event, GuiNS::GuiElemen
 		}
 		SoundEngine::playSound("hover");
 	}
-	else if (event.type == GuiNS::GuiElementEvent::Pressed && event.mouse.type == GuiNS::GuiElementEvent::Type::Released)
+	else if (event.type == GuiNS::GuiElementEvent::Mouse && event.mouse.type == GuiNS::GuiElementEvent::Type::Released)
 	{
 		if (from == &checkboxfullscreen|| from == &checkboxfullscreeninfo)
 		{

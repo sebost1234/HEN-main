@@ -27,7 +27,7 @@ private:
 	//Logos
 	void nextLogo();
 
-	sf::Sprite logo;
+	thor::BigSprite logo;
 
 	float timer;
 	int currentnr;

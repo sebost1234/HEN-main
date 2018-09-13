@@ -2,17 +2,20 @@
 #include "Engine.h"
 
 GameState::GameState(Engine * engine, SaveData data) :
-	tekst(GuiNS::GuiText(ResourceManager::getStyle(), *ResourceManager::getFont(), sf::Vector2f(300, 40), "", 30, 15, 15, GuiNS::GuiText::FormatVer::Ver_Top, GuiNS::GuiText::FormatHor::Hor_Left, GuiNS::GuiText::NewLine), 0.1f),
-	name(ResourceManager::getStyle(), *ResourceManager::getFont(), sf::Vector2f(300, 150), "Name", 30, 5, 5, GuiNS::GuiText::FormatVer::Ver_Center, GuiNS::GuiText::FormatHor::Hor_Left, GuiNS::GuiText::Nothing),
+	tekst(GuiNS::GuiText(ResourceManager::getStyle(StyleTypes::transparentbackgroundwhitetext), *ResourceManager::getFont(), sf::Vector2f(300, 40), "", 30, 15, 15, GuiNS::GuiText::FormatVer::Ver_Top, GuiNS::GuiText::FormatHor::Hor_Left, GuiNS::GuiText::NewLine), 0.1f),
+	name(ResourceManager::getStyle(StyleTypes::transparentbackgroundwhitetext), *ResourceManager::getFont(), sf::Vector2f(300, 150), "Name", 30, 5, 5, GuiNS::GuiText::FormatVer::Ver_Center, GuiNS::GuiText::FormatHor::Hor_Left, GuiNS::GuiText::Nothing),
 	options(Optiontype::InGame, this),
 	State(engine)
 {
 	float x = (gamesize.x - 1280)*0.5f;
 
-	tekst.setSize(sf::Vector2f(float(gamesize.x-x*2), 200));
+	tekst.setSize(sf::Vector2f(float(gamesize.x-x*2), 400));
 	tekst.setPosition(sf::Vector2f(x, float(gamesize.y) - 200));
 	name.setSize(sf::Vector2f(150, 40));
 	name.setPosition(sf::Vector2f(x, float(gamesize.y) - 240));
+
+	textbackground.setPosition(name.getPosition());
+	textbackground.setTexture(*ResourceManager::getTexture("Data//GameTextBox.png"));
 
 	gui.setObserver(this);
 
@@ -23,8 +26,12 @@ GameState::GameState(Engine * engine, SaveData data) :
 	hidegui = false;
 
 
+	syncTextSpeed();
+
 	if (data.slot == -1)
 	{
+		vnc.loadFile(L"start.txt");
+
 		if (!vnc.gotoScope(L"start"))
 		{
 			throwWarning("\"scope;start\" not found. Starting from the beginning of the file.");
@@ -37,9 +44,6 @@ GameState::GameState(Engine * engine, SaveData data) :
 
 	SoundEngine::changeMusic("NONE");
 	currentmusic = "NONE";
-
-	scene = new Scene();
-
 	processing = true;
 	while ((timer == 0) && (processing = process(vnc.next())));
 	timer = 0;
@@ -47,8 +51,6 @@ GameState::GameState(Engine * engine, SaveData data) :
 
 GameState::~GameState()
 {
-	if (scene != nullptr)
-		delete scene;
 	for (unsigned int i = 0; i < choices.size(); i++)
 		delete choices[i];
 	choices.clear();
@@ -102,8 +104,7 @@ void GameState::sync(float time)
 	else
 	{
 		gui.sync(getWindow()->mapPixelToCoords(sf::Mouse::getPosition(*getWindow())), time);
-		fxengine.sync(time);
-		scene->sync(time);
+		scene.sync(time);
 
 		timer -= time;
 		if (timer < 0)
@@ -120,11 +121,9 @@ void GameState::draw()
 		getWindow()->draw(options);
 	else
 	{
-		fxengine.begin();
-		fxengine.add(*scene);
-		fxengine.end();
+		getWindow()->draw(scene);
 
-		getWindow()->draw(fxengine);
+		getWindow()->draw(textbackground);
 
 		if (!hidegui)
 			getWindow()->draw(gui);
@@ -133,7 +132,7 @@ void GameState::draw()
 
 void GameState::notifyEvent(GuiNS::GuiElementEvent event, GuiNS::GuiElement * from)
 {
-	if (event.type == GuiNS::GuiElementEvent::Pressed && event.mouse.type == GuiNS::GuiElementEvent::Type::Released)
+	if (event.type == GuiNS::GuiElementEvent::Mouse && event.mouse.type == GuiNS::GuiElementEvent::Type::Released)
 	{
 		if(!choices.empty())
 		{
@@ -157,24 +156,25 @@ void GameState::notifyEvent(GuiNS::GuiElementEvent event, GuiNS::GuiElement * fr
 	}
 }
 
+void GameState::syncTextSpeed()
+{
+	const float max = 0.1f;
+	const float min = 0.001f;
+
+	float speed = min + ((max - min) / 100.0f)*(100-getEngine()->getSettings()->getTextspeed());
+
+
+	tekst.setSpeed(speed);
+}
+
 bool GameState::process(VisualNovelEvent event)
 {
 	if (event.getType() > VisualNovelEvent::STARTOFSCENE&&event.getType() < VisualNovelEvent::ENDOFSCENE)
-		return scene->processEvent(event);
+		return scene.processEvent(event);
 
 
 	switch (event.getType())
 	{
-	case VisualNovelEvent::SetScene:
-	{
-		std::wstring tmp = event.getArgument(SetSceneEventtype);
-
-		if (scene != nullptr)
-			delete scene;
-		scene = new Scene(true);
-
-		return true;
-	}
 	case VisualNovelEvent::Say:
 	{
 		std::wstring tmp = event.getArgument(SayEventname);
@@ -187,10 +187,12 @@ bool GameState::process(VisualNovelEvent event)
 			type = event.getArgument(SayEventtype);
 
 		tmp = event.getArgument(SayEventstring);
+
+		sf::String string = sf::String::fromUtf8(tmp.begin(), tmp.end());
 		if (type.find(L'A') != std::string::npos)
-			tekst.addText(sf::String::fromUtf8(tmp.begin(), tmp.end()));
+			tekst.addText(string);
 		else
-			tekst.setText(sf::String::fromUtf8(tmp.begin(), tmp.end()));
+			tekst.setText(string);
 
 		return type.find(L"NS") != std::string::npos;
 	}
@@ -230,9 +232,6 @@ bool GameState::process(VisualNovelEvent event)
 	case VisualNovelEvent::Wait:
 		timer = event.getArgumentAsFloat(WaitEventtime);
 		return true;
-	case VisualNovelEvent::FX:
-		fxengine.interpretFX(event);
-		return true;
 	default:
 		return true;
 	}
@@ -250,6 +249,7 @@ void GameState::notifyEvent(GuiNS::GuiEvent event, GuiNS::Gui * from)
 		if (tmp == &options)
 		{
 			SoundEngine::changeMusic(currentmusic);
+			syncTextSpeed();
 		}
 	}
 	break;

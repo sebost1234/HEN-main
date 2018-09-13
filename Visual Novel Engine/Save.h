@@ -3,6 +3,8 @@
 #include <string>
 #include <vector>
 
+#include "VisualNovelEvent.h"
+
 struct SaveData
 {
 	SaveData()
@@ -15,7 +17,7 @@ struct SaveData
 	std::wstring file;
 	int currentline;
 
-	std::vector <std::wstring> toLoad;
+	std::vector <VisualNovelEvent> toLoad;
 };
 
 std::wostream& operator<<(std::wostream& str, SaveData&save);

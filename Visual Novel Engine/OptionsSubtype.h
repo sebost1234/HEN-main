@@ -31,6 +31,11 @@ public:
 	{
 	}
 
+	virtual void sync(float time)
+	{
+		
+	}
+
 	virtual OptionsSubTypeEnum getSubtype() = 0;
 protected:
 	Options*options;

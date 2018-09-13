@@ -119,7 +119,7 @@ namespace GuiNS
 
 		virtual void notifyEvent(GuiElementEvent event, GuiElement*from)
 		{
-			if (event.type == GuiNS::GuiElementEvent::Pressed && event.mouse.type == GuiNS::GuiElementEvent::Type::Released)
+			if (event.type == GuiNS::GuiElementEvent::Mouse && event.mouse.type == GuiNS::GuiElementEvent::Type::Released)
 			{
 				if (from == &button)
 				{
@@ -142,7 +142,7 @@ namespace GuiNS
 			Popup(id),
 			rectangle(GuiNS::GuiRectangle(ResourceManager::getStyle(StyleTypes::blankwhite), size),
 				"Popup.png", "Popup.png", "Popup.png", "Data\\"),
-			info(ResourceManager::getStyle(StyleTypes::transparentbackground), *ResourceManager::getFont(), sf::Vector2f(size.x, size.y - 50), text, 40, 50, 50, GuiNS::GuiText::FormatVer::Ver_Top, GuiNS::GuiText::FormatHor::Hor_Center, GuiNS::GuiText::Type::NewLine),
+			info(ResourceManager::getStyle(StyleTypes::transparentbackgrounddarktext), *ResourceManager::getFont(), sf::Vector2f(size.x, size.y - 50), text, 40, 50, 50, GuiNS::GuiText::FormatVer::Ver_Top, GuiNS::GuiText::FormatHor::Hor_Center, GuiNS::GuiText::Type::NewLine),
 			button1(GuiNS::GuiText(ResourceManager::getStyle(StyleTypes::blankwhite), *ResourceManager::getFont(), sf::Vector2f(200, 70), button1text, 45, 5, 5, GuiNS::GuiText::FormatVer::Ver_Center, GuiNS::GuiText::FormatHor::Hor_Center, GuiNS::GuiText::Nothing),
 				"ButtonNormal.png", "ButtonHover.png", "ButtonHover.png", "Data\\", 5),
 			button2(GuiNS::GuiText(ResourceManager::getStyle(StyleTypes::blankwhite), *ResourceManager::getFont(), sf::Vector2f(200, 70), button2text, 45, 5, 5, GuiNS::GuiText::FormatVer::Ver_Center, GuiNS::GuiText::FormatHor::Hor_Center, GuiNS::GuiText::Nothing),
@@ -178,7 +178,7 @@ namespace GuiNS
 
 		virtual void notifyEvent(GuiElementEvent event, GuiElement*from)
 		{
-			if (event.type == GuiNS::GuiElementEvent::Pressed && event.mouse.type == GuiNS::GuiElementEvent::Type::Released)
+			if (event.type == GuiNS::GuiElementEvent::Mouse && event.mouse.type == GuiNS::GuiElementEvent::Type::Released)
 			{
 				if (from == &button1)
 				{

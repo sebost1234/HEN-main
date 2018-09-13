@@ -3,8 +3,8 @@
 #include "Music.h"
 
 CGGallery::CGGallery(Options * options) : OptionsSubType(options),
-pagename(ResourceManager::getStyle(StyleTypes::transparentbackground), *ResourceManager::getFont(), sf::Vector2f(100, 70), "", 60, 5, 10, GuiNS::GuiText::FormatVer::Ver_Center, GuiNS::GuiText::FormatHor::Hor_Left, GuiNS::GuiText::Nothing),
-chapter1info(ResourceManager::getStyle(StyleTypes::transparentbackground), *ResourceManager::getFont(), sf::Vector2f(200, 50), "Chapter 1:", 30, 1, 0, GuiNS::GuiText::FormatVer::Ver_Center, GuiNS::GuiText::FormatHor::Hor_Left, GuiNS::GuiText::Nothing),
+pagename(ResourceManager::getStyle(StyleTypes::transparentbackgroundwhitetext), *ResourceManager::getFont(), sf::Vector2f(290, 70), "", 60, 5, 10, GuiNS::GuiText::FormatVer::Ver_Center, GuiNS::GuiText::FormatHor::Hor_Center, GuiNS::GuiText::Nothing),
+chapter1info(ResourceManager::getStyle(StyleTypes::transparentbackgrounddarktext), *ResourceManager::getFont(), sf::Vector2f(200, 50), "Chapter 1:", 30, 1, 0, GuiNS::GuiText::FormatVer::Ver_Center, GuiNS::GuiText::FormatHor::Hor_Left, GuiNS::GuiText::Nothing),
 chapter1page1(GuiNS::GuiText(ResourceManager::getStyle(StyleTypes::blankwhite), *ResourceManager::getFont(), sf::Vector2f(40, 40),
 	"1", 30, 1, 10, GuiNS::GuiText::FormatVer::Ver_Center, GuiNS::GuiText::FormatHor::Hor_Center, GuiNS::GuiText::Nothing),
 	"GalleryCombNormal.png", "GalleryCombHover.png", "GalleryCombHover.png", "Data\\"),
@@ -17,11 +17,11 @@ chapter1page1(GuiNS::GuiText(ResourceManager::getStyle(StyleTypes::blankwhite), 
 	fullscreen.setClickable(true);
 	fullscreen.setObserver(this);
 
-	options->background.changeRectangle()->setTexture(ResourceManager::getTexture("Data//bgGallery.png"));
+	options->background.setTexture(ResourceManager::getBigTexture("Data//bgGallery.png"));
 
 	pagename.setString("Gallery");
 	pagename.fitBackground(true, false);
-	pagename.setPosition(sf::Vector2f(10, 100));
+	pagename.setPosition(sf::Vector2f(0, 110));
 	pagename.setClickable(false);
 
 	{
@@ -78,7 +78,7 @@ chapter1page1(GuiNS::GuiText(ResourceManager::getStyle(StyleTypes::blankwhite), 
 
 void CGGallery::notifyEvent(GuiNS::GuiElementEvent event, GuiNS::GuiElement * from)
 {
-	if (event.type == GuiNS::GuiElementEvent::Pressed && event.mouse.type == GuiNS::GuiElementEvent::Type::Released)
+	if (event.type == GuiNS::GuiElementEvent::Mouse && event.mouse.type == GuiNS::GuiElementEvent::Type::Released)
 	{
 		if (from == &chapter1page1)
 			sync(1);

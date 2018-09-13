@@ -1,4 +1,4 @@
-#include "VisualNovelControler.h"
+#include "VisualNovelEvent.h"
 
 std::map < std::wstring, VisualNovelEvent::Type, Comparewstring>  VisualNovelEvent::stringtotypemap;
 std::map < VisualNovelEvent::Type, std::wstring>  VisualNovelEvent::typetostringmap;
@@ -12,7 +12,7 @@ void VisualNovelEvent::loadEvents()
 	addEvent(VisualNovelEvent::Say, L"say");
 	addEvent(VisualNovelEvent::Choice, L"choice");
 	addEvent(VisualNovelEvent::Flag, L"flag");
-	addEvent(VisualNovelEvent::SetScene, L"setscene");
+	addEvent(VisualNovelEvent::GlobalFlag, L"globalflag");
 	addEvent(VisualNovelEvent::SetModelPosition, L"setmodelposition");
 	addEvent(VisualNovelEvent::SetModelTargetPosition, L"setmodeltargetposition");
 	addEvent(VisualNovelEvent::SetModelFreeEvent, L"setmodelfree");
@@ -24,11 +24,11 @@ void VisualNovelEvent::loadEvents()
 	addEvent(VisualNovelEvent::DeleteModel, L"deletemodel");
 	addEvent(VisualNovelEvent::PlaySound, L"playsound");
 	addEvent(VisualNovelEvent::PlayMusic, L"playmusic");
-	addEvent(VisualNovelEvent::FX, L"fx");
 	addEvent(VisualNovelEvent::ChangeFile, L"changefile");
 	addEvent(VisualNovelEvent::GoTo, L"jump");
 	addEvent(VisualNovelEvent::Scope, L"label");
 	addEvent(VisualNovelEvent::FlagTest, L"flagtest");
+	addEvent(VisualNovelEvent::GlobalFlagTest, L"globalflagtest");
 	addEvent(VisualNovelEvent::CG, L"cg");
 }
 
